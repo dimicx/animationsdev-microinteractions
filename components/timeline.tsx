@@ -1,6 +1,8 @@
+import { motion } from "motion/react";
+
 export function Timeline() {
   return (
-    <g>
+    <motion.g>
       <g filter="url(#filter6_i_368_1560)">
         <path
           fill="#252525"
@@ -22,6 +24,6 @@ export function Timeline() {
         strokeWidth="2.457"
         d="m217.429 81.691 5.204-32.34"
       ></path>
-    </g>
+    </motion.g>
   );
 }

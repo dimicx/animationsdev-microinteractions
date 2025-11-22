@@ -1,6 +1,8 @@
+import { motion } from "motion/react";
+
 export function Code() {
   return (
-    <g>
+    <motion.g>
       <g filter="url(#filter8_i_368_1560)">
         <path
           fill="#252525"
@@ -19,6 +21,6 @@ export function Code() {
         d="M402.624 268.175a4.91 4.91 0 0 1 3.966-5.705l3.224-.58a4.91 4.91 0 0 1 5.705 3.966l2.32 12.895a4.915 4.915 0 0 1-3.966 5.706l-3.224.58a4.915 4.915 0 0 1-5.706-3.966z"
         opacity="0.4"
       ></path>
-    </g>
+    </motion.g>
   );
 }

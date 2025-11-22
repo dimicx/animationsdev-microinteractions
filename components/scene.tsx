@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "motion/react";
+
 import { Clock } from "@/components/clock";
 import { Code } from "@/components/code";
 import { Defs } from "@/components/defs";
@@ -16,14 +20,14 @@ export function Scene() {
       viewBox="0 0 622 319"
       className="h-auto"
     >
-      <g clipPath="url(#clip0_368_1560)">
+      <motion.g clipPath="url(#clip0_368_1560)">
         <Code />
         <SpringPath />
         <Hand />
         <Clock />
         <Timeline />
         <Lightbulb />
-      </g>
+      </motion.g>
       <Defs />
     </svg>
   );

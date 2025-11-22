@@ -1,6 +1,8 @@
+import { motion } from "motion/react";
+
 export function Hand() {
   return (
-    <g>
+    <motion.g>
       <g filter="url(#filter4_i_368_1560)">
         <path
           fill="#252525"
@@ -16,6 +18,6 @@ export function Hand() {
         d="M39.521 162.694a1.843 1.843 0 0 1 2.87-2.312l3.083 3.826a1.842 1.842 0 1 1-2.87 2.312zM50.815 158.964a1.843 1.843 0 0 1 3.641-.567l.42 2.696a1.843 1.843 0 0 1-3.64.568zM61.544 160.71a1.843 1.843 0 0 1 3.438 1.329l-.41 1.058a1.843 1.843 0 1 1-3.437-1.33z"
         opacity="0.5"
       ></path>
-    </g>
+    </motion.g>
   );
 }

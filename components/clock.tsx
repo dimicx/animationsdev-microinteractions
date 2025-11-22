@@ -1,6 +1,8 @@
+import { motion } from "motion/react";
+
 export function Clock() {
   return (
-    <g>
+    <motion.g>
       <g filter="url(#filter7_i_368_1560)">
         <path
           fill="#252525"
@@ -21,6 +23,6 @@ export function Clock() {
         d="M570.169 166.997a3.771 3.771 0 0 1-2.773 6.044.16.16 0 0 1-.149-.081 27.3 27.3 0 0 0-4-5.269.16.16 0 0 1-.036-.164 3.77 3.77 0 0 1 6.567-1.045z"
         opacity="0.45"
       ></path>
-    </g>
+    </motion.g>
   );
 }

@@ -1,6 +1,8 @@
+import { motion } from "motion/react";
+
 export function SpringPath() {
   return (
-    <g>
+    <motion.g>
       <g filter="url(#filter0_ii_368_1560)">
         <path
           fill="#252525"
@@ -59,6 +61,6 @@ export function SpringPath() {
         fill="#D6D6D6"
         transform="rotate(-6.595 212.157 190.615)"
       ></circle>
-    </g>
+    </motion.g>
   );
 }
