@@ -1,26 +1,191 @@
-import { motion } from "motion/react";
+import { useCallback } from "react";
+import {
+  animate,
+  motion,
+  useAnimation,
+  useMotionValue,
+  Variants,
+} from "motion/react";
+import { useFlubber } from "@/lib/flubber";
+
+const variants: Variants = {
+  initial: {
+    opacity: 0,
+    scale: 0,
+  },
+  animate: {
+    opacity: 1,
+    scale: 1,
+  },
+};
+
+const rotateVariants: Variants = {
+  initial: {
+    transform: "rotate(0deg)",
+  },
+  animate: {
+    transform: "rotate(10deg)",
+  },
+};
+
+const caretLeftVariants: Variants = {
+  initial: {
+    transform: "translateX(0%) translateY(0%) scale(1)",
+  },
+  animate: {
+    transform: [
+      "translateX(0%) translateY(0%) scale(1)",
+      "translateX(20%) translateY(0%) scale(1)",
+      "translateX(-100%) translateY(10%) scale(0.9)",
+    ],
+    transition: {
+      duration: 0.6,
+      times: [0, 0.3, 0.8],
+      ease: "easeInOut",
+    },
+  },
+};
+
+const caretRightVariants: Variants = {
+  initial: {
+    transform: "translateX(0%) translateY(0%) scale(1)",
+  },
+  animate: {
+    transform: [
+      "translateX(0%) translateY(0%) scale(1)",
+      "translateX(-20%) translateY(0%) scale(1)",
+      "translateX(100%) translateY(-10%) scale(0.9)",
+    ],
+    transition: {
+      duration: 0.6,
+      times: [0, 0.3, 0.8],
+      ease: "easeInOut",
+    },
+  },
+};
+
+const slashVariants: Variants = {
+  initial: {
+    transform: "translateX(0%) translateY(0%) scale(1) rotate(0deg)",
+  },
+  animate: {
+    transform: [
+      "translateX(0%) translateY(0%) scale(1) rotate(0deg)",
+      "translateX(-100%) translateY(0%) scale(1) rotate(5deg)",
+      "translateX(600%) translateY(-10%) scale(0.9) rotate(-30deg)",
+    ],
+    transition: {
+      duration: 0.6,
+      times: [0, 0.3, 0.8],
+      ease: "easeInOut",
+    },
+  },
+};
+
+const codePaths = [
+  "M402.625 268.175C402.51 267.54 402.522 266.888 402.659 266.258C402.797 265.627 403.057 265.03 403.425 264.5C403.794 263.97 404.263 263.518 404.806 263.17C405.349 262.821 405.956 262.583 406.591 262.47L409.815 261.89C410.45 261.775 411.101 261.787 411.732 261.924C412.362 262.061 412.96 262.322 413.49 262.69C414.019 263.058 414.471 263.527 414.82 264.071C415.168 264.614 415.406 265.22 415.52 265.856L417.84 278.751C418.07 280.033 417.782 281.355 417.038 282.425C416.295 283.495 415.156 284.225 413.874 284.457L410.65 285.037C409.367 285.267 408.046 284.979 406.976 284.235C405.906 283.491 405.175 282.353 404.944 281.071L402.625 268.175Z",
+  "M403.67 266.711C403.326 264.529 404.816 262.481 406.998 262.136L407.851 262.002C410.033 261.658 412.082 263.147 412.426 265.33L414.81 280.443C415.154 282.625 413.664 284.673 411.482 285.017L410.629 285.152C408.447 285.496 406.399 284.006 406.054 281.824L403.67 266.711Z",
+  "M394.314 270.214C393.798 266.941 396.032 263.869 399.306 263.352L416.981 260.564C420.254 260.047 423.326 262.282 423.843 265.555L425.604 276.717C426.12 279.991 423.885 283.063 420.612 283.579L402.936 286.367C399.663 286.884 396.591 284.649 396.075 281.376L394.314 270.214Z",
+];
 
 export function Code() {
+  const controls = useAnimation();
+
+  const codePathProgress = useMotionValue(0);
+  const codePath = useFlubber(codePathProgress, codePaths);
+
+  const handleMouseEnter = useCallback(() => {
+    controls.start("animate");
+    animate(codePathProgress, [0, 1, 2], {
+      duration: 0.6,
+      times: [0, 0.3, 0.8],
+      ease: "easeInOut",
+    });
+  }, [controls, codePathProgress]);
+  const handleMouseLeave = useCallback(() => {
+    controls.start("initial");
+    animate(codePathProgress, [2, 1, 0], {
+      duration: 0.6,
+      times: [0, 0.3, 0.7],
+      ease: "easeOut",
+    });
+  }, [controls, codePathProgress]);
+
   return (
-    <motion.g>
-      <g filter="url(#filter8_i_368_1560)">
-        <path
-          fill="#252525"
-          d="M425.216 236.653c18.25-3.283 35.706 8.851 38.989 27.101s-8.851 35.706-27.101 38.989l-29.079 5.23a33.4 33.4 0 0 1-19.555-2.35 7.9 7.9 0 0 1-1.279 1.918 19.72 19.72 0 0 1-11.137 6.182l-1.753.315c-1.918.345-3.473-1.544-2.765-3.36l.616-1.581c.878-2.25 1.115-4.7.688-7.078l-3.804-21.147h.001c-3.283-18.25 8.85-35.706 27.1-38.988z"
-        ></path>
-      </g>
-      <path
-        stroke="#D6D6D6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2.457"
-        d="m400.252 282.746-8.02-5.575c-.189-.131-.283-.196-.329-.283a.4.4 0 0 1-.045-.249c.013-.097.079-.191.21-.38l5.575-8.02M429.881 262.44l8.02 5.575c.189.131.283.196.329.283a.4.4 0 0 1 .045.249c-.013.097-.079.191-.21.38l-5.575 8.02M423.802 261.037l-1.357 20.213"
-      ></path>
-      <path
-        fill="#D6D6D6"
-        d="M402.624 268.175a4.91 4.91 0 0 1 3.966-5.705l3.224-.58a4.91 4.91 0 0 1 5.705 3.966l2.32 12.895a4.915 4.915 0 0 1-3.966 5.706l-3.224.58a4.915 4.915 0 0 1-5.706-3.966z"
-        opacity="0.4"
-      ></path>
+    <motion.g
+      variants={variants}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="origin-bottom-left!"
+    >
+      <motion.g
+        animate={{
+          transform: ["translateY(-1px)", "translateY(2px)"],
+          transition: {
+            duration: 2,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "reverse",
+          },
+        }}
+      >
+        <motion.g
+          variants={rotateVariants}
+          initial="initial"
+          animate={controls}
+        >
+          <g className="filter-[url(#filter8_i_359_1453)] dark:filter-[url(#filter8_i_197_321)]">
+            <path
+              d="M425.217 236.652C443.467 233.369 460.923 245.503 464.206 263.753C467.489 282.003 455.355 299.459 437.105 302.742L408.026 307.972C401.42 309.172 394.605 308.353 388.471 305.622C388.141 306.321 387.71 306.967 387.192 307.54C384.266 310.776 380.349 312.95 376.055 313.722L374.302 314.037C372.384 314.382 370.829 312.493 371.537 310.677L372.153 309.096C373.031 306.846 373.268 304.396 372.841 302.018L369.037 280.871C365.754 262.621 377.888 245.165 396.138 241.883L425.217 236.652Z"
+              className="fill-[#F8F8F8] dark:fill-[#252525]"
+            />
+          </g>
+          <motion.g
+            variants={caretLeftVariants}
+            initial="initial"
+            animate={controls}
+          >
+            <path
+              d="M400.254 282.746L392.234 277.171C392.045 277.04 391.951 276.975 391.905 276.888C391.863 276.812 391.847 276.725 391.86 276.639C391.873 276.542 391.939 276.448 392.07 276.259L397.645 268.239"
+              strokeWidth="2.457"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+            />
+          </motion.g>
+          <motion.g
+            variants={slashVariants}
+            initial="initial"
+            animate={controls}
+          >
+            <path
+              d="M423.804 261.037L423.126 271.144L422.447 281.25"
+              strokeWidth="2.457"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+            />
+          </motion.g>
+          <motion.g
+            variants={caretRightVariants}
+            initial="initial"
+            animate={controls}
+          >
+            <path
+              d="M429.881 262.438L437.901 268.013C438.09 268.144 438.184 268.209 438.23 268.296C438.271 268.372 438.287 268.46 438.275 268.545C438.262 268.642 438.196 268.736 438.065 268.925L432.49 276.945"
+              strokeWidth="2.457"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+            />
+          </motion.g>
+          <motion.path
+            opacity="0.4"
+            d={codePath}
+            className="fill-[#989898] dark:fill-[#D6D6D6]"
+          />
+        </motion.g>
+      </motion.g>
     </motion.g>
   );
 }

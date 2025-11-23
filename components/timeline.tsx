@@ -1,29 +1,281 @@
-import { motion } from "motion/react";
+import { motion, useAnimation, Variants } from "motion/react";
+import { useCallback } from "react";
+
+const variants: Variants = {
+  initial: {
+    opacity: 0,
+    scale: 0,
+  },
+  animate: {
+    opacity: 1,
+    scale: 1,
+  },
+};
+
+const timelineTimes = [0, 0.2, 0.35, 0.65, 0.8, 1];
+const timelineDuration = 2;
+
+const timelineOneVariants: Variants = {
+  initial: {
+    pathLength: 1,
+  },
+  animate: {
+    pathLength: [1, 0.4, 0.4, 0.4, 1],
+    transition: {
+      duration: timelineDuration,
+      times: timelineTimes,
+      ease: "easeInOut",
+    },
+  },
+};
+
+const timelineTwoVariants: Variants = {
+  initial: {
+    pathLength: 1,
+    transform: "translateY(0%) translateX(0%)",
+  },
+  animate: {
+    pathLength: [1, 0.4, 0.4, 0.4, 1],
+    transform: [
+      "translateY(0%) translateX(0%)",
+      "translateY(0%)  translateX(0%)",
+      "translateY(235%) translateX(-5%)",
+      "translateY(0%) translateX(0%)",
+      "translateY(0%) translateX(0%)",
+    ],
+    transition: {
+      duration: timelineDuration,
+      times: timelineTimes,
+      ease: "easeInOut",
+    },
+  },
+};
+
+const timelineThreeVariants: Variants = {
+  initial: {
+    pathLength: 1,
+    transform: "translateY(0%) translateX(0%)",
+  },
+  animate: {
+    pathLength: [1, 0.25, 0.25, 0.25, 1],
+    transform: [
+      "translateY(0%) translateX(0%)",
+      "translateY(0%) translateX(0%)",
+      "translateY(-235%) translateX(5%)",
+      "translateY(0%) translateX(0%)",
+      "translateY(0%) translateX(0%)",
+    ],
+    transition: {
+      duration: timelineDuration,
+      times: timelineTimes,
+      ease: "easeInOut",
+    },
+  },
+};
+
+const timelineContainerVariants: Variants = {
+  initial: {
+    transform: "rotate(0deg)",
+  },
+  animate: {
+    transform: [
+      "rotate(0deg)",
+      "rotate(-12deg)",
+      "rotate(-8.5deg)",
+      "rotate(-9deg)",
+    ],
+    transition: {
+      duration: 0.5,
+    },
+  },
+};
 
 export function Timeline() {
+  const controls = useAnimation();
+
+  const handleMouseEnter = useCallback(() => {
+    controls.start("animate");
+  }, [controls]);
+
+  const handleMouseLeave = useCallback(() => {
+    controls.start("initial");
+  }, [controls]);
+
   return (
-    <motion.g>
-      <g filter="url(#filter6_i_368_1560)">
-        <path
-          fill="#252525"
-          d="M216.15 23.607c6.663-4.711 15.869-3.23 20.717 3.333a15 15 0 0 0 9.525 5.869c8.042 1.38 13.504 8.937 12.292 17.006a15 15 0 0 0 2.585 10.885c4.711 6.662 3.23 15.868-3.333 20.717a15 15 0 0 0-5.869 9.524c-1.38 8.042-8.937 13.505-17.006 12.292a15 15 0 0 0-10.885 2.585c-6.662 4.711-15.869 3.23-20.717-3.333a15 15 0 0 0-9.524-5.869c-8.042-1.38-13.505-8.937-12.292-17.006a15 15 0 0 0-2.585-10.885c-4.711-6.662-3.23-15.868 3.333-20.716a15 15 0 0 0 5.869-9.525c1.379-8.042 8.937-13.505 17.006-12.292a15 15 0 0 0 10.884-2.585"
-        ></path>
-      </g>
-      <path
-        fill="#D6D6D6"
-        d="M208.714 63.7a3.275 3.275 0 0 1 3.754-2.714l4.447.716-1.041 6.468-4.446-.716a3.276 3.276 0 0 1-2.714-3.754M199.763 52.307a3.275 3.275 0 0 1 3.754-2.714L218.475 52l-1.041 6.468-14.957-2.407a3.275 3.275 0 0 1-2.714-3.754M202.304 72.621a3.275 3.275 0 0 1 3.754-2.713l9.298 1.495-1.041 6.469-9.297-1.496a3.275 3.275 0 0 1-2.714-3.755"
-      ></path>
-      <path
-        fill="#D6D6D6"
-        d="M232.217 77.434a3.276 3.276 0 0 0-2.714-3.754l-6.872-1.106-1.041 6.468 6.872 1.106a3.276 3.276 0 0 0 3.755-2.714M234.529 57.9a3.275 3.275 0 0 0-2.713-3.754l-6.064-.976-1.041 6.468 6.064.976a3.275 3.275 0 0 0 3.754-2.714M241.862 69.034a3.275 3.275 0 0 0-2.713-3.755l-14.958-2.406-1.04 6.468 14.957 2.406a3.275 3.275 0 0 0 3.754-2.713"
-        opacity="0.4"
-      ></path>
-      <path
-        stroke="#D6D6D6"
-        strokeLinecap="round"
-        strokeWidth="2.457"
-        d="m217.429 81.691 5.204-32.34"
-      ></path>
+    <motion.g
+      variants={variants}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="origin-bottom!"
+    >
+      <motion.g
+        animate={{
+          transform: ["translateY(-1px)", "translateY(2.5px)"],
+          transition: {
+            duration: 2.5,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "reverse",
+          },
+        }}
+      >
+        <motion.g
+          animate={{
+            transform: ["rotate(-8deg)", "rotate(8deg)"],
+            transition: {
+              duration: 5,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "reverse",
+            },
+          }}
+          className="filter-[url(#filter6_i_359_1453)] dark:filter-[url(#filter6_i_368_1560)]"
+        >
+          <path
+            d="M216.15 23.607c6.663-4.711 15.869-3.23 20.717 3.333a15 15 0 0 0 9.525 5.869c8.042 1.38 13.504 8.937 12.292 17.006a15 15 0 0 0 2.585 10.885c4.711 6.662 3.23 15.868-3.333 20.717a15 15 0 0 0-5.869 9.524c-1.38 8.042-8.937 13.505-17.006 12.292a15 15 0 0 0-10.885 2.585c-6.662 4.711-15.869 3.23-20.717-3.333a15 15 0 0 0-9.524-5.869c-8.042-1.38-13.505-8.937-12.292-17.006a15 15 0 0 0-2.585-10.885c-4.711-6.662-3.23-15.868 3.333-20.716a15 15 0 0 0 5.869-9.525c1.379-8.042 8.937-13.505 17.006-12.292a15 15 0 0 0 10.884-2.585"
+            className="fill-[#F8F8F8] dark:fill-[#252525]"
+          ></path>
+        </motion.g>
+
+        <motion.g
+          variants={timelineContainerVariants}
+          initial="initial"
+          animate={controls}
+          className="transform-border origin-center"
+        >
+          {/* center line */}
+          <path
+            strokeLinecap="round"
+            strokeWidth="2.457"
+            d="m217.429 81.691 5.204-32.34"
+            className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+          ></path>
+
+          <g>
+            <mask
+              id="mask2_197_321"
+              style={{ maskType: "alpha" }}
+              maskUnits="userSpaceOnUse"
+              x="190"
+              y="43"
+              width="30"
+              height="44"
+            >
+              <rect
+                x="196.709"
+                y="43"
+                width="23"
+                height="40"
+                transform="rotate(9.07478 196.709 43)"
+                fill="#D9D9D9"
+              />
+            </mask>
+            <g mask="url(#mask2_197_321)">
+              <motion.line
+                variants={timelineOneVariants}
+                initial="initial"
+                animate={controls}
+                x1="202.907"
+                y1="52.7907"
+                x2="231.287"
+                y2="57.3873"
+                strokeOpacity="1"
+                strokeWidth="6.55"
+                strokeLinecap="round"
+                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+              />
+              <motion.line
+                variants={timelineTwoVariants}
+                initial="initial"
+                animate={controls}
+                x1="238.626"
+                y1="68.4911"
+                x2="211.948"
+                y2="64.21"
+                strokeOpacity="1"
+                strokeWidth="6.55"
+                strokeLinecap="round"
+                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+              />
+              <motion.line
+                variants={timelineThreeVariants}
+                initial="initial"
+                animate={controls}
+                x1="205.527"
+                y1="73.1088"
+                x2="229.023"
+                y2="76.8985"
+                strokeOpacity="1"
+                strokeWidth="6.5"
+                strokeLinecap="round"
+                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+              />
+            </g>
+          </g>
+
+          <g>
+            <mask
+              id="mask1_197_321"
+              style={{ maskType: "alpha" }}
+              maskUnits="userSpaceOnUse"
+              x="220"
+              y="46"
+              width="30"
+              height="45"
+            >
+              <rect
+                x="226.76"
+                y="46.957"
+                width="23"
+                height="40"
+                transform="rotate(9.07478 226.76 46.957)"
+                fill="#D9D9D9"
+              />
+            </mask>
+            <g mask="url(#mask1_197_321)">
+              <motion.line
+                variants={timelineOneVariants}
+                initial="initial"
+                animate={controls}
+                x1="202.907"
+                y1="52.7907"
+                x2="231.287"
+                y2="57.3873"
+                strokeOpacity="0.4"
+                strokeWidth="6.55"
+                strokeLinecap="round"
+                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+              />
+              <motion.line
+                variants={timelineTwoVariants}
+                initial="initial"
+                animate={controls}
+                x1="238.626"
+                y1="68.4911"
+                x2="211.948"
+                y2="64.21"
+                strokeOpacity="0.4"
+                strokeWidth="6.55"
+                strokeLinecap="round"
+                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+              />
+              <motion.line
+                variants={timelineThreeVariants}
+                initial="initial"
+                animate={controls}
+                x1="205.527"
+                y1="73.1088"
+                x2="229.023"
+                y2="76.8985"
+                strokeOpacity="0.4"
+                strokeWidth="6.5"
+                strokeLinecap="round"
+                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+              />
+            </g>
+          </g>
+        </motion.g>
+      </motion.g>
     </motion.g>
   );
 }
