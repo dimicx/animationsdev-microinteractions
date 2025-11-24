@@ -42,7 +42,7 @@ const handVariants: Variants = {
     transform: [
       "translateX(0%) translateY(0%) rotate(0deg) scale(1)",
       "translateX(-11%) translateY(4%) rotate(25deg) scale(1)",
-      "translateX(-11%) translateY(4%) rotate(25deg) scale(0.9)",
+      "translateX(-11%) translateY(4%) rotate(25deg) scale(0.95)",
       "translateX(-11%) translateY(4%) rotate(25deg) scale(1)",
     ],
     transition: {
