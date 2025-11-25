@@ -1,6 +1,7 @@
 import { motion, useAnimation, Variants } from "motion/react";
-import { useCallback } from "react";
+import { useEffect } from "react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import { useHoverTimeout } from "@/lib/use-hover-timeout";
 
 const timelineTimes = [0, 0.2, 0.35, 0.65, 0.8, 1];
 const timelineDuration = 2;
@@ -15,7 +16,18 @@ const timelineOneVariants: Variants = {
       duration: timelineDuration,
       times: timelineTimes,
       ease: "easeInOut",
-      delay: UNIVERSAL_DELAY,
+    },
+  },
+  idle: {
+    pathLength: [1, 0.4, 0.2, 1, 0.4, 1],
+    transition: {
+      duration: 5,
+      times: timelineTimes,
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "loop",
+      repeatDelay: 2.7,
+      delay: 2.7,
     },
   },
 };
@@ -38,7 +50,18 @@ const timelineTwoVariants: Variants = {
       duration: timelineDuration,
       times: timelineTimes,
       ease: "easeInOut",
-      delay: UNIVERSAL_DELAY,
+    },
+  },
+  idle: {
+    pathLength: [1, 0.4, 1, 0.4, 1],
+    transition: {
+      duration: 6,
+      times: timelineTimes,
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "loop",
+      repeatDelay: 3.2,
+      delay: 3.2,
     },
   },
 };
@@ -61,7 +84,18 @@ const timelineThreeVariants: Variants = {
       duration: timelineDuration,
       times: timelineTimes,
       ease: "easeInOut",
-      delay: UNIVERSAL_DELAY,
+    },
+  },
+  idle: {
+    pathLength: [1, 0.25, 0.8, 0.25, 1],
+    transition: {
+      duration: 4,
+      times: timelineTimes,
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "loop",
+      repeatDelay: 3.5,
+      delay: 3.5,
     },
   },
 };
@@ -78,22 +112,36 @@ const timelineContainerVariants: Variants = {
       "rotate(-9deg)",
     ],
     transition: {
-      duration: 0.5,
-      delay: UNIVERSAL_DELAY,
+      duration: 0.7,
     },
   },
 };
 
 export function Timeline() {
   const controls = useAnimation();
+  const containerControls = useAnimation();
 
-  const handleMouseEnter = useCallback(() => {
-    controls.start("animate");
-  }, [controls]);
+  const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
+    delay: UNIVERSAL_DELAY,
+    onHoverStart: async () => {
+      containerControls.start("animate");
+      await controls.start("initial", {
+        duration: 0.2,
+        ease: "easeOut",
+      });
+      controls.start("animate");
+    },
+    onHoverEnd: async () => {
+      containerControls.start("initial");
+      await controls.start("initial");
+      await controls.start("idle");
+    },
+  });
 
-  const handleMouseLeave = useCallback(() => {
-    controls.start("initial");
-  }, [controls]);
+  useEffect(() => {
+    controls.start("idle");
+    containerControls.start("initial");
+  }, [controls, containerControls]);
 
   return (
     <motion.g
@@ -103,25 +151,31 @@ export function Timeline() {
       className="origin-bottom!"
     >
       <motion.g
+        initial={{
+          transform: "translateY(0px)",
+        }}
         animate={{
           transform: ["translateY(-1px)", "translateY(2.5px)"],
-          transition: {
-            duration: 2.5,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
-          },
+        }}
+        transition={{
+          duration: 2.5,
+          ease: "easeInOut",
+          repeat: Infinity,
+          repeatType: "reverse",
         }}
       >
         <motion.g
+          initial={{
+            transform: "rotate(0deg)",
+          }}
           animate={{
             transform: ["rotate(-8deg)", "rotate(8deg)"],
-            transition: {
-              duration: 5,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "reverse",
-            },
+          }}
+          transition={{
+            duration: 5,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "reverse",
           }}
           className="filter-[url(#filter6_i_359_1453)] dark:filter-[url(#filter6_i_368_1560)]"
         >
@@ -134,7 +188,7 @@ export function Timeline() {
         <motion.g
           variants={timelineContainerVariants}
           initial="initial"
-          animate={controls}
+          animate={containerControls}
           className="transform-border origin-center"
         >
           {/* center line */}

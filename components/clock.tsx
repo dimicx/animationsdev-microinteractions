@@ -1,6 +1,7 @@
 import { motion, useAnimation, Variants } from "motion/react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import { useHoverTimeout } from "@/lib/use-hover-timeout";
 
 const clockVariants: Variants = {
   initial: {
@@ -14,13 +15,11 @@ const clockVariants: Variants = {
       y: {
         duration: 0.2,
         ease: "easeOut",
-        delay: UNIVERSAL_DELAY,
       },
       x: {
         duration: 0.3,
         repeat: Infinity,
         ease: "linear",
-        delay: UNIVERSAL_DELAY,
       },
     },
   },
@@ -38,12 +37,12 @@ const bellVariants: Variants = {
     rotate: i === 0 ? 0 : [0, -2],
     transition: {
       y: {
-        delay: UNIVERSAL_DELAY + i * 0.05,
+        delay: i * 0.05,
         duration: 3,
         ease: "easeOut",
       },
       x: {
-        delay: UNIVERSAL_DELAY + i * 0.05,
+        delay: i * 0.05,
         duration: 0.3,
         repeat: Infinity,
         ease: "linear",
@@ -51,22 +50,57 @@ const bellVariants: Variants = {
       rotate: {
         duration: 0.2,
         ease: "easeOut",
-        delay: UNIVERSAL_DELAY,
       },
     },
   }),
 };
 
+const bellsVariants: Variants = {
+  initial: {
+    transform: "translateX(0%) translateY(0%) rotate(0deg)",
+  },
+  animate: {
+    transform: [
+      "translateX(0%) translateY(0%) rotate(0deg)",
+      "translateX(-12%) translateY(-6%) rotate(-8deg)",
+      "translateX(12%) translateY(6%) rotate(8deg)",
+      "translateX(0%) translateY(0%) rotate(0deg)",
+    ],
+    transition: {
+      duration: 1,
+      ease: "easeOut",
+      repeat: Infinity,
+      repeatType: "loop",
+      repeatDelay: 5,
+      delay: 5,
+    },
+  },
+};
+
 export function Clock() {
   const controls = useAnimation();
+  const idleControls = useAnimation();
 
-  const handleMouseEnter = useCallback(() => {
-    controls.start("animate");
-  }, [controls]);
-
-  const handleMouseLeave = useCallback(() => {
+  const startAnimations = useCallback(() => {
     controls.start("initial");
-  }, [controls]);
+    idleControls.start("animate");
+  }, [idleControls, controls]);
+
+  useEffect(() => {
+    startAnimations();
+  }, [startAnimations]);
+
+  const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
+    delay: UNIVERSAL_DELAY,
+    onHoverStart: async () => {
+      await idleControls.start("initial", { duration: 0.05 });
+      controls.start("animate");
+    },
+    onHoverEnd: async () => {
+      await controls.start("initial");
+      idleControls.start("animate");
+    },
+  });
 
   return (
     <motion.g
@@ -76,25 +110,31 @@ export function Clock() {
       onMouseLeave={handleMouseLeave}
     >
       <motion.g
+        initial={{
+          transform: "rotate(0deg)",
+        }}
         animate={{
           transform: ["rotate(-2deg)", "rotate(2deg)"],
-          transition: {
-            duration: 5,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
-          },
+        }}
+        transition={{
+          duration: 5,
+          ease: "easeInOut",
+          repeat: Infinity,
+          repeatType: "reverse",
         }}
       >
         <motion.g
+          initial={{
+            transform: "translateY(0px)",
+          }}
           animate={{
             transform: ["translateY(-2px)", "translateY(2px)"],
-            transition: {
-              duration: 3,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "reverse",
-            },
+          }}
+          transition={{
+            duration: 3,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "reverse",
           }}
           className="filter-[url(#filter7_i_359_1453)] dark:filter-[url(#filter7_i_368_1560)]"
         >
@@ -105,14 +145,17 @@ export function Clock() {
         </motion.g>
       </motion.g>
       <motion.g
+        initial={{
+          transform: "translateY(0px)",
+        }}
         animate={{
           transform: ["translateY(-1.5px)", "translateY(2px)"],
-          transition: {
-            duration: 4.5,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
-          },
+        }}
+        transition={{
+          duration: 4.5,
+          ease: "easeInOut",
+          repeat: Infinity,
+          repeatType: "reverse",
         }}
       >
         {/* clock */}
@@ -126,28 +169,34 @@ export function Clock() {
 
         {/* bells */}
         <motion.g
-          variants={bellVariants}
+          variants={bellsVariants}
           initial="initial"
-          animate={controls}
-          custom={0}
+          animate={idleControls}
         >
-          <path
-            d="M553.071 151.434a3.848 3.848 0 0 1 2.478 6.222l-1.993 2.482a1.7 1.7 0 0 1-1.826.544 27 27 0 0 0-4.182-.912 27 27 0 0 0-4.275-.247 1.7 1.7 0 0 1-1.612-1.015l-1.252-2.926a3.847 3.847 0 0 1 4.059-5.326z"
-            opacity="0.4"
-            className="fill-[#989898] dark:fill-[#D6D6D6]"
-          ></path>
-        </motion.g>
-        <motion.g
-          variants={bellVariants}
-          initial="initial"
-          animate={controls}
-          custom={1}
-        >
-          <path
-            d="M570.169 166.997a3.771 3.771 0 0 1-2.773 6.044.16.16 0 0 1-.149-.081 27.3 27.3 0 0 0-4-5.269.16.16 0 0 1-.036-.164 3.77 3.77 0 0 1 6.567-1.045z"
-            opacity="0.45"
-            className="fill-[#989898] dark:fill-[#D6D6D6]"
-          ></path>
+          <motion.g
+            variants={bellVariants}
+            initial="initial"
+            animate={controls}
+            custom={0}
+          >
+            <path
+              d="M553.071 151.434a3.848 3.848 0 0 1 2.478 6.222l-1.993 2.482a1.7 1.7 0 0 1-1.826.544 27 27 0 0 0-4.182-.912 27 27 0 0 0-4.275-.247 1.7 1.7 0 0 1-1.612-1.015l-1.252-2.926a3.847 3.847 0 0 1 4.059-5.326z"
+              opacity="0.4"
+              className="fill-[#989898] dark:fill-[#D6D6D6]"
+            ></path>
+          </motion.g>
+          <motion.g
+            variants={bellVariants}
+            initial="initial"
+            animate={controls}
+            custom={1}
+          >
+            <path
+              d="M570.169 166.997a3.771 3.771 0 0 1-2.773 6.044.16.16 0 0 1-.149-.081 27.3 27.3 0 0 0-4-5.269.16.16 0 0 1-.036-.164 3.77 3.77 0 0 1 6.567-1.045z"
+              opacity="0.45"
+              className="fill-[#989898] dark:fill-[#D6D6D6]"
+            ></path>
+          </motion.g>
         </motion.g>
       </motion.g>
     </motion.g>

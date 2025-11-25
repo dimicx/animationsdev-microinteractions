@@ -54,7 +54,7 @@ const caretRightVariants: Variants = {
       duration: 0.6,
       times: [0, 0.3, 0.8],
       ease: "easeInOut",
-      delay: UNIVERSAL_DELAY,
+      delay: UNIVERSAL_DELAY / 1000,
     },
   },
 };
@@ -73,7 +73,7 @@ const slashVariants: Variants = {
       duration: 0.6,
       times: [0, 0.3, 0.8],
       ease: "easeInOut",
-      delay: UNIVERSAL_DELAY,
+      delay: UNIVERSAL_DELAY / 1000,
     },
   },
 };
@@ -96,7 +96,7 @@ export function Code() {
       duration: 0.6,
       times: [0, 0.3, 0.8],
       ease: "easeInOut",
-      delay: UNIVERSAL_DELAY,
+      delay: UNIVERSAL_DELAY / 1000,
     });
   }, [controls, codePathProgress]);
   const handleMouseLeave = useCallback(() => {
@@ -112,7 +112,7 @@ export function Code() {
       variants={fadeScaleVariants}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="origin-bottom-left!"
+      className="origin-bottom-left! group"
     >
       <motion.g
         animate={{
@@ -175,11 +175,13 @@ export function Code() {
               className="stroke-[#989898] dark:stroke-[#D6D6D6]"
             />
           </motion.g>
-          <motion.path
-            opacity="0.4"
-            d={codePath}
-            className="fill-[#989898] dark:fill-[#D6D6D6]"
-          />
+          <g className="animate-pulse [animation-duration:1.5s]">
+            <motion.path
+              opacity="0.4"
+              d={codePath}
+              className="fill-[#989898] dark:fill-[#D6D6D6]"
+            />
+          </g>
         </motion.g>
       </motion.g>
     </motion.g>

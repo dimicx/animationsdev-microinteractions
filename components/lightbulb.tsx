@@ -1,6 +1,9 @@
 import { motion, useAnimation, Variants } from "motion/react";
-import { useCallback } from "react";
+import { useEffect } from "react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import { useHoverTimeout } from "@/lib/use-hover-timeout";
+
+const REPEAT_DELAY = 10;
 
 const wholeVariants: Variants = {
   initial: {
@@ -17,7 +20,6 @@ const wholeVariants: Variants = {
       duration: 0.8,
       times: [0, 0.3, 0.7, 1],
       ease: "easeInOut",
-      delay: UNIVERSAL_DELAY,
     },
   },
 };
@@ -38,7 +40,6 @@ const bulbVariants: Variants = {
     transition: {
       duration: 0.7,
       times: [0, 0.2, 0.5, 0.7],
-      delay: UNIVERSAL_DELAY,
     },
   },
 };
@@ -52,7 +53,6 @@ const stemVariants: Variants = {
     transition: {
       duration: 0.7,
       times: [0, 0.2, 0.5, 0.7],
-      delay: UNIVERSAL_DELAY,
     },
   },
 };
@@ -65,17 +65,27 @@ const bulbMaskVariants: Variants = {
     opacity: 1,
   },
   animate: {
-    y: ["0%", "20%", "20%", "-10%", "0%"],
-    x: ["0%", "20%", "20%", "-10%", "0%"],
-    rotate: ["0deg", "20deg", "20deg", "-10deg", "0deg"],
-    opacity: [1, 0, 0, 1, 1],
+    y: ["0%", "0%", "20%", "20%", "-10%", "0%"],
+    x: ["0%", "0%", "20%", "20%", "-10%", "0%"],
+    rotate: ["0deg", "0deg", "20deg", "20deg", "-10deg", "0deg"],
+    opacity: [1, 0, 0, 0, 1, 1],
     transition: {
       duration: 0.7,
-      times: [0, 0.2, 0.3, 0.7, 1],
-      delay: 0.2,
-      opacity: {
-        delay: UNIVERSAL_DELAY,
-      },
+      times: [0, 0.2, 0.3, 0.5, 0.8, 1],
+    },
+  },
+  idle: {
+    y: ["0%", "0%", "20%", "20%", "-10%", "0%"],
+    x: ["0%", "0%", "20%", "20%", "-10%", "0%"],
+    rotate: ["0deg", "0deg", "20deg", "20deg", "-10deg", "0deg"],
+    opacity: [1, 0, 0, 0, 1, 1],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.2, 0.3, 0.5, 0.8, 1],
+      delay: REPEAT_DELAY,
+      repeat: Infinity,
+      repeatType: "loop",
+      repeatDelay: REPEAT_DELAY,
     },
   },
 };
@@ -86,9 +96,21 @@ const rayVariants: Variants = {
     pathLength: [1, 1, 0, 0, 1],
     strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
     transition: {
-      delay: UNIVERSAL_DELAY + 0.2 + i * 0.05,
+      delay: 0.2 + i * 0.05,
       duration: 0.7,
       times: [0, 0, 0.2, 0.2, 0.5],
+    },
+  }),
+  idle: (i: number) => ({
+    pathLength: [1, 1, 0, 0, 1],
+    strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
+    transition: {
+      delay: REPEAT_DELAY + 0.2 + i * 0.05,
+      duration: 0.7,
+      times: [0, 0, 0.2, 0.2, 0.5],
+      repeat: Infinity,
+      repeatType: "loop",
+      repeatDelay: REPEAT_DELAY,
     },
   }),
 };
@@ -98,9 +120,19 @@ const raysOpacityVariants: Variants = {
   animate: {
     opacity: [1, 0, 0, 1],
     transition: {
-      delay: UNIVERSAL_DELAY,
       duration: 0.4,
       times: [0, 0.1, 0.9, 1],
+    },
+  },
+  idle: {
+    opacity: [1, 0, 0, 1],
+    transition: {
+      delay: REPEAT_DELAY,
+      duration: 0.7,
+      times: [0, 0.1, 0.5, 0.6],
+      repeat: Infinity,
+      repeatType: "loop",
+      repeatDelay: REPEAT_DELAY,
     },
   },
 };
@@ -108,13 +140,21 @@ const raysOpacityVariants: Variants = {
 export function Lightbulb() {
   const controls = useAnimation();
 
-  const handleMouseEnter = useCallback(() => {
-    controls.start("animate");
+  useEffect(() => {
+    controls.start("idle");
   }, [controls]);
 
-  const handleMouseLeave = useCallback(() => {
-    controls.start("initial");
-  }, [controls]);
+  const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
+    delay: UNIVERSAL_DELAY,
+    onHoverStart: async () => {
+      await controls.start("initial", { duration: 0 });
+      controls.start("animate");
+    },
+    onHoverEnd: async () => {
+      await controls.start("initial");
+      await controls.start("idle");
+    },
+  });
 
   return (
     <motion.g
@@ -124,25 +164,31 @@ export function Lightbulb() {
       className="origin-bottom!"
     >
       <motion.g
+        initial={{
+          transform: "translateY(0px)",
+        }}
         animate={{
           transform: ["translateY(-2px)", "translateY(3px)"],
-          transition: {
-            duration: 3,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
-          },
+        }}
+        transition={{
+          duration: 3,
+          ease: "easeInOut",
+          repeat: Infinity,
+          repeatType: "reverse",
         }}
       >
         <motion.g
+          initial={{
+            transform: "rotate(0deg)",
+          }}
           animate={{
             transform: ["rotate(-8deg)", "rotate(8deg)"],
-            transition: {
-              duration: 5,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "reverse",
-            },
+          }}
+          transition={{
+            duration: 5,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "reverse",
           }}
           className="filter-[url(#filter5_i_359_1453)] dark:filter-[url(#filter5_i_368_1560)]"
         >
@@ -154,14 +200,17 @@ export function Lightbulb() {
 
         <motion.g variants={wholeVariants} initial="initial" animate={controls}>
           <motion.g
+            initial={{
+              transform: "translateY(0px)",
+            }}
             animate={{
               transform: ["translateY(-1.5px)", "translateY(2px)"],
-              transition: {
-                duration: 4.5,
-                ease: "easeInOut",
-                repeat: Infinity,
-                repeatType: "reverse",
-              },
+            }}
+            transition={{
+              duration: 4.5,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "reverse",
             }}
           >
             <g>

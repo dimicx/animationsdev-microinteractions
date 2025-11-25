@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useEffect } from "react";
 import { useFlubber } from "@/lib/flubber";
 import {
   animate,
@@ -8,6 +8,9 @@ import {
   Variants,
 } from "motion/react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import { useHoverTimeout } from "@/lib/use-hover-timeout";
+
+const REPEAT_DELAY = 8;
 
 const rayVariants: Variants = {
   initial: { pathLength: 1, strokeOpacity: 0.5 },
@@ -15,9 +18,21 @@ const rayVariants: Variants = {
     pathLength: [1, 1, 0, 0, 1],
     strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
     transition: {
-      delay: UNIVERSAL_DELAY + 0.3 + i * 0.05,
-      duration: 0.7,
+      delay: 0.3 + i * 0.05,
+      duration: 0.65,
       times: [0, 0, 0.1, 0.1, 0.4],
+    },
+  }),
+  idle: (i: number) => ({
+    pathLength: [1, 1, 0, 0, 1],
+    strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
+    transition: {
+      delay: REPEAT_DELAY + 0.3 + i * 0.05,
+      duration: 0.65,
+      times: [0, 0, 0.1, 0.1, 0.4],
+      repeat: Infinity,
+      repeatType: "loop",
+      repeatDelay: REPEAT_DELAY,
     },
   }),
 };
@@ -27,9 +42,19 @@ const raysOpacityVariants: Variants = {
   animate: {
     opacity: [1, 0, 0, 1],
     transition: {
-      delay: UNIVERSAL_DELAY,
       duration: 0.45,
       times: [0, 0.1, 0.9, 1],
+    },
+  },
+  idle: {
+    opacity: [1, 0, 0, 1],
+    transition: {
+      duration: 0.65,
+      times: [0, 0.1, 0.6, 0.7],
+      repeat: Infinity,
+      repeatType: "loop",
+      repeatDelay: REPEAT_DELAY,
+      delay: REPEAT_DELAY,
     },
   },
 };
@@ -46,10 +71,9 @@ const handVariants: Variants = {
       "translateX(-11%) translateY(4%) rotate(25deg) scale(1)",
     ],
     transition: {
-      duration: 0.9,
+      duration: 1,
       times: [0, 0.2, 0.4, 0.75],
       ease: "easeInOut",
-      delay: UNIVERSAL_DELAY,
     },
   },
 };
@@ -62,26 +86,32 @@ const handPaths = [
 
 export function Hand() {
   const controls = useAnimation();
-
   const handPathProgress = useMotionValue(0);
   const handPath = useFlubber(handPathProgress, handPaths);
 
-  const handleMouseEnter = useCallback(() => {
-    controls.start("animate");
-    animate(handPathProgress, [0, 1, 2], {
-      duration: 0.5,
-      times: [0, 0.7, 1],
-      delay: UNIVERSAL_DELAY,
-      ease: "easeInOut",
-    });
-  }, [controls, handPathProgress]);
+  useEffect(() => {
+    controls.start("idle");
+  }, [controls]);
 
-  const handleMouseLeave = useCallback(() => {
-    controls.start("initial");
-    animate(handPathProgress, 0, {
-      duration: 0,
-    });
-  }, [controls, handPathProgress]);
+  const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
+    delay: UNIVERSAL_DELAY,
+    onHoverStart: async () => {
+      await controls.start("initial", { duration: 0 });
+      controls.start("animate");
+      animate(handPathProgress, [0, 1, 2], {
+        duration: 0.5,
+        times: [0, 0.7, 1],
+        ease: "easeInOut",
+      });
+    },
+    onHoverEnd: async () => {
+      animate(handPathProgress, 0, {
+        duration: 0,
+      });
+      await controls.start("initial");
+      await controls.start("idle");
+    },
+  });
 
   return (
     <motion.g
@@ -91,26 +121,32 @@ export function Hand() {
       className="origin-bottom!"
     >
       <motion.g
+        initial={{
+          transform: "translateY(0px)",
+        }}
         animate={{
           transform: ["translateY(-2px)", "translateY(2px)"],
-          transition: {
-            delay: 0.5,
-            duration: 2.5,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
-          },
+        }}
+        transition={{
+          delay: 0.5,
+          duration: 2.5,
+          ease: "easeInOut",
+          repeat: Infinity,
+          repeatType: "reverse",
         }}
       >
         <motion.g
+          initial={{
+            transform: "rotate(0deg)",
+          }}
           animate={{
             transform: ["rotate(-3deg)", "rotate(2deg)"],
-            transition: {
-              duration: 4,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "reverse",
-            },
+          }}
+          transition={{
+            duration: 4,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "reverse",
           }}
           className="filter-[url(#filter4_i_359_1453)] dark:filter-[url(#filter4_i_368_1560)]"
         >

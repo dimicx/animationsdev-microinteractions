@@ -8,8 +8,9 @@ import {
   animate,
   useAnimation,
 } from "motion/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import { useHoverTimeout } from "@/lib/use-hover-timeout";
 
 const pathVariants: Variants = {
   initial: {
@@ -20,7 +21,6 @@ const pathVariants: Variants = {
     transition: {
       duration: 0.8,
       ease: bounceEasing,
-      delay: UNIVERSAL_DELAY,
     },
   }),
 };
@@ -34,7 +34,6 @@ const secondaryCircleVariants: Variants = {
     transition: {
       duration: 0.25,
       ease: "easeOut",
-      delay: UNIVERSAL_DELAY,
     },
   },
 };
@@ -45,8 +44,22 @@ const rotateVariants: Variants = {
   },
   animate: {
     transform: "rotate(7deg)",
+  },
+};
+
+const idleVariants: Variants = {
+  initial: {
+    y: 0,
+    x: 0,
+  },
+  animate: {
+    y: [0, -3, 0],
+    x: [0, -2, 0],
     transition: {
-      delay: UNIVERSAL_DELAY,
+      duration: 2.5,
+      repeat: Infinity,
+      repeatType: "mirror",
+      ease: "easeInOut",
     },
   },
 };
@@ -56,6 +69,7 @@ const forwardPathString =
 
 export function SpringPath() {
   const controls = useAnimation();
+  const idleControls = useAnimation();
 
   const [currentPath, setCurrentPath] = useState(forwardPathString);
   const [forwardCompleted, setForwardCompleted] = useState(false);
@@ -68,6 +82,12 @@ export function SpringPath() {
     [currentPath]
   );
   const forwardPathData = useMemo(() => getPathData(forwardPathString), []);
+
+  // Generate physics-based easing from the bounce path
+  const bounceEasing = useMemo(
+    () => generateBounceEasing(forwardPathString),
+    []
+  );
 
   // Transform progress to cx and cy
   const cx = useTransform(progress, (p) => {
@@ -82,76 +102,82 @@ export function SpringPath() {
     return point.y;
   });
 
-  const handleMouseEnter = useCallback(() => {
-    controls.start("animate");
-  }, [controls]);
+  const startAnimations = useCallback(() => {
+    controls.start("initial");
+    idleControls.start("animate");
+  }, [controls, idleControls]);
 
-  const handleMouseLeave = useCallback(() => {
-    controls.start("initial", {
-      duration: 0.5,
-      ease: "easeOut",
-    });
-  }, [controls]);
+  useEffect(() => {
+    startAnimations();
+  }, [startAnimations]);
 
-  // Generate physics-based easing from the bounce path
-  const bounceEasing = useMemo(
-    () => generateBounceEasing(forwardPathString),
-    []
-  );
+  const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
+    delay: UNIVERSAL_DELAY,
+    onHoverStart: () => {
+      idleControls.start("initial");
+      controls.start("animate");
+      setCurrentPath(forwardPathString);
+      setForwardCompleted(false);
+      progress.set(0);
+      animate(progress, forwardPathData.length, {
+        duration: 0.8,
+        ease: bounceEasing || "linear",
+      }).then(() => {
+        setForwardCompleted(true);
+      });
+    },
+    onHoverEnd: async () => {
+      const currentProgress = progress.get();
+
+      if (forwardCompleted) {
+        // Forward animation completed, fade out and reset to initial position
+        animate(ballOpacity, 0, {
+          duration: 0.125,
+          ease: "easeOut",
+        }).then(() => {
+          // Reset position instantly while invisible
+          progress.set(0);
+          setCurrentPath(forwardPathString);
+          setForwardCompleted(false);
+          // Fade back in
+          animate(ballOpacity, 1, {
+            delay: 0.28,
+            duration: 0.125,
+            ease: "easeOut",
+          });
+        });
+      } else {
+        // Forward animation not completed, reverse on same path
+        animate(progress, 0, {
+          duration: (currentProgress / forwardPathData.length) * 0.5,
+          ease: "easeOut",
+        });
+      }
+
+      await controls.start("initial", {
+        duration: 0.5,
+        ease: "easeOut",
+      });
+      idleControls.start("animate");
+    },
+  });
 
   return (
     <motion.g variants={fadeScaleVariants} className="origin-bottom-left!">
       <motion.g
-        onMouseEnter={() => {
-          handleMouseEnter();
-          setCurrentPath(forwardPathString);
-          setForwardCompleted(false);
-          progress.set(0);
-          animate(progress, forwardPathData.length, {
-            duration: 0.8,
-            ease: bounceEasing || "linear",
-            delay: UNIVERSAL_DELAY,
-          }).then(() => {
-            setForwardCompleted(true);
-          });
-        }}
-        onMouseLeave={() => {
-          handleMouseLeave();
-          const currentProgress = progress.get();
-
-          if (forwardCompleted) {
-            // Forward animation completed, fade out and reset to initial position
-            animate(ballOpacity, 0, {
-              duration: 0.125,
-              ease: "easeOut",
-            }).then(() => {
-              // Reset position instantly while invisible
-              progress.set(0);
-              setCurrentPath(forwardPathString);
-              setForwardCompleted(false);
-              // Fade back in
-              animate(ballOpacity, 1, {
-                delay: 0.28,
-                duration: 0.125,
-                ease: "easeOut",
-              });
-            });
-          } else {
-            // Forward animation not completed, reverse on same path
-            animate(progress, 0, {
-              duration: (currentProgress / forwardPathData.length) * 0.5,
-              ease: "easeOut",
-            });
-          }
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        initial={{
+          transform: "translateY(0px)",
         }}
         animate={{
           transform: ["translateY(-2px)", "translateY(3px)"],
-          transition: {
-            duration: 3,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
-          },
+        }}
+        transition={{
+          duration: 3,
+          ease: "easeInOut",
+          repeat: Infinity,
+          repeatType: "reverse",
         }}
       >
         <motion.g
@@ -160,15 +186,18 @@ export function SpringPath() {
           animate={controls}
         >
           <motion.g
+            initial={{
+              transform: "rotate(0deg)",
+            }}
             animate={{
               transform: ["rotate(-1deg)", "rotate(3deg)"],
-              transition: {
-                delay: 1,
-                duration: 5,
-                ease: "easeInOut",
-                repeat: Infinity,
-                repeatType: "reverse",
-              },
+            }}
+            transition={{
+              delay: 1,
+              duration: 5,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "reverse",
             }}
             className="filter-[url(#filter0_i_359_1453)] dark:filter-[url(#filter0_ii_368_1560)]"
           >
@@ -216,13 +245,19 @@ export function SpringPath() {
             ></motion.circle>
           </g>
 
-          <motion.circle
-            cx={cx}
-            cy={cy}
-            r="8.189"
-            style={{ opacity: ballOpacity }}
-            className="fill-[#989898] dark:fill-[#D6D6D6]"
-          />
+          <motion.g
+            variants={idleVariants}
+            initial="initial"
+            animate={idleControls}
+          >
+            <motion.circle
+              cx={cx}
+              cy={cy}
+              r="8.189"
+              style={{ opacity: ballOpacity }}
+              className="fill-[#989898] dark:fill-[#D6D6D6]"
+            />
+          </motion.g>
         </motion.g>
       </motion.g>
 
@@ -240,15 +275,18 @@ export function SpringPath() {
         animate="animate"
       >
         <motion.g
+          initial={{
+            transform: "translateY(0px)",
+          }}
           animate={{
             transform: ["translateY(-2px)", "translateY(3px)"],
-            transition: {
-              delay: 0.4,
-              duration: 3,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "reverse",
-            },
+          }}
+          transition={{
+            delay: 0.4,
+            duration: 3,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "reverse",
           }}
         >
           <motion.g
@@ -274,15 +312,18 @@ export function SpringPath() {
           </motion.g>
         </motion.g>
         <motion.g
+          initial={{
+            transform: "translateY(0px)",
+          }}
           animate={{
             transform: ["translateY(-2px)", "translateY(3px)"],
-            transition: {
-              delay: 1,
-              duration: 3,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "reverse",
-            },
+          }}
+          transition={{
+            delay: 1,
+            duration: 3,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "reverse",
           }}
         >
           <motion.g
