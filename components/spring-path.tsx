@@ -23,6 +23,15 @@ const pathVariants: Variants = {
       ease: bounceEasing,
     },
   }),
+  idle: {
+    pathLength: [1, 0.98, 1],
+    transition: {
+      duration: 2.5,
+      repeat: Infinity,
+      repeatType: "mirror",
+      ease: "easeInOut",
+    },
+  },
 };
 
 const secondaryCircleVariants: Variants = {
@@ -49,12 +58,12 @@ const rotateVariants: Variants = {
 
 const idleVariants: Variants = {
   initial: {
-    y: 0,
-    x: 0,
+    y: "0%",
+    x: "0%",
   },
   animate: {
-    y: [0, -3, 0],
-    x: [0, -2, 0],
+    y: ["0%", "-25%", "0%"],
+    x: ["0%", "-20%", "0%"],
     transition: {
       duration: 2.5,
       repeat: Infinity,
@@ -98,6 +107,7 @@ export function SpringPath() {
   const startAnimations = useCallback(() => {
     controls.start("initial");
     idleControls.start("animate");
+    controls.start("idle");
   }, [controls, idleControls]);
 
   useEffect(() => {
@@ -150,6 +160,7 @@ export function SpringPath() {
         ease: "easeOut",
       });
       idleControls.start("animate");
+      controls.start("idle");
     },
   });
 
