@@ -5,15 +5,15 @@ import { useHoverTimeout } from "@/lib/use-hover-timeout";
 
 const clockVariants: Variants = {
   initial: {
-    y: 0,
-    x: 0,
+    y: "0%",
+    x: "0%",
   },
   animate: {
-    y: [0, -2],
-    x: [0, -1, 1, -1, 1, -1, 0],
+    y: ["0%", "3%", "-6%"],
+    x: ["0%", "-3%", "3%", "-3%", "3%", "-3%", "0%"],
     transition: {
       y: {
-        duration: 0.2,
+        duration: 0.3,
         ease: "easeOut",
       },
       x: {
@@ -27,18 +27,22 @@ const clockVariants: Variants = {
 
 const bellVariants: Variants = {
   initial: {
-    y: 0,
-    x: 0,
-    rotate: 0,
+    y: "0%",
+    x: "0%",
+    rotate: "0deg",
   },
   animate: (i: number) => ({
-    y: [0, -3, -4.5],
-    x: i === 0 ? [0, -2.5, 2, -2, 2.5, -2, 0] : [0, -1, 1, -1, 1, -1, 0],
-    rotate: i === 0 ? 0 : [0, -2],
+    y: i === 0 ? ["0%", "10%", "-25%", "-70%"] : ["0%", "20%", "-50%", "-100%"],
+    x:
+      i === 0
+        ? ["0%", "-20%", "16%", "-16%", "20%", "-16%", "0%"]
+        : ["0%", "-30%", "24%", "-24%", "30%", "-24%", "0%"],
+    rotate: i === 0 ? "0deg" : ["0deg", "-5deg"],
     transition: {
       y: {
         delay: i * 0.05,
         duration: 3,
+        times: [0, 0.05, 0.1, 1],
         ease: "easeOut",
       },
       x: {
