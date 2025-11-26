@@ -169,13 +169,13 @@ export function Timeline() {
             transform: "rotate(0deg)",
           }}
           animate={{
-            transform: ["rotate(-8deg)", "rotate(8deg)"],
+            transform: ["rotate(0deg)", "rotate(-360deg)"],
           }}
           transition={{
-            duration: 5,
-            ease: "easeInOut",
+            duration: 60,
+            ease: "linear",
             repeat: Infinity,
-            repeatType: "reverse",
+            repeatType: "loop",
           }}
           className="filter-[url(#filter6_i_359_1453)] dark:filter-[url(#filter6_i_368_1560)]"
         >
