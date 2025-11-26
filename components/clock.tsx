@@ -3,6 +3,25 @@ import { useCallback, useEffect } from "react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 
+const backgroundVariants: Variants = {
+  initial: {
+    transform: "rotate(0deg) scale(1)",
+  },
+  animate: {
+    transform: [
+      "rotate(0deg) scale(1)",
+      "rotate(-4deg) scale(0.99)",
+      "rotate(-1deg) scale(1.01)",
+      "rotate(-3deg) scale(1)",
+    ],
+    transition: {
+      duration: 0.5,
+      times: [0, 0.25, 0.6, 1],
+      ease: "easeInOut",
+    },
+  },
+};
+
 const clockVariants: Variants = {
   initial: {
     y: "0%",
@@ -142,10 +161,16 @@ export function Clock() {
           }}
           className="filter-[url(#filter7_i_359_1453)] dark:filter-[url(#filter7_i_368_1560)]"
         >
-          <path
-            d="M553.22 118.392c42.396 5.809 72.84 39.157 68 74.487-1.536 11.213-6.442 21.277-13.78 29.607-6.142 6.973-8.217 17.405-2.728 24.902l1.828 2.496a6.7 6.7 0 0 1 1.082 2.304c1.428 5.683-4.672 10.293-9.749 7.368l-20.818-11.989a16.37 16.37 0 0 0-9.304-2.147l-2.455.17c-9.352 1.811-19.359 2.145-29.605.741-42.395-5.809-72.839-39.158-67.998-74.487s43.132-59.26 85.527-53.452"
-            className="fill-[#F8F8F8] dark:fill-[#252525]"
-          ></path>
+          <motion.g
+            variants={backgroundVariants}
+            initial="initial"
+            animate={controls}
+          >
+            <path
+              d="M553.22 118.392c42.396 5.809 72.84 39.157 68 74.487-1.536 11.213-6.442 21.277-13.78 29.607-6.142 6.973-8.217 17.405-2.728 24.902l1.828 2.496a6.7 6.7 0 0 1 1.082 2.304c1.428 5.683-4.672 10.293-9.749 7.368l-20.818-11.989a16.37 16.37 0 0 0-9.304-2.147l-2.455.17c-9.352 1.811-19.359 2.145-29.605.741-42.395-5.809-72.839-39.158-67.998-74.487s43.132-59.26 85.527-53.452"
+              className="fill-[#F8F8F8] dark:fill-[#252525]"
+            ></path>
+          </motion.g>
         </motion.g>
       </motion.g>
       <motion.g

@@ -11,12 +11,20 @@ import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
 
 const rotateVariants: Variants = {
   initial: {
-    transform: "rotate(0deg)",
+    transform: "rotate(0deg) scale(1)",
   },
   animate: {
-    transform: "rotate(10deg)",
+    transform: [
+      "rotate(0deg) scale(1)",
+      "rotate(8deg) scale(0.99)",
+      "rotate(12deg) scale(1.01)",
+      "rotate(10deg) scale(1)",
+    ],
     transition: {
       delay: 0.1,
+      duration: 0.5,
+      times: [0, 0.4, 0.7, 1],
+      ease: "easeInOut",
     },
   },
 };
@@ -28,14 +36,15 @@ const caretLeftVariants: Variants = {
   animate: {
     transform: [
       "translateX(0%) translateY(0%)",
-      "translateX(20%) translateY(0%)",
+      "translateX(15%) translateY(-3%)",
+      "translateX(-90%) translateY(12%)",
       "translateX(-80%) translateY(10%)",
     ],
     transition: {
-      duration: 0.6,
-      times: [0, 0.3, 0.8],
+      duration: 0.7,
+      times: [0, 0.2, 0.55, 1],
       ease: "easeInOut",
-      delay: 0.1,
+      delay: UNIVERSAL_DELAY / 1000,
     },
   },
 };
@@ -47,12 +56,13 @@ const caretRightVariants: Variants = {
   animate: {
     transform: [
       "translateX(0%) translateY(0%)",
-      "translateX(-20%) translateY(0%)",
+      "translateX(-15%) translateY(3%)",
+      "translateX(90%) translateY(-12%)",
       "translateX(80%) translateY(-10%)",
     ],
     transition: {
-      duration: 0.6,
-      times: [0, 0.3, 0.8],
+      duration: 0.7,
+      times: [0, 0.2, 0.55, 1],
       ease: "easeInOut",
       delay: UNIVERSAL_DELAY / 1000,
     },
@@ -66,12 +76,13 @@ const slashVariants: Variants = {
   animate: {
     transform: [
       "translateX(0%) translateY(0%) rotate(0deg)",
-      "translateX(-100%) translateY(0%) rotate(5deg)",
+      "translateX(-80%) translateY(3%) rotate(8deg)",
+      "translateX(520%) translateY(-12%) rotate(-35deg)",
       "translateX(500%) translateY(-10%) rotate(-30deg)",
     ],
     transition: {
-      duration: 0.6,
-      times: [0, 0.3, 0.8],
+      duration: 0.7,
+      times: [0, 0.2, 0.55, 1],
       ease: "easeInOut",
       delay: UNIVERSAL_DELAY / 1000,
     },
@@ -93,7 +104,7 @@ export function Code() {
   const handleMouseEnter = useCallback(() => {
     controls.start("animate");
     animate(codePathProgress, [0, 1, 2], {
-      duration: 0.6,
+      duration: 0.5,
       times: [0, 0.3, 0.8],
       ease: "easeInOut",
       delay: UNIVERSAL_DELAY / 1000,
@@ -102,7 +113,7 @@ export function Code() {
   const handleMouseLeave = useCallback(() => {
     controls.start("initial");
     animate(codePathProgress, 0, {
-      duration: 0.6,
+      duration: 0.5,
       ease: "easeOut",
     });
   }, [controls, codePathProgress]);

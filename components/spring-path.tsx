@@ -19,7 +19,7 @@ const pathVariants: Variants = {
   animate: ({ bounceEasing }: { bounceEasing: (t: number) => number }) => ({
     pathLength: [1, bounceEasing(0.01)],
     transition: {
-      duration: 0.8,
+      duration: 0.9,
       ease: bounceEasing,
     },
   }),
@@ -47,12 +47,22 @@ const secondaryCircleVariants: Variants = {
   },
 };
 
-const rotateVariants: Variants = {
+const backgroundVariants: Variants = {
   initial: {
-    transform: "rotate(0deg)",
+    transform: "rotate(0deg) scale(1)",
   },
   animate: {
-    transform: "rotate(7deg)",
+    transform: [
+      "rotate(0deg) scale(1)",
+      "rotate(8deg) scale(0.99)",
+      "rotate(6deg) scale(1)",
+      "rotate(7deg) scale(1)",
+    ],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.25, 0.6, 1],
+      ease: "easeInOut",
+    },
   },
 };
 
@@ -131,8 +141,8 @@ export function SpringPath() {
         ? 1 - squashAmount
         : 1 + squashAmount;
 
-      // Fade to scale 1 in the last 5% of the path
-      const threshold = forwardPathData.length * 0.95;
+      // Fade to scale 1 in the last 1% of the path
+      const threshold = forwardPathData.length * 0.99;
       if (p >= threshold) {
         const fadeOut =
           1 - (p - threshold) / (forwardPathData.length - threshold);
@@ -165,7 +175,7 @@ export function SpringPath() {
       forwardCompleted.current = false;
       progress.set(0);
       animate(progress, forwardPathData.length, {
-        duration: 0.8,
+        duration: 0.9,
         ease: bounceEasing || "linear",
       }).then(() => {
         forwardCompleted.current = true;
@@ -199,7 +209,7 @@ export function SpringPath() {
       }
 
       await controls.start("initial", {
-        duration: 0.5,
+        duration: 0.4,
         ease: "easeOut",
       });
       idleControls.start("animate");
@@ -226,7 +236,7 @@ export function SpringPath() {
         }}
       >
         <motion.g
-          variants={rotateVariants}
+          variants={backgroundVariants}
           initial="initial"
           animate={controls}
         >

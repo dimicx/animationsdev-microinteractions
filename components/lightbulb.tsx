@@ -7,18 +7,32 @@ const REPEAT_DELAY = 8;
 
 const wholeVariants: Variants = {
   initial: {
-    transform: "translateY(0px) rotate(0deg)",
+    transform: "translateY(0%) rotate(0deg) scale(1)",
   },
   animate: {
     transform: [
-      "translateY(0px) rotate(0deg)",
-      "translateY(2px) rotate(2deg)",
-      "translateY(-3px) rotate(-3deg)",
-      "translateY(-2px) rotate(-2deg)",
+      "translateY(0px) rotate(0deg) scale(1)",
+      "translateY(5%) rotate(2deg) scale(0.99)",
+      "translateY(-10%) rotate(-3deg) scale(1.03)",
+      "translateY(-8%) rotate(-2deg) scale(1)",
     ],
     transition: {
-      duration: 0.8,
-      times: [0, 0.3, 0.7, 1],
+      duration: 0.7,
+      times: [0, 0.25, 0.6, 1],
+      ease: "easeInOut",
+    },
+  },
+};
+
+const backgroundVariants: Variants = {
+  initial: {
+    scale: 1,
+  },
+  animate: {
+    scale: [1, 0.99, 1.02, 1],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.25, 0.6, 1],
       ease: "easeInOut",
     },
   },
@@ -28,6 +42,7 @@ const bulbVariants: Variants = {
   initial: {
     opacity: 1,
     fill: "var(--fill-color)",
+    transform: "translateY(0%) translateX(0%)",
   },
   animate: {
     opacity: [1, 0.2, 0.2, 1],
@@ -36,6 +51,13 @@ const bulbVariants: Variants = {
       "var(--fill-color)",
       "var(--fill-highlight)",
       "var(--fill-highlight)",
+    ],
+    transform: [
+      "translateY(0%) translateX(0%)",
+      "translateY(0%) translateX(0%)",
+      "translateY(-5%) translateX(3%)",
+      "translateY(0%) translateX(0%)",
+      "translateY(0%) translateX(0%)",
     ],
     transition: {
       duration: 0.7,
@@ -171,7 +193,7 @@ export function Lightbulb() {
     },
     onHoverEnd: async () => {
       await controls.start("initial");
-      await controls.start("idle");
+      controls.start("idle");
     },
   });
 
@@ -211,10 +233,16 @@ export function Lightbulb() {
           }}
           className="filter-[url(#filter5_i_359_1453)] dark:filter-[url(#filter5_i_368_1560)]"
         >
-          <path
-            d="M367.266 21.417c-2.316-9.36 10.658-14.171 15.564-5.87 2.973 5.03 10.083 5.68 13.821 1.188l4.123-4.955c8.221-9.88 24.263-3.102 22.91 9.68l-.678 6.41c-.615 5.811 4.807 10.455 10.487 9.08 9.371-2.268 14.965 10.389 6.64 15.252-5.132 2.998-5.591 10.24-.88 13.862l5.654 4.347c10.746 8.261 3.501 25.412-9.914 23.466l-7.058-1.023c-5.881-.853-10.753 4.524-9.325 10.293 2.316 9.359-10.658 14.171-15.564 5.871-2.974-5.031-10.083-5.681-13.822-1.189l-4.123 4.954c-8.221 9.88-24.263 3.102-22.91-9.679l.678-6.41c.615-5.812-4.807-10.456-10.487-9.08-9.371 2.267-14.965-10.39-6.639-15.253 5.131-2.998 5.59-10.239.879-13.861l-5.654-4.347c-10.746-8.262-3.5-25.412 9.915-23.467l7.057 1.024c5.882.853 10.753-4.524 9.326-10.293"
-            className="fill-[#F8F8F8] dark:fill-[#252525]"
-          ></path>
+          <motion.g
+            variants={backgroundVariants}
+            initial="initial"
+            animate={controls}
+          >
+            <path
+              d="M367.266 21.417c-2.316-9.36 10.658-14.171 15.564-5.87 2.973 5.03 10.083 5.68 13.821 1.188l4.123-4.955c8.221-9.88 24.263-3.102 22.91 9.68l-.678 6.41c-.615 5.811 4.807 10.455 10.487 9.08 9.371-2.268 14.965 10.389 6.64 15.252-5.132 2.998-5.591 10.24-.88 13.862l5.654 4.347c10.746 8.261 3.501 25.412-9.914 23.466l-7.058-1.023c-5.881-.853-10.753 4.524-9.325 10.293 2.316 9.359-10.658 14.171-15.564 5.871-2.974-5.031-10.083-5.681-13.822-1.189l-4.123 4.954c-8.221 9.88-24.263 3.102-22.91-9.679l.678-6.41c.615-5.812-4.807-10.456-10.487-9.08-9.371 2.267-14.965-10.39-6.639-15.253 5.131-2.998 5.59-10.239.879-13.861l-5.654-4.347c-10.746-8.262-3.5-25.412 9.915-23.467l7.057 1.024c5.882.853 10.753-4.524 9.326-10.293"
+              className="fill-[#F8F8F8] dark:fill-[#252525]"
+            ></path>
+          </motion.g>
         </motion.g>
 
         <motion.g variants={wholeVariants} initial="initial" animate={controls}>
