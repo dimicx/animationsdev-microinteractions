@@ -26,10 +26,10 @@ const wholeVariants: Variants = {
 
 const backgroundVariants: Variants = {
   initial: {
-    scale: 1,
+    transform: "scale(1)",
   },
   animate: {
-    scale: [1, 0.99, 1.02, 1],
+    transform: ["scale(1)", "scale(0.99)", "scale(1.02)", "scale(1)"],
     transition: {
       duration: 0.7,
       times: [0, 0.25, 0.6, 1],
@@ -103,15 +103,18 @@ const stemVariants: Variants = {
 
 const bulbMaskVariants: Variants = {
   initial: {
-    y: "0%",
-    x: "0%",
-    rotate: "0deg",
+    transform: "translateY(0%) translateX(0%) rotate(0deg)",
     opacity: 1,
   },
   animate: {
-    y: ["0%", "0%", "20%", "20%", "-10%", "0%"],
-    x: ["0%", "0%", "20%", "20%", "-10%", "0%"],
-    rotate: ["0deg", "0deg", "20deg", "20deg", "-10deg", "0deg"],
+    transform: [
+      "translateY(0%) translateX(0%) rotate(0deg)",
+      "translateY(0%) translateX(0%) rotate(0deg)",
+      "translateY(20%) translateX(20%) rotate(20deg)",
+      "translateY(20%) translateX(20%) rotate(20deg)",
+      "translateY(-10%) translateX(-10%) rotate(-10deg)",
+      "translateY(0%) translateX(0%) rotate(0deg)",
+    ],
     opacity: [1, 0, 0, 0, 1, 1],
     transition: {
       duration: 0.7,

@@ -68,12 +68,14 @@ const backgroundVariants: Variants = {
 
 const idleVariants: Variants = {
   initial: {
-    y: "0%",
-    x: "0%",
+    transform: "translateY(0%) translateX(0%)",
   },
   animate: {
-    y: ["0%", "-25%", "0%"],
-    x: ["0%", "-20%", "0%"],
+    transform: [
+      "translateY(0%) translateX(0%)",
+      "translateY(-25%) translateX(-20%)",
+      "translateY(0%) translateX(0%)",
+    ],
     transition: {
       duration: 2.5,
       repeat: Infinity,

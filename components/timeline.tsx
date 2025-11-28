@@ -8,10 +8,10 @@ const timelineDuration = 1.7;
 
 const backgroundVariants: Variants = {
   initial: {
-    scale: 1,
+    transform: "scale(1)",
   },
   animate: {
-    scale: [1, 0.97, 1.02, 1],
+    transform: ["scale(1)", "scale(0.97)", "scale(1.02)", "scale(1)"],
     transition: {
       duration: 0.5,
       times: [0, 0.25, 0.6, 1],

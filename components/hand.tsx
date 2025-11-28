@@ -15,10 +15,10 @@ const REPEAT_DELAY = 6;
 
 const backgroundVariants: Variants = {
   initial: {
-    scale: 1,
+    transform: "scale(1)",
   },
   animate: {
-    scale: [1, 1, 0.97, 1],
+    transform: ["scale(1)", "scale(1)", "scale(0.97)", "scale(1)"],
     transition: {
       duration: 0.5,
       times: [0, 0.65, 0.8, 1],
@@ -26,7 +26,7 @@ const backgroundVariants: Variants = {
     },
   },
   idle: {
-    scale: [1, 1, 0.97, 1, 1],
+    transform: ["scale(1)", "scale(1)", "scale(0.97)", "scale(1)", "scale(1)"],
     transition: {
       duration: 0.65,
       times: [0, 0.25, 0.4, 0.6, 1],

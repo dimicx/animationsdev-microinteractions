@@ -3,11 +3,11 @@ import { Variants } from "motion/react";
 export const fadeScaleVariants: Variants = {
   initial: {
     opacity: 0,
-    scale: 0,
+    transform: "scale(0)",
   },
   animate: {
     opacity: 1,
-    scale: 1,
+    transform: "scale(1)",
   },
 };
 
