@@ -30,7 +30,7 @@ export function Scene() {
           className="h-auto max-w-full overflow-visible!"
           variants={{
             animate: {
-              transition: { staggerChildren: 0.05 },
+              transition: { staggerChildren: 0.05, delayChildren: 0.125 },
             },
           }}
           initial="initial"
