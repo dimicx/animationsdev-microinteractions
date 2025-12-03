@@ -86,7 +86,7 @@ const idleBellsVariants: Variants = {
     transform: [
       "translateX(0%) translateY(0%) rotate(0deg)",
       "translateX(-12%) translateY(-6%) rotate(-8deg)",
-      "translateX(12%) translateY(6%) rotate(8deg)",
+      "translateX(12%) translateY(8%) rotate(8deg)",
       "translateX(0%) translateY(0%) rotate(0deg)",
     ],
     transition: {
