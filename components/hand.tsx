@@ -49,7 +49,7 @@ const rayVariants: Variants = {
   animate: (i: number) => {
     const pathLength = idleRayPathLengths[i];
     return {
-      pathLength: [pathLength, 1, 1, 0, 0, 1],
+      pathLength: [pathLength, 1, 1, 0.01, 0.01, 1],
       strokeOpacity: [0, 0.5, 0, 0, 0.5, 0.5],
       transition: {
         delay: 0.3 + i * 0.05,
@@ -61,7 +61,7 @@ const rayVariants: Variants = {
   idle: (i: number) => {
     const pathLength = idleRayPathLengths[i];
     return {
-      pathLength: [pathLength, pathLength, 0, 0, pathLength],
+      pathLength: [pathLength, pathLength, 0.01, 0.01, pathLength],
       strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
       transition: {
         delay: REPEAT_DELAY / 2 + (0.2 + i * 0.05),
