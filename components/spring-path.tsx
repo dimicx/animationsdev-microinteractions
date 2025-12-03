@@ -331,7 +331,7 @@ export function SpringPath() {
           animate: {
             transition: {
               staggerChildren: 0.1,
-              delayChildren: 0.225,
+              delayChildren: 0.35,
             },
           },
         }}
