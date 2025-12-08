@@ -10,6 +10,7 @@ import {
 } from "motion/react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
+import useIsMobile from "@/lib/use-is-mobile";
 
 const REPEAT_DELAY = 6;
 
@@ -165,6 +166,7 @@ const handProgressTransition: Transition = {
 };
 
 export function Hand() {
+  const { isMobile } = useIsMobile();
   const controls = useAnimation();
   const handPathProgress = useMotionValue(0);
   const handPath = useFlubber(handPathProgress, handPaths);
@@ -200,6 +202,7 @@ export function Hand() {
   });
 
   const onClick = useCallback(async () => {
+    if (isMobile) return;
     handPathProgress.set(0);
     animate(handPathProgress, [0, 1, 2], {
       duration: 0.35,
@@ -207,7 +210,7 @@ export function Hand() {
       ease: "easeInOut",
     });
     controls.start("click");
-  }, [controls, handPathProgress]);
+  }, [controls, handPathProgress, isMobile]);
 
   return (
     <motion.g
