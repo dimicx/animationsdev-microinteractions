@@ -144,6 +144,9 @@ export function SpringPath() {
 
   const forwardCompleted = useRef(false);
   const animationRef = useRef<{ stop: () => void } | null>(null);
+  const forwardCompleteTimeoutRef = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
 
   // Animation progress (0 to 1)
   const progress = useMotionValue(0);
@@ -209,6 +212,9 @@ export function SpringPath() {
     onHoverStart: () => {
       // Stop any existing animation
       animationRef.current?.stop();
+      if (forwardCompleteTimeoutRef.current) {
+        clearTimeout(forwardCompleteTimeoutRef.current);
+      }
 
       idleControls.start("initial");
       backgroundControls.start("animate");
@@ -226,13 +232,17 @@ export function SpringPath() {
 
       animationRef.current = animation;
 
-      animation.then(() => {
+      // Set forwardCompleted 0.1 seconds before animation actually ends
+      forwardCompleteTimeoutRef.current = setTimeout(() => {
         forwardCompleted.current = true;
-      });
+      }, (BOUNCE_DURATION - 0.2) * 1000);
     },
     onHoverEnd: async () => {
       // Stop ongoing animation
       animationRef.current?.stop();
+      if (forwardCompleteTimeoutRef.current) {
+        clearTimeout(forwardCompleteTimeoutRef.current);
+      }
 
       if (forwardCompleted.current) {
         // Forward animation completed, fade out and reset
