@@ -104,6 +104,34 @@ export function getSquashStretchAtProgress(
   const velocity = bounceVelocity(progress);
   const atBounce = isAtBouncePoint(progress, 0.04);
 
+  // Final settle phase - after the light bounce up comes back down
+  // settleT goes from 0 to 1 during progress 0.82 to 1.0
+  if (progress > 0.82) {
+    const settleT = (progress - 0.82) / (1 - 0.82);
+
+    // Final squash when ball lands from the light bounce (around settleT 0.85-0.95)
+    // The light bounce peaks at settleT ~0.5, comes down after
+    const finalLandingCenter = 0.9;
+    const finalLandingRadius = 0.08;
+    const distFromLanding = Math.abs(settleT - finalLandingCenter);
+
+    if (distFromLanding < finalLandingRadius) {
+      // Squash intensity peaks at center, fades at edges
+      const squashFactor = 1 - distFromLanding / finalLandingRadius;
+      const finalSquashIntensity = intensity * 0.4 * squashFactor;
+
+      return {
+        scaleX: 1 + finalSquashIntensity * 1.2,
+        scaleY: 1 - finalSquashIntensity * 0.5,
+      };
+    }
+
+    // After the final squash, return to normal scale
+    if (settleT > finalLandingCenter + finalLandingRadius) {
+      return { scaleX: 1, scaleY: 1 };
+    }
+  }
+
   if (atBounce && progress > 0.05 && progress < 0.97) {
     // Impact squash - stronger for earlier bounces
     let bounceDecay = 1;
