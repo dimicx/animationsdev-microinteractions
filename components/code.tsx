@@ -76,9 +76,29 @@ const slashVariants: Variants = {
   animate: {
     transform: [
       "translateX(0%) translateY(0%) rotate(0deg)",
-      "translateX(-80%) translateY(3%) rotate(8deg)",
-      "translateX(520%) translateY(-12%) rotate(-35deg)",
-      "translateX(500%) translateY(-10%) rotate(-30deg)",
+      "translateX(80%) translateY(-3%) rotate(8deg)",
+      "translateX(-1750%) translateY(19%) rotate(-35deg)",
+      "translateX(-1700%) translateY(17%) rotate(-30deg)",
+    ],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.2, 0.55, 1],
+      ease: "easeInOut",
+      delay: UNIVERSAL_DELAY / 1000,
+    },
+  },
+};
+
+const codePathVariants: Variants = {
+  initial: {
+    transform: "translateX(0%) translateY(0%)",
+  },
+  animate: {
+    transform: [
+      "translateX(0%) translateY(0%)",
+      "translateX(-10%) translateY(0%)",
+      "translateX(43%) translateY(-12%)",
+      "translateX(38%) translateY(-10%)",
     ],
     transition: {
       duration: 0.7,
@@ -186,13 +206,18 @@ export function Code() {
               className="stroke-[#989898] dark:stroke-[#D6D6D6]"
             />
           </motion.g>
-          <g className="animate-pulse [animation-duration:1.5s]">
+          <motion.g
+            variants={codePathVariants}
+            initial="initial"
+            animate={controls}
+            className="animate-pulse [animation-duration:1.5s]"
+          >
             <motion.path
               opacity="0.4"
               d={codePath}
               className="fill-[#989898] dark:fill-[#D6D6D6]"
             />
-          </g>
+          </motion.g>
         </motion.g>
       </motion.g>
     </motion.g>
