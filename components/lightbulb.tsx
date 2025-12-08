@@ -1,7 +1,8 @@
 import { motion, useAnimation, Variants } from "motion/react";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
+import { useClickTimeout } from "@/lib/use-click-timeout";
 
 const REPEAT_DELAY = 8;
 
@@ -22,6 +23,19 @@ const wholeVariants: Variants = {
       ease: "easeInOut",
     },
   },
+  click: {
+    transform: [
+      "translateY(-8%) rotate(-2deg) scale(1)",
+      "translateY(5%) rotate(2deg) scale(0.99)",
+      "translateY(-10%) rotate(-3deg) scale(1.03)",
+      "translateY(-8%) rotate(-2deg) scale(1)",
+    ],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.25, 0.6, 1],
+      ease: "easeInOut",
+    },
+  },
 };
 
 const backgroundVariants: Variants = {
@@ -29,6 +43,14 @@ const backgroundVariants: Variants = {
     transform: "scale(1)",
   },
   animate: {
+    transform: ["scale(1)", "scale(0.99)", "scale(1.02)", "scale(1)"],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.25, 0.6, 1],
+      ease: "easeInOut",
+    },
+  },
+  click: {
     transform: ["scale(1)", "scale(0.99)", "scale(1.02)", "scale(1)"],
     transition: {
       duration: 0.7,
@@ -68,6 +90,20 @@ const bulbVariants: Variants = {
       repeatDelay: REPEAT_DELAY,
     },
   },
+  click: {
+    opacity: [1, 0.2, 0.2, 1],
+    transform: [
+      "translateY(0%) translateX(0%)",
+      "translateY(0%) translateX(0%)",
+      "translateY(-5%) translateX(3%)",
+      "translateY(0%) translateX(0%)",
+      "translateY(0%) translateX(0%)",
+    ],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.2, 0.5, 0.7],
+    },
+  },
 };
 
 const stemVariants: Variants = {
@@ -90,6 +126,13 @@ const stemVariants: Variants = {
       repeat: Infinity,
       repeatType: "loop",
       repeatDelay: REPEAT_DELAY,
+    },
+  },
+  click: {
+    opacity: [1, 0.3, 0.3, 1],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.2, 0.5, 0.7],
     },
   },
 };
@@ -125,6 +168,21 @@ const bulbMaskVariants: Variants = {
       repeatDelay: REPEAT_DELAY,
     },
   },
+  click: {
+    transform: [
+      "translateY(0%) translateX(0%) rotate(0deg)",
+      "translateY(0%) translateX(0%) rotate(0deg)",
+      "translateY(20%) translateX(20%) rotate(20deg)",
+      "translateY(20%) translateX(20%) rotate(20deg)",
+      "translateY(-10%) translateX(-10%) rotate(-10deg)",
+      "translateY(0%) translateX(0%) rotate(0deg)",
+    ],
+    opacity: [1, 0, 0, 0, 1, 1],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.2, 0.3, 0.5, 0.8, 1],
+    },
+  },
 };
 
 const rayVariants: Variants = {
@@ -150,6 +208,15 @@ const rayVariants: Variants = {
       repeatDelay: REPEAT_DELAY,
     },
   },
+  click: {
+    pathLength: [1, 1, 0, 0, 1],
+    strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
+    transition: {
+      delay: 0.2,
+      duration: 0.7,
+      times: [0, 0, 0.2, 0.2, 0.5],
+    },
+  },
 };
 
 const raysOpacityVariants: Variants = {
@@ -172,10 +239,19 @@ const raysOpacityVariants: Variants = {
       repeatDelay: REPEAT_DELAY,
     },
   },
+  click: {
+    opacity: [1, 0, 0, 1],
+    transition: {
+      duration: 0.4,
+      times: [0, 0.1, 0.9, 1],
+    },
+  },
 };
 
 export function Lightbulb() {
   const controls = useAnimation();
+  const isAnimated = useRef(false);
+  const isHovering = useRef(false);
 
   useEffect(() => {
     controls.start("idle");
@@ -184,13 +260,29 @@ export function Lightbulb() {
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: UNIVERSAL_DELAY,
     onHoverStart: async () => {
+      isHovering.current = true;
       controls.start("initial", { duration: 0 });
-      controls.start("animate");
+      await controls.start("animate");
+      isAnimated.current = true;
     },
     onHoverEnd: async () => {
+      isHovering.current = false;
       await controls.start("initial");
       controls.start("idle");
+      isAnimated.current = false;
     },
+  });
+
+  const onClick = useCallback(async () => {
+    if (!isAnimated.current || !isHovering.current) {
+      return;
+    }
+    controls.start("click");
+  }, [controls]);
+
+  const { handleClick } = useClickTimeout({
+    delay: 1000,
+    onClick: onClick,
   });
 
   return (
@@ -198,7 +290,8 @@ export function Lightbulb() {
       variants={fadeScaleVariants}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="origin-bottom!"
+      onClick={handleClick}
+      className="origin-bottom! cursor-pointer"
     >
       <motion.g
         initial={{
