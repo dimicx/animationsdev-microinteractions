@@ -1,7 +1,8 @@
 import { motion, useAnimation, Variants } from "motion/react";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
+import { useClickTimeout } from "@/lib/use-click-timeout";
 
 const REPEAT_DELAY = 8;
 
@@ -12,6 +13,19 @@ const wholeVariants: Variants = {
   animate: {
     transform: [
       "translateY(0px) rotate(0deg) scale(1)",
+      "translateY(5%) rotate(2deg) scale(0.99)",
+      "translateY(-10%) rotate(-3deg) scale(1.03)",
+      "translateY(-8%) rotate(-2deg) scale(1)",
+    ],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.25, 0.6, 1],
+      ease: "easeInOut",
+    },
+  },
+  click: {
+    transform: [
+      "translateY(-8%) rotate(-2deg) scale(1)",
       "translateY(5%) rotate(2deg) scale(0.99)",
       "translateY(-10%) rotate(-3deg) scale(1.03)",
       "translateY(-8%) rotate(-2deg) scale(1)",
@@ -36,22 +50,23 @@ const backgroundVariants: Variants = {
       ease: "easeInOut",
     },
   },
+  click: {
+    transform: ["scale(1)", "scale(0.99)", "scale(1.02)", "scale(1)"],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.25, 0.6, 1],
+      ease: "easeInOut",
+    },
+  },
 };
 
 const bulbVariants: Variants = {
   initial: {
     opacity: 1,
-    fill: "var(--fill-color)",
     transform: "translateY(0%) translateX(0%)",
   },
   animate: {
     opacity: [1, 0.2, 0.2, 1],
-    fill: [
-      "var(--fill-color)",
-      "var(--fill-color)",
-      "var(--fill-highlight)",
-      "var(--fill-highlight)",
-    ],
     transform: [
       "translateY(0%) translateX(0%)",
       "translateY(0%) translateX(0%)",
@@ -73,6 +88,20 @@ const bulbVariants: Variants = {
       repeat: Infinity,
       repeatType: "loop",
       repeatDelay: REPEAT_DELAY,
+    },
+  },
+  click: {
+    opacity: [1, 0.2, 0.2, 1],
+    transform: [
+      "translateY(0%) translateX(0%)",
+      "translateY(0%) translateX(0%)",
+      "translateY(-5%) translateX(3%)",
+      "translateY(0%) translateX(0%)",
+      "translateY(0%) translateX(0%)",
+    ],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.2, 0.5, 0.7],
     },
   },
 };
@@ -97,6 +126,13 @@ const stemVariants: Variants = {
       repeat: Infinity,
       repeatType: "loop",
       repeatDelay: REPEAT_DELAY,
+    },
+  },
+  click: {
+    opacity: [1, 0.3, 0.3, 1],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.2, 0.5, 0.7],
     },
   },
 };
@@ -132,31 +168,55 @@ const bulbMaskVariants: Variants = {
       repeatDelay: REPEAT_DELAY,
     },
   },
+  click: {
+    transform: [
+      "translateY(0%) translateX(0%) rotate(0deg)",
+      "translateY(0%) translateX(0%) rotate(0deg)",
+      "translateY(20%) translateX(20%) rotate(20deg)",
+      "translateY(20%) translateX(20%) rotate(20deg)",
+      "translateY(-10%) translateX(-10%) rotate(-10deg)",
+      "translateY(0%) translateX(0%) rotate(0deg)",
+    ],
+    opacity: [1, 0, 0, 0, 1, 1],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.2, 0.3, 0.5, 0.8, 1],
+    },
+  },
 };
 
 const rayVariants: Variants = {
   initial: { pathLength: 1, strokeOpacity: 0.5 },
-  animate: (i: number) => ({
+  animate: {
     pathLength: [1, 1, 0, 0, 1],
     strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
     transition: {
-      delay: 0.2 + i * 0.05,
+      delay: 0.2,
       duration: 0.7,
       times: [0, 0, 0.2, 0.2, 0.5],
     },
-  }),
-  idle: (i: number) => ({
+  },
+  idle: {
     pathLength: [1, 1, 0, 0, 1],
     strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
     transition: {
-      delay: REPEAT_DELAY / 2 + 0.2 + i * 0.05,
+      delay: REPEAT_DELAY / 2 + 0.2,
       duration: 0.7,
       times: [0, 0, 0.2, 0.2, 0.5],
       repeat: Infinity,
       repeatType: "loop",
       repeatDelay: REPEAT_DELAY,
     },
-  }),
+  },
+  click: {
+    pathLength: [1, 1, 0, 0, 1],
+    strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
+    transition: {
+      delay: 0.2,
+      duration: 0.7,
+      times: [0, 0, 0.2, 0.2, 0.5],
+    },
+  },
 };
 
 const raysOpacityVariants: Variants = {
@@ -179,10 +239,19 @@ const raysOpacityVariants: Variants = {
       repeatDelay: REPEAT_DELAY,
     },
   },
+  click: {
+    opacity: [1, 0, 0, 1],
+    transition: {
+      duration: 0.4,
+      times: [0, 0.1, 0.9, 1],
+    },
+  },
 };
 
 export function Lightbulb() {
   const controls = useAnimation();
+  const isAnimated = useRef(false);
+  const isHovering = useRef(false);
 
   useEffect(() => {
     controls.start("idle");
@@ -191,13 +260,29 @@ export function Lightbulb() {
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: UNIVERSAL_DELAY,
     onHoverStart: async () => {
+      isHovering.current = true;
       controls.start("initial", { duration: 0 });
-      controls.start("animate");
+      await controls.start("animate");
+      isAnimated.current = true;
     },
     onHoverEnd: async () => {
+      isHovering.current = false;
       await controls.start("initial");
       controls.start("idle");
+      isAnimated.current = false;
     },
+  });
+
+  const onClick = useCallback(async () => {
+    if (!isAnimated.current || !isHovering.current) {
+      return;
+    }
+    controls.start("click");
+  }, [controls]);
+
+  const { handleClick } = useClickTimeout({
+    delay: 1000,
+    onClick: onClick,
   });
 
   return (
@@ -205,7 +290,8 @@ export function Lightbulb() {
       variants={fadeScaleVariants}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="origin-bottom!"
+      onClick={handleClick}
+      className="origin-bottom! cursor-pointer"
     >
       <motion.g
         initial={{
@@ -295,7 +381,7 @@ export function Lightbulb() {
                 animate={controls}
                 d="M398.989 49.368c6.408 2.708 9.141 10.328 5.95 16.51a10 10 0 0 1-4.121 4.208l-.94.508a10.6 10.6 0 0 0-4.718 5.197l-.318.752a1.95 1.95 0 0 1-1.353 1.14 10.12 10.12 0 0 1-10.967-4.634 1.95 1.95 0 0 1-.126-1.765l.318-.752a10.6 10.6 0 0 0 .437-7.005l-.291-1.028a10 10 0 0 1 .144-5.888c2.208-6.597 9.576-9.95 15.985-7.242"
                 mask="url(#bulb-mask)"
-                className="[--fill-color:#989898] dark:[--fill-color:#D6D6D6] [--fill-highlight:#989898] dark:[--fill-highlight:#FFFFFF]"
+                className="fill-[#989898] dark:fill-[#D6D6D6]"
               ></motion.path>
             </g>
 
@@ -309,7 +395,6 @@ export function Lightbulb() {
                 variants={rayVariants}
                 initial="initial"
                 animate={controls}
-                custom={0}
                 x1="376.711"
                 y1="53.2909"
                 x2="376.62"
@@ -323,7 +408,6 @@ export function Lightbulb() {
                 variants={rayVariants}
                 initial="initial"
                 animate={controls}
-                custom={1}
                 x1="382.703"
                 y1="45.4685"
                 x2="382.04"
@@ -337,7 +421,6 @@ export function Lightbulb() {
                 variants={rayVariants}
                 initial="initial"
                 animate={controls}
-                custom={2}
                 x1="391.866"
                 y1="41.752"
                 x2="391.536"
@@ -351,7 +434,6 @@ export function Lightbulb() {
                 variants={rayVariants}
                 initial="initial"
                 animate={controls}
-                custom={3}
                 x1="401.616"
                 y1="43.146"
                 x2="403.502"

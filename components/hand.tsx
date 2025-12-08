@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useFlubber } from "@/lib/flubber";
 import {
   animate,
@@ -10,6 +10,7 @@ import {
 } from "motion/react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
+import { useClickTimeout } from "@/lib/use-click-timeout";
 
 const REPEAT_DELAY = 6;
 
@@ -21,7 +22,7 @@ const backgroundVariants: Variants = {
     transform: ["scale(1)", "scale(1)", "scale(0.97)", "scale(1)"],
     transition: {
       duration: 0.5,
-      times: [0, 0.65, 0.8, 1],
+      times: [0, 0.6, 0.75, 1],
       ease: "easeOut",
     },
   },
@@ -35,6 +36,13 @@ const backgroundVariants: Variants = {
       repeatType: "loop",
       repeatDelay: REPEAT_DELAY,
       delay: REPEAT_DELAY / 2,
+    },
+  },
+  click: {
+    transform: ["scale(1)", "scale(0.97)", "scale(1)"],
+    transition: {
+      duration: 0.35,
+      ease: "easeOut",
     },
   },
 };
@@ -52,7 +60,7 @@ const rayVariants: Variants = {
       pathLength: [pathLength, 1, 1, 0.01, 0.01, 1],
       strokeOpacity: [0, 0.5, 0, 0, 0.5, 0.5],
       transition: {
-        delay: 0.3 + i * 0.05,
+        delay: 0.3 + (i === 1 ? 0 : 0.075),
         duration: 0.65,
         times: [0, 0, 0, 0.1, 0.1, 0.4],
       },
@@ -64,12 +72,24 @@ const rayVariants: Variants = {
       pathLength: [pathLength, pathLength, 0.01, 0.01, pathLength],
       strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
       transition: {
-        delay: REPEAT_DELAY / 2 + (0.2 + i * 0.05),
+        delay: REPEAT_DELAY / 2 + 0.2,
         duration: 0.65,
         times: [0, 0, 0.1, 0.2, 0.4],
         repeat: Infinity,
         repeatType: "loop",
         repeatDelay: REPEAT_DELAY,
+      },
+    };
+  },
+  click: (i: number) => {
+    const pathLength = idleRayPathLengths[i];
+    return {
+      pathLength: [pathLength, 1, 1, 0.01, 0.01, 1],
+      strokeOpacity: [0, 0.5, 0, 0, 0.5, 0.5],
+      transition: {
+        delay: 0.15 + (i === 1 ? 0 : 0.05),
+        duration: 0.5,
+        times: [0, 0, 0, 0.1, 0.1, 0.4],
       },
     };
   },
@@ -104,12 +124,25 @@ const handVariants: Variants = {
   animate: {
     transform: [
       "translateX(0%) translateY(0%) rotate(0deg) scale(1)",
-      "translateX(-11%) translateY(4%) rotate(25deg) scale(1)",
-      "translateX(-11%) translateY(4%) rotate(25deg) scale(0.95)",
-      "translateX(-11%) translateY(4%) rotate(25deg) scale(1)",
+      "translateX(-11%) translateY(8%) rotate(25deg) scale(1)",
+      "translateX(-11%) translateY(8%) rotate(25deg) scale(0.95)",
+      "translateX(-11%) translateY(8%) rotate(25deg) scale(1)",
     ],
     transition: {
       duration: 1,
+      times: [0, 0.2, 0.4, 0.75],
+      ease: "easeInOut",
+    },
+  },
+  click: {
+    transform: [
+      "translateX(-11%) translateY(8%) rotate(25deg) scale(1)",
+      "translateX(-11%) translateY(8%) rotate(25deg) scale(1)",
+      "translateX(-11%) translateY(8%) rotate(25deg) scale(0.95)",
+      "translateX(-11%) translateY(8%) rotate(25deg) scale(1)",
+    ],
+    transition: {
+      duration: 0.4,
       times: [0, 0.2, 0.4, 0.75],
       ease: "easeInOut",
     },
@@ -136,6 +169,8 @@ export function Hand() {
   const controls = useAnimation();
   const handPathProgress = useMotionValue(0);
   const handPath = useFlubber(handPathProgress, handPaths);
+  const isAnimated = useRef(false);
+  const isHovering = useRef(false);
 
   const startAnimations = useCallback(() => {
     controls.start("idle");
@@ -149,21 +184,44 @@ export function Hand() {
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: UNIVERSAL_DELAY,
     onHoverStart: async () => {
-      controls.start("initial");
-      controls.start("animate");
+      isHovering.current = true;
       handPathProgress.set(0);
-      animate(handPathProgress, [0, 1, 2], {
+      controls.start("animate");
+      await animate(handPathProgress, [0, 1, 2], {
         duration: 0.5,
         times: [0, 0.7, 1],
         ease: "easeInOut",
       });
+      isAnimated.current = true;
     },
     onHoverEnd: async () => {
+      isHovering.current = false;
       handPathProgress.set(0);
       await controls.start("initial");
-      controls.start("idle");
-      animate(handPathProgress, [0, 1, 2], handProgressTransition);
+      await Promise.all([
+        controls.start("idle"),
+        animate(handPathProgress, [0, 1, 2], handProgressTransition),
+      ]);
+      isAnimated.current = false;
     },
+  });
+
+  const onClick = useCallback(async () => {
+    if (!isAnimated.current || !isHovering.current) {
+      return;
+    }
+    handPathProgress.set(0);
+    animate(handPathProgress, [0, 1, 2], {
+      duration: 0.35,
+      times: [0, 0.7, 1],
+      ease: "easeInOut",
+    });
+    controls.start("click");
+  }, [controls, handPathProgress]);
+
+  const { handleClick } = useClickTimeout({
+    delay: 500,
+    onClick: onClick,
   });
 
   return (
@@ -171,7 +229,8 @@ export function Hand() {
       variants={fadeScaleVariants}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="origin-bottom!"
+      onClick={handleClick}
+      className="origin-bottom! cursor-pointer"
     >
       <motion.g
         initial={{

@@ -12,6 +12,8 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 
+const BOUNCE_DURATION = 0.9;
+
 const pathVariants: Variants = {
   initial: {
     pathLength: 1,
@@ -19,30 +21,28 @@ const pathVariants: Variants = {
   animate: ({ bounceEasing }: { bounceEasing: (t: number) => number }) => ({
     pathLength: [1, bounceEasing(0.01)],
     transition: {
-      duration: 0.9,
+      duration: BOUNCE_DURATION,
       ease: bounceEasing,
     },
   }),
-  idle: {
-    pathLength: [1, 0.98, 1],
-    transition: {
-      duration: 2.5,
-      repeat: Infinity,
-      repeatType: "mirror",
-      ease: "easeInOut",
-    },
-  },
 };
 
 const secondaryCircleVariants: Variants = {
   initial: {
     stroke: "var(--stroke-color)",
+    opacity: 1,
   },
   animate: {
-    stroke: ["var(--stroke-color)", "var(--stroke-highlight)"],
+    stroke: [
+      "var(--stroke-color)",
+      "var(--stroke-highlight)",
+      "var(--stroke-highlight)",
+      "var(--bg-fill)",
+    ],
     transition: {
-      duration: 0.25,
+      duration: BOUNCE_DURATION,
       ease: "easeOut",
+      times: [0, 0.1, 0.99, 1],
     },
   },
 };
@@ -77,12 +77,38 @@ const idleVariants: Variants = {
       "translateY(0%) translateX(0%)",
     ],
     transition: {
-      duration: 2.5,
+      duration: 4,
       repeat: Infinity,
       repeatType: "mirror",
       ease: "easeInOut",
     },
   },
+};
+
+const bubblesVariants: Variants = {
+  initial: {
+    transform: "translateY(0%) translateX(0%)",
+  },
+  animate: (i: number) => ({
+    transform:
+      i === 0
+        ? ["translateY(0%) translateX(0%)", "translateY(-25%) translateX(-20%)"]
+        : ["translateY(0%) translateX(0%)", "translateY(-60%) translateX(20%)"],
+    transition: {
+      duration: 0.25,
+      ease: "easeInOut",
+    },
+  }),
+  idle: (i: number) => ({
+    transform: ["translateY(0px)", "translateY(-2px)", "translateY(3px)"],
+    transition: {
+      delay: 0.4 + i * 0.6,
+      duration: 3,
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "reverse",
+    },
+  }),
 };
 
 const forwardPathString =
@@ -96,6 +122,7 @@ export function SpringPath() {
   const forwardCompleted = useRef(false);
   const progress = useMotionValue(0);
   const ballOpacity = useMotionValue(1);
+  const settleOffset = useMotionValue(0);
   const forwardPathData = useMemo(() => getPathData(forwardPathString), []);
 
   // Generate physics-based easing from the bounce path
@@ -111,10 +138,15 @@ export function SpringPath() {
     return point.x;
   });
 
-  const cy = useTransform(progress, (p) => {
+  const cyBase = useTransform(progress, (p) => {
     if (!forwardPathData.path || p === 0) return 190.615;
     const point = forwardPathData.path.getPointAtLength(p);
     return point.y;
+  });
+
+  // Combine base cy with settle offset for micro-bounce effect at the end
+  const cy = useTransform([cyBase, settleOffset], ([base, offset]) => {
+    return (base as number) + (offset as number);
   });
 
   // Helper function to calculate squash/stretch scale based on velocity
@@ -132,7 +164,7 @@ export function SpringPath() {
       );
       const velocityY = point2.y - point1.y;
 
-      const squashAmount = Math.min(Math.abs(velocityY) / 30, 0.35);
+      const squashAmount = Math.min(Math.abs(velocityY) / 50, 0.2);
 
       // X-axis: squash horizontally when moving down, stretch when moving up
       // Y-axis: opposite (stretch vertically when moving down, squash when moving up)
@@ -178,11 +210,17 @@ export function SpringPath() {
       controls.start("animate");
       forwardCompleted.current = false;
       progress.set(0);
+      settleOffset.set(0);
       animate(progress, forwardPathData.length, {
-        duration: 0.9,
+        duration: BOUNCE_DURATION,
         ease: bounceEasing || "linear",
       }).then(() => {
         forwardCompleted.current = true;
+        // Add settling micro-bounces at final position
+        animate(settleOffset, [0, -4, 0, -1.5, 0], {
+          duration: 0.5,
+          ease: [0.22, 1, 0.36, 1], // ease-out-quint for natural deceleration
+        });
       });
     },
     onHoverEnd: async () => {
@@ -196,6 +234,7 @@ export function SpringPath() {
         }).then(() => {
           // Reset position instantly while invisible
           progress.set(0);
+          settleOffset.set(0);
           forwardCompleted.current = false;
           // Fade back in
           animate(ballOpacity, 1, {
@@ -206,6 +245,7 @@ export function SpringPath() {
         });
       } else {
         // Forward animation not completed, reverse on same path
+        settleOffset.set(0);
         animate(progress, 0, {
           duration: (currentProgress / forwardPathData.length) * 0.5,
           ease: "easeOut",
@@ -214,7 +254,7 @@ export function SpringPath() {
 
       backgroundControls.start("initial");
       await controls.start("initial", {
-        duration: 0.4,
+        duration: 0.35,
         ease: "easeOut",
       });
       idleControls.start("animate");
@@ -301,7 +341,7 @@ export function SpringPath() {
               strokeLinecap="round"
               strokeWidth="4.913"
               transform="rotate(-6.595 289.63 228.535)"
-              className="[--stroke-color:#989898] dark:[--stroke-color:#D6D6D6] [--stroke-highlight:#98989866] dark:[--stroke-highlight:#D6D6D666]"
+              className="[--stroke-color:#989898] dark:[--stroke-color:#D6D6D6] [--stroke-highlight:#98989866] dark:[--stroke-highlight:#D6D6D666] [--bg-fill:#F8F8F8] dark:[--bg-fill:#252525]"
             ></motion.circle>
           </g>
 
@@ -327,43 +367,34 @@ export function SpringPath() {
 
       <motion.g
         variants={{
-          initial: {},
-          animate: {
+          hidden: {},
+          visible: {
             transition: {
               staggerChildren: 0.1,
               delayChildren: 0.35,
             },
           },
         }}
-        initial="initial"
-        animate="animate"
+        initial="hidden"
+        animate="visible"
       >
         <motion.g
-          initial={{
-            transform: "translateY(0px)",
-          }}
-          animate={{
-            transform: ["translateY(-2px)", "translateY(3px)"],
-          }}
-          transition={{
-            delay: 0.4,
-            duration: 3,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
+          variants={{
+            hidden: {
+              transform: "translateX(40px) translateY(-60px) scale(0)",
+              opacity: 0,
+            },
+            visible: {
+              transform: "translateX(0px) translateY(0px) scale(1)",
+              opacity: 1,
+            },
           }}
         >
           <motion.g
-            variants={{
-              initial: {
-                transform: "translateX(40px) translateY(-60px) scale(0)",
-                opacity: 0,
-              },
-              animate: {
-                transform: "translateX(0px) translateY(0px) scale(1)",
-                opacity: 1,
-              },
-            }}
+            variants={bubblesVariants}
+            initial="initial"
+            animate={controls}
+            custom={0}
             className="filter-[url(#filter1_i_359_1453)] dark:filter-[url(#filter1_ii_368_1560)]"
           >
             <circle
@@ -376,31 +407,22 @@ export function SpringPath() {
           </motion.g>
         </motion.g>
         <motion.g
-          initial={{
-            transform: "translateY(0px)",
-          }}
-          animate={{
-            transform: ["translateY(-2px)", "translateY(3px)"],
-          }}
-          transition={{
-            delay: 1,
-            duration: 3,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
+          variants={{
+            hidden: {
+              transform: "translateX(40px) translateY(-60px) scale(0)",
+              opacity: 0,
+            },
+            visible: {
+              transform: "translateX(0px) translateY(0px) scale(1)",
+              opacity: 1,
+            },
           }}
         >
           <motion.g
-            variants={{
-              initial: {
-                transform: "translateX(40px) translateY(-60px) scale(0)",
-                opacity: 0,
-              },
-              animate: {
-                transform: "translateX(0px) translateY(0px) scale(1)",
-                opacity: 1,
-              },
-            }}
+            variants={bubblesVariants}
+            initial="initial"
+            animate={controls}
+            custom={1}
             className="filter-[url(#filter2_i_359_1453)] dark:filter-[url(#filter2_ii_368_1560)]"
           >
             <circle
