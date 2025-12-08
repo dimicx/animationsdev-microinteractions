@@ -129,21 +129,19 @@ const bulbMaskVariants: Variants = {
 
 const rayVariants: Variants = {
   initial: { pathLength: 1, strokeOpacity: 0.5 },
-  animate: (i: number) => ({
+  animate: {
     pathLength: [1, 1, 0, 0, 1],
     strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
     transition: {
-      // delay: 0.2 + i * 0.05,
       delay: 0.2,
       duration: 0.7,
       times: [0, 0, 0.2, 0.2, 0.5],
     },
-  }),
-  idle: (i: number) => ({
+  },
+  idle: {
     pathLength: [1, 1, 0, 0, 1],
     strokeOpacity: [0.5, 0, 0, 0.5, 0.5],
     transition: {
-      // delay: REPEAT_DELAY / 2 + 0.2 + i * 0.05,
       delay: REPEAT_DELAY / 2 + 0.2,
       duration: 0.7,
       times: [0, 0, 0.2, 0.2, 0.5],
@@ -151,7 +149,7 @@ const rayVariants: Variants = {
       repeatType: "loop",
       repeatDelay: REPEAT_DELAY,
     },
-  }),
+  },
 };
 
 const raysOpacityVariants: Variants = {
@@ -304,7 +302,6 @@ export function Lightbulb() {
                 variants={rayVariants}
                 initial="initial"
                 animate={controls}
-                custom={0}
                 x1="376.711"
                 y1="53.2909"
                 x2="376.62"
@@ -318,7 +315,6 @@ export function Lightbulb() {
                 variants={rayVariants}
                 initial="initial"
                 animate={controls}
-                custom={1}
                 x1="382.703"
                 y1="45.4685"
                 x2="382.04"
@@ -332,7 +328,6 @@ export function Lightbulb() {
                 variants={rayVariants}
                 initial="initial"
                 animate={controls}
-                custom={2}
                 x1="391.866"
                 y1="41.752"
                 x2="391.536"
@@ -346,7 +341,6 @@ export function Lightbulb() {
                 variants={rayVariants}
                 initial="initial"
                 animate={controls}
-                custom={3}
                 x1="401.616"
                 y1="43.146"
                 x2="403.502"
