@@ -41,17 +41,10 @@ const backgroundVariants: Variants = {
 const bulbVariants: Variants = {
   initial: {
     opacity: 1,
-    fill: "var(--fill-color)",
     transform: "translateY(0%) translateX(0%)",
   },
   animate: {
     opacity: [1, 0.2, 0.2, 1],
-    fill: [
-      "var(--fill-color)",
-      "var(--fill-color)",
-      "var(--fill-highlight)",
-      "var(--fill-highlight)",
-    ],
     transform: [
       "translateY(0%) translateX(0%)",
       "translateY(0%) translateX(0%)",
@@ -295,7 +288,7 @@ export function Lightbulb() {
                 animate={controls}
                 d="M398.989 49.368c6.408 2.708 9.141 10.328 5.95 16.51a10 10 0 0 1-4.121 4.208l-.94.508a10.6 10.6 0 0 0-4.718 5.197l-.318.752a1.95 1.95 0 0 1-1.353 1.14 10.12 10.12 0 0 1-10.967-4.634 1.95 1.95 0 0 1-.126-1.765l.318-.752a10.6 10.6 0 0 0 .437-7.005l-.291-1.028a10 10 0 0 1 .144-5.888c2.208-6.597 9.576-9.95 15.985-7.242"
                 mask="url(#bulb-mask)"
-                className="[--fill-color:#989898] dark:[--fill-color:#D6D6D6] [--fill-highlight:#989898] dark:[--fill-highlight:#FFFFFF]"
+                className="fill-[#989898] dark:fill-[#D6D6D6]"
               ></motion.path>
             </g>
 
