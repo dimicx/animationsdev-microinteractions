@@ -23,15 +23,6 @@ const pathVariants: Variants = {
       ease: bounceEasing,
     },
   }),
-  idle: {
-    pathLength: [1, 0.98, 1],
-    transition: {
-      duration: 2.5,
-      repeat: Infinity,
-      repeatType: "mirror",
-      ease: "easeInOut",
-    },
-  },
 };
 
 const secondaryCircleVariants: Variants = {
@@ -77,7 +68,7 @@ const idleVariants: Variants = {
       "translateY(0%) translateX(0%)",
     ],
     transition: {
-      duration: 2.5,
+      duration: 4,
       repeat: Infinity,
       repeatType: "mirror",
       ease: "easeInOut",
