@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useFlubber } from "@/lib/flubber";
 import {
   animate,
@@ -170,6 +170,7 @@ export function Hand() {
   const controls = useAnimation();
   const handPathProgress = useMotionValue(0);
   const handPath = useFlubber(handPathProgress, handPaths);
+  const hasAnimatedMobile = useRef(false);
 
   const startAnimations = useCallback(() => {
     controls.start("idle");
@@ -181,7 +182,7 @@ export function Hand() {
   }, [startAnimations]);
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
-    delay: UNIVERSAL_DELAY,
+    delay: isMobile ? 0 : UNIVERSAL_DELAY,
     onHoverStart: async () => {
       handPathProgress.set(0);
       controls.start("animate");
@@ -190,8 +191,14 @@ export function Hand() {
         times: [0, 0.7, 1],
         ease: "easeInOut",
       });
+      if (isMobile && !hasAnimatedMobile.current) {
+        hasAnimatedMobile.current = true;
+      }
     },
     onHoverEnd: async () => {
+      if (isMobile && hasAnimatedMobile.current) {
+        hasAnimatedMobile.current = false;
+      }
       handPathProgress.set(0);
       await controls.start("initial");
       await Promise.all([
@@ -202,7 +209,7 @@ export function Hand() {
   });
 
   const onClick = useCallback(async () => {
-    if (isMobile) return;
+    if (isMobile && !hasAnimatedMobile.current) return;
     handPathProgress.set(0);
     animate(handPathProgress, [0, 1, 2], {
       duration: 0.35,
