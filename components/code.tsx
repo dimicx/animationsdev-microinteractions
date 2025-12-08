@@ -76,9 +76,9 @@ const slashVariants: Variants = {
   animate: {
     transform: [
       "translateX(0%) translateY(0%) rotate(0deg)",
-      "translateX(80%) translateY(-3%) rotate(8deg)",
-      "translateX(-1750%) translateY(19%) rotate(-35deg)",
-      "translateX(-1700%) translateY(17%) rotate(-30deg)",
+      "translateX(80%) translateY(-3%) rotate(-8deg)",
+      "translateX(-1700%) translateY(19%) rotate(8deg)",
+      "translateX(-1650%) translateY(17%) rotate(0deg)",
     ],
     transition: {
       duration: 0.7,

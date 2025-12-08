@@ -19,7 +19,7 @@ const pathVariants: Variants = {
   animate: ({ bounceEasing }: { bounceEasing: (t: number) => number }) => ({
     pathLength: [1, bounceEasing(0.01)],
     transition: {
-      duration: 0.9,
+      duration: 0.95,
       ease: bounceEasing,
     },
   }),
@@ -170,7 +170,7 @@ export function SpringPath() {
       forwardCompleted.current = false;
       progress.set(0);
       animate(progress, forwardPathData.length, {
-        duration: 0.9,
+        duration: 0.95,
         ease: bounceEasing || "linear",
       }).then(() => {
         forwardCompleted.current = true;
