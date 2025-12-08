@@ -335,115 +335,100 @@ export function Lightbulb() {
         </motion.g>
 
         <motion.g variants={wholeVariants} initial="initial" animate={controls}>
-          <motion.g
-            initial={{
-              transform: "translateY(0px)",
-            }}
-            animate={{
-              transform: ["translateY(-1.5px)", "translateY(2px)"],
-            }}
-            transition={{
-              duration: 4.5,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "reverse",
-            }}
-          >
-            <g>
-              <defs>
-                <mask id="bulb-mask">
-                  <rect width="100%" height="100%" fill="white" />
-                  <motion.g
-                    variants={bulbMaskVariants}
-                    initial="initial"
-                    animate={controls}
-                  >
-                    <path
-                      d="M398.773 55.476a1.843 1.843 0 0 0-2.181 2.97l.181.144a3.08 3.08 0 0 1 .974 3.108 1.842 1.842 0 1 0 3.565.932 6.76 6.76 0 0 0-2.539-7.154"
-                      fill="black"
-                    />
-                  </motion.g>
-                </mask>
-              </defs>
-              {/* stem */}
-              <motion.path
-                variants={stemVariants}
-                initial="initial"
-                animate={controls}
-                d="M379.934 77.108c.307-.725 1.318-.824 1.845-.24a12.15 12.15 0 0 0 4.303 3.05 12.14 12.14 0 0 0 5.185.959c.787-.03 1.42.764 1.114 1.49l-.784 1.854-.009.024c-.924 2.187-4.46 2.783-7.896 1.332-3.436-1.452-5.473-4.403-4.551-6.59z"
-                className="fill-[#989898] dark:fill-[#D6D6D6]"
-              ></motion.path>
-              {/* bulb */}
-              {/* shine applied as mask to the bulb path (#bulb-mask) */}
-              <motion.path
-                variants={bulbVariants}
-                initial="initial"
-                animate={controls}
-                d="M398.989 49.368c6.408 2.708 9.141 10.328 5.95 16.51a10 10 0 0 1-4.121 4.208l-.94.508a10.6 10.6 0 0 0-4.718 5.197l-.318.752a1.95 1.95 0 0 1-1.353 1.14 10.12 10.12 0 0 1-10.967-4.634 1.95 1.95 0 0 1-.126-1.765l.318-.752a10.6 10.6 0 0 0 .437-7.005l-.291-1.028a10 10 0 0 1 .144-5.888c2.208-6.597 9.576-9.95 15.985-7.242"
-                mask="url(#bulb-mask)"
-                className="fill-[#989898] dark:fill-[#D6D6D6]"
-              ></motion.path>
-            </g>
-
-            {/* light rays reworked as lines to animate pathLength */}
-            <motion.g
-              variants={raysOpacityVariants}
+          <g>
+            <defs>
+              <mask id="bulb-mask">
+                <rect width="100%" height="100%" fill="white" />
+                <motion.g
+                  variants={bulbMaskVariants}
+                  initial="initial"
+                  animate={controls}
+                >
+                  <path
+                    d="M398.773 55.476a1.843 1.843 0 0 0-2.181 2.97l.181.144a3.08 3.08 0 0 1 .974 3.108 1.842 1.842 0 1 0 3.565.932 6.76 6.76 0 0 0-2.539-7.154"
+                    fill="black"
+                  />
+                </motion.g>
+              </mask>
+            </defs>
+            {/* stem */}
+            <motion.path
+              variants={stemVariants}
               initial="initial"
               animate={controls}
-            >
-              <motion.line
-                variants={rayVariants}
-                initial="initial"
-                animate={controls}
-                x1="376.711"
-                y1="53.2909"
-                x2="376.62"
-                y2="53.2495"
-                strokeOpacity="0.5"
-                strokeWidth="3.7"
-                strokeLinecap="round"
-                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-              />
-              <motion.line
-                variants={rayVariants}
-                initial="initial"
-                animate={controls}
-                x1="382.703"
-                y1="45.4685"
-                x2="382.04"
-                y2="44.5912"
-                strokeOpacity="0.5"
-                strokeWidth="3.7"
-                strokeLinecap="round"
-                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-              />
-              <motion.line
-                variants={rayVariants}
-                initial="initial"
-                animate={controls}
-                x1="391.866"
-                y1="41.752"
-                x2="391.536"
-                y2="39.1226"
-                strokeOpacity="0.5"
-                strokeWidth="3.7"
-                strokeLinecap="round"
-                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-              />
-              <motion.line
-                variants={rayVariants}
-                initial="initial"
-                animate={controls}
-                x1="401.616"
-                y1="43.146"
-                x2="403.502"
-                y2="38.6842"
-                strokeOpacity="0.5"
-                strokeWidth="3.7"
-                strokeLinecap="round"
-                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-              />
-            </motion.g>
+              d="M379.934 77.108c.307-.725 1.318-.824 1.845-.24a12.15 12.15 0 0 0 4.303 3.05 12.14 12.14 0 0 0 5.185.959c.787-.03 1.42.764 1.114 1.49l-.784 1.854-.009.024c-.924 2.187-4.46 2.783-7.896 1.332-3.436-1.452-5.473-4.403-4.551-6.59z"
+              className="fill-[#989898] dark:fill-[#D6D6D6]"
+            ></motion.path>
+            {/* bulb */}
+            {/* shine applied as mask to the bulb path (#bulb-mask) */}
+            <motion.path
+              variants={bulbVariants}
+              initial="initial"
+              animate={controls}
+              d="M398.989 49.368c6.408 2.708 9.141 10.328 5.95 16.51a10 10 0 0 1-4.121 4.208l-.94.508a10.6 10.6 0 0 0-4.718 5.197l-.318.752a1.95 1.95 0 0 1-1.353 1.14 10.12 10.12 0 0 1-10.967-4.634 1.95 1.95 0 0 1-.126-1.765l.318-.752a10.6 10.6 0 0 0 .437-7.005l-.291-1.028a10 10 0 0 1 .144-5.888c2.208-6.597 9.576-9.95 15.985-7.242"
+              mask="url(#bulb-mask)"
+              className="fill-[#989898] dark:fill-[#D6D6D6]"
+            ></motion.path>
+          </g>
+
+          {/* light rays reworked as lines to animate pathLength */}
+          <motion.g
+            variants={raysOpacityVariants}
+            initial="initial"
+            animate={controls}
+          >
+            <motion.line
+              variants={rayVariants}
+              initial="initial"
+              animate={controls}
+              x1="376.711"
+              y1="53.2909"
+              x2="376.62"
+              y2="53.2495"
+              strokeOpacity="0.5"
+              strokeWidth="3.7"
+              strokeLinecap="round"
+              className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+            />
+            <motion.line
+              variants={rayVariants}
+              initial="initial"
+              animate={controls}
+              x1="382.703"
+              y1="45.4685"
+              x2="382.04"
+              y2="44.5912"
+              strokeOpacity="0.5"
+              strokeWidth="3.7"
+              strokeLinecap="round"
+              className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+            />
+            <motion.line
+              variants={rayVariants}
+              initial="initial"
+              animate={controls}
+              x1="391.866"
+              y1="41.752"
+              x2="391.536"
+              y2="39.1226"
+              strokeOpacity="0.5"
+              strokeWidth="3.7"
+              strokeLinecap="round"
+              className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+            />
+            <motion.line
+              variants={rayVariants}
+              initial="initial"
+              animate={controls}
+              x1="401.616"
+              y1="43.146"
+              x2="403.502"
+              y2="38.6842"
+              strokeOpacity="0.5"
+              strokeWidth="3.7"
+              strokeLinecap="round"
+              className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+            />
           </motion.g>
         </motion.g>
       </motion.g>
