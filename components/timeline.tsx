@@ -13,11 +13,12 @@ import {
   timelineTwoVariants,
 } from "@/lib/variants/timeline-variants";
 import { motion, useAnimation } from "motion/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function Timeline({ isMobile }: { isMobile: boolean }) {
   const controls = useAnimation();
   const containerControls = useAnimation();
+  const bufferLeaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
@@ -33,6 +34,10 @@ export function Timeline({ isMobile }: { isMobile: boolean }) {
   });
 
   const handleBufferEnter = async () => {
+    if (bufferLeaveTimeoutRef.current) {
+      clearTimeout(bufferLeaveTimeoutRef.current);
+      bufferLeaveTimeoutRef.current = null;
+    }
     // Reset to initial when cursor enters buffer zone
     containerControls.start("initial");
     await controls.start("initial", {
@@ -43,12 +48,19 @@ export function Timeline({ isMobile }: { isMobile: boolean }) {
 
   const handleBufferLeave = () => {
     // Go back to idle when leaving buffer zone
-    controls.start("idle");
+    bufferLeaveTimeoutRef.current = setTimeout(() => {
+      controls.start("idle");
+    }, 1000);
   };
 
   useEffect(() => {
     controls.start("idle");
     containerControls.start("initial");
+    return () => {
+      if (bufferLeaveTimeoutRef.current) {
+        clearTimeout(bufferLeaveTimeoutRef.current);
+      }
+    };
   }, [controls, containerControls]);
 
   return (
