@@ -1,109 +1,14 @@
-import {
-  animate,
-  motion,
-  useAnimation,
-  useMotionValue,
-  Variants,
-} from "motion/react";
-import { useFlubber } from "@/lib/flubber";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import { useFlubber } from "@/lib/flubber";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
-
-const rotateVariants: Variants = {
-  initial: {
-    transform: "rotate(0deg) scale(1)",
-  },
-  animate: {
-    transform: [
-      "rotate(0deg) scale(1)",
-      "rotate(8deg) scale(0.99)",
-      "rotate(12deg) scale(1.01)",
-      "rotate(10deg) scale(1)",
-    ],
-    transition: {
-      delay: 0.1,
-      duration: 0.5,
-      times: [0, 0.4, 0.7, 1],
-      ease: "easeInOut",
-    },
-  },
-};
-
-const caretLeftVariants: Variants = {
-  initial: {
-    transform: "translateX(0%) translateY(0%)",
-  },
-  animate: {
-    transform: [
-      "translateX(0%) translateY(0%)",
-      "translateX(15%) translateY(-3%)",
-      "translateX(-90%) translateY(12%)",
-      "translateX(-80%) translateY(10%)",
-    ],
-    transition: {
-      duration: 0.7,
-      times: [0, 0.2, 0.55, 1],
-      ease: "easeInOut",
-    },
-  },
-};
-
-const caretRightVariants: Variants = {
-  initial: {
-    transform: "translateX(0%) translateY(0%)",
-  },
-  animate: {
-    transform: [
-      "translateX(0%) translateY(0%)",
-      "translateX(-15%) translateY(3%)",
-      "translateX(90%) translateY(-12%)",
-      "translateX(80%) translateY(-10%)",
-    ],
-    transition: {
-      duration: 0.7,
-      times: [0, 0.2, 0.55, 1],
-      ease: "easeInOut",
-    },
-  },
-};
-
-const slashVariants: Variants = {
-  initial: {
-    transform: "translateX(0%) translateY(0%) rotate(0deg)",
-  },
-  animate: {
-    transform: [
-      "translateX(0%) translateY(0%) rotate(0deg)",
-      "translateX(80%) translateY(-3%) rotate(-8deg)",
-      "translateX(-1700%) translateY(19%) rotate(8deg)",
-      "translateX(-1650%) translateY(17%) rotate(0deg)",
-    ],
-    transition: {
-      duration: 0.7,
-      times: [0, 0.2, 0.55, 1],
-      ease: "easeInOut",
-    },
-  },
-};
-
-const codePathVariants: Variants = {
-  initial: {
-    transform: "translateX(0%) translateY(0%)",
-  },
-  animate: {
-    transform: [
-      "translateX(0%) translateY(0%)",
-      "translateX(-10%) translateY(0%)",
-      "translateX(43%) translateY(-12%)",
-      "translateX(38%) translateY(-10%)",
-    ],
-    transition: {
-      duration: 0.7,
-      times: [0, 0.2, 0.55, 1],
-      ease: "easeInOut",
-    },
-  },
-};
+import {
+  caretLeftVariants,
+  caretRightVariants,
+  codePathVariants,
+  rotateVariants,
+  slashVariants,
+} from "@/lib/variants/code-variants";
+import { animate, motion, useAnimation, useMotionValue } from "motion/react";
 
 const codePaths = [
   "M402.625 268.175C402.51 267.54 402.522 266.888 402.659 266.258C402.797 265.627 403.057 265.03 403.425 264.5C403.794 263.97 404.263 263.518 404.806 263.17C405.349 262.821 405.956 262.583 406.591 262.47L409.815 261.89C410.45 261.775 411.101 261.787 411.732 261.924C412.362 262.061 412.96 262.322 413.49 262.69C414.019 263.058 414.471 263.527 414.82 264.071C415.168 264.614 415.406 265.22 415.52 265.856L417.84 278.751C418.07 280.033 417.782 281.355 417.038 282.425C416.295 283.495 415.156 284.225 413.874 284.457L410.65 285.037C409.367 285.267 408.046 284.979 406.976 284.235C405.906 283.491 405.175 282.353 404.944 281.071L402.625 268.175Z",

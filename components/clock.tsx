@@ -1,104 +1,13 @@
-import { motion, useAnimation, Variants } from "motion/react";
-import { useCallback, useEffect } from "react";
 import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
-
-const backgroundVariants: Variants = {
-  initial: {
-    transform: "rotate(0deg) scale(1)",
-  },
-  animate: {
-    transform: [
-      "rotate(0deg) scale(1)",
-      "rotate(-4deg) scale(0.99)",
-      "rotate(-1deg) scale(1.01)",
-      "rotate(-3deg) scale(1)",
-    ],
-    transition: {
-      duration: 0.5,
-      times: [0, 0.25, 0.6, 1],
-      ease: "easeInOut",
-    },
-  },
-};
-
-const clockVariants: Variants = {
-  initial: {
-    y: "0%",
-    x: "0%",
-  },
-  animate: {
-    y: ["0%", "3%", "-6%"],
-    x: ["0%", "-4%", "4%", "-4%", "4%", "-4%", "0%"],
-    transition: {
-      y: {
-        duration: 0.3,
-        ease: "easeOut",
-      },
-      x: {
-        duration: 0.3,
-        repeat: Infinity,
-        ease: "linear",
-      },
-    },
-  },
-};
-
-const bellVariants: Variants = {
-  initial: {
-    y: "0%",
-    x: "0%",
-    rotate: "0deg",
-  },
-  animate: (i: number) => ({
-    y: i === 0 ? ["0%", "10%", "-25%", "-70%"] : ["0%", "20%", "-50%", "-100%"],
-    x:
-      i === 0
-        ? ["0%", "-20%", "16%", "-16%", "20%", "-16%", "0%"]
-        : ["0%", "-15%", "30%", "-30%", "35%", "-30%", "0%"],
-    rotate: i === 0 ? "0deg" : ["0deg", "-5deg"],
-    transition: {
-      y: {
-        delay: i * 0.05,
-        duration: 3,
-        times: [0, 0.05, 0.1, 1],
-        ease: "easeOut",
-      },
-      x: {
-        delay: i * 0.05,
-        duration: 0.25,
-        repeat: Infinity,
-        ease: "linear",
-      },
-      rotate: {
-        duration: 0.2,
-        ease: "easeOut",
-      },
-    },
-  }),
-};
-
-const idleBellsVariants: Variants = {
-  initial: {
-    transform: "translateX(0%) translateY(0%) rotate(0deg)",
-  },
-  animate: {
-    transform: [
-      "translateX(0%) translateY(0%) rotate(0deg)",
-      "translateX(-12%) translateY(-6%) rotate(-8deg)",
-      "translateX(12%) translateY(8%) rotate(8deg)",
-      "translateX(0%) translateY(0%) rotate(0deg)",
-    ],
-    transition: {
-      duration: 1,
-      ease: "easeOut",
-      repeat: Infinity,
-      repeatType: "loop",
-      repeatDelay: 4,
-      delay: 2,
-    },
-  },
-};
+import {
+  backgroundVariants,
+  bellVariants,
+  clockVariants,
+  idleBellsVariants,
+} from "@/lib/variants/clock-variants";
+import { motion, useAnimation } from "motion/react";
+import { useCallback, useEffect } from "react";
 
 export function Clock({ isMobile }: { isMobile: boolean }) {
   const controls = useAnimation();
