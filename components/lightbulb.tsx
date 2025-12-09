@@ -253,8 +253,8 @@ export function Lightbulb({ isMobile }: { isMobile: boolean }) {
 
   useEffect(() => {
     const startAnimations = async () => {
-      await controls.start("initial", { duration: 0 });
-      await controls.start("idle");
+      controls.start("initial");
+      controls.start("idle");
     };
     startAnimations();
   }, [controls]);

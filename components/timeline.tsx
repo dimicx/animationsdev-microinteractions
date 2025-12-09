@@ -35,12 +35,12 @@ const timelineOneVariants: Variants = {
   idle: {
     pathLength: [1, 0.8, 1],
     transition: {
-      duration: 2.5,
+      duration: 3,
       ease: "easeInOut",
       repeat: Infinity,
       repeatType: "loop",
-      repeatDelay: 2.7,
-      delay: 2.7,
+      repeatDelay: 4,
+      delay: 4,
     },
   },
 };
@@ -67,14 +67,14 @@ const timelineTwoVariants: Variants = {
     },
   },
   idle: {
-    pathLength: [1, 0.7, 1],
+    pathLength: [1, 0.8, 1],
     transition: {
-      duration: 2,
+      duration: 2.5,
       ease: "easeInOut",
       repeat: Infinity,
       repeatType: "loop",
-      repeatDelay: 3.2,
-      delay: 3.2,
+      repeatDelay: 3.6,
+      delay: 3.6,
     },
   },
 };
@@ -103,12 +103,12 @@ const timelineThreeVariants: Variants = {
   idle: {
     pathLength: [1, 0.8, 1],
     transition: {
-      duration: 1,
+      duration: 2.4,
       ease: "easeInOut",
       repeat: Infinity,
       repeatType: "loop",
-      repeatDelay: 3.5,
-      delay: 3.5,
+      repeatDelay: 3.2,
+      delay: 3.2,
     },
   },
 };
