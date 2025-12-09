@@ -1,6 +1,6 @@
 import { Variants } from "motion";
 
-const REPEAT_DELAY = 8;
+const REPEAT_DELAY = 10;
 
 const wholeVariants: Variants = {
   initial: {

@@ -1,4 +1,9 @@
-import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import {
+  createFloatingAnimation,
+  createRotationAnimation,
+  fadeScaleVariants,
+  UNIVERSAL_DELAY,
+} from "@/lib/animation-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
   backgroundVariants,
@@ -23,7 +28,7 @@ export function Timeline({ isMobile }: { isMobile: boolean }) {
     onHoverEnd: async () => {
       containerControls.start("initial");
       await controls.start("initial");
-      await controls.start("idle");
+      controls.start("idle");
     },
   });
 
@@ -62,32 +67,18 @@ export function Timeline({ isMobile }: { isMobile: boolean }) {
 
       <motion.g onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <motion.g
-          initial={{
-            transform: "translateY(0px)",
-          }}
-          animate={{
-            transform: ["translateY(-1px)", "translateY(2.5px)"],
-          }}
-          transition={{
+          {...createFloatingAnimation({
+            from: -1,
+            to: 2.5,
             duration: 2.5,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
+          })}
         >
           <motion.g
-            initial={{
-              transform: "rotate(0deg)",
-            }}
-            animate={{
-              transform: ["rotate(0deg)", "rotate(-360deg)"],
-            }}
-            transition={{
-              duration: 60,
-              ease: "linear",
-              repeat: Infinity,
-              repeatType: "loop",
-            }}
+            {...createRotationAnimation({
+              from: 0,
+              to: 360,
+              duration: 90,
+            })}
             className="filter-[url(#filter6_i_359_1453)] dark:filter-[url(#filter6_i_368_1560)]"
           >
             <motion.g

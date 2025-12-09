@@ -106,6 +106,17 @@ const bubblesVariants: Variants = {
   }),
 };
 
+const bubblesAppearVariants: Variants = {
+  hidden: {
+    transform: "translateX(40px) translateY(-60px) scale(0)",
+    opacity: 0,
+  },
+  visible: {
+    transform: "translateX(0px) translateY(0px) scale(1)",
+    opacity: 1,
+  },
+};
+
 export {
   BOUNCE_DURATION,
   pathVariants,
@@ -113,4 +124,5 @@ export {
   backgroundVariants,
   idleVariants,
   bubblesVariants,
+  bubblesAppearVariants,
 };

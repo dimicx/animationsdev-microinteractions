@@ -1,4 +1,9 @@
-import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import {
+  createFloatingAnimation,
+  createRotationAnimation,
+  fadeScaleVariants,
+  UNIVERSAL_DELAY,
+} from "@/lib/animation-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
   backgroundVariants,
@@ -42,32 +47,18 @@ export function Clock({ isMobile }: { isMobile: boolean }) {
       onMouseLeave={handleMouseLeave}
     >
       <motion.g
-        initial={{
-          transform: "rotate(0deg)",
-        }}
-        animate={{
-          transform: ["rotate(-2deg)", "rotate(2deg)"],
-        }}
-        transition={{
-          duration: 5,
-          ease: "easeInOut",
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
+        {...createRotationAnimation({
+          from: -1,
+          to: 1,
+          duration: 4,
+        })}
       >
         <motion.g
-          initial={{
-            transform: "translateY(0px)",
-          }}
-          animate={{
-            transform: ["translateY(-2px)", "translateY(2px)"],
-          }}
-          transition={{
+          {...createFloatingAnimation({
+            from: -1.5,
+            to: 1.5,
             duration: 3,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
+          })}
           className="filter-[url(#filter7_i_359_1453)] dark:filter-[url(#filter7_i_368_1560)]"
         >
           <motion.g

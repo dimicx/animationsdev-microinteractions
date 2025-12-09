@@ -1,4 +1,9 @@
-import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import {
+  createFloatingAnimation,
+  createRotationAnimation,
+  fadeScaleVariants,
+  UNIVERSAL_DELAY,
+} from "@/lib/animation-variants";
 import {
   bounceAcceleratedX,
   bounceEase,
@@ -8,6 +13,7 @@ import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
   backgroundVariants,
   BOUNCE_DURATION,
+  bubblesAppearVariants,
   bubblesVariants,
   idleVariants,
   pathVariants,
@@ -98,6 +104,13 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
 
   useEffect(() => {
     startAnimations();
+
+    return () => {
+      animationRef.current?.stop();
+      if (forwardCompleteTimeoutRef.current) {
+        clearTimeout(forwardCompleteTimeoutRef.current);
+      }
+    };
   }, [startAnimations]);
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
@@ -176,18 +189,11 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
     <motion.g variants={fadeScaleVariants} className="origin-bottom-left!">
       <motion.g onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <motion.g
-          initial={{
-            transform: "translateY(0%)",
-          }}
-          animate={{
-            transform: ["translateY(-1px)", "translateY(2px)"],
-          }}
-          transition={{
-            duration: 4,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
+          {...createFloatingAnimation({
+            from: -1,
+            to: 2,
+            duration: 5,
+          })}
         >
           <motion.g
             variants={backgroundVariants}
@@ -195,19 +201,12 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
             animate={backgroundControls}
           >
             <motion.g
-              initial={{
-                transform: "rotate(0deg)",
-              }}
-              animate={{
-                transform: ["rotate(-1deg)", "rotate(3deg)"],
-              }}
-              transition={{
+              {...createRotationAnimation({
+                from: -1,
+                to: 2,
+                duration: 6,
                 delay: 1,
-                duration: 5,
-                ease: "easeInOut",
-                repeat: Infinity,
-                repeatType: "reverse",
-              }}
+              })}
               className="filter-[url(#filter0_i_359_1453)] dark:filter-[url(#filter0_ii_368_1560)]"
             >
               <path
@@ -286,18 +285,7 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
           initial="hidden"
           animate="visible"
         >
-          <motion.g
-            variants={{
-              hidden: {
-                transform: "translateX(40px) translateY(-60px) scale(0)",
-                opacity: 0,
-              },
-              visible: {
-                transform: "translateX(0px) translateY(0px) scale(1)",
-                opacity: 1,
-              },
-            }}
-          >
+          <motion.g variants={bubblesAppearVariants}>
             <motion.g
               variants={bubblesVariants}
               initial="initial"
@@ -314,18 +302,7 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
               ></circle>
             </motion.g>
           </motion.g>
-          <motion.g
-            variants={{
-              hidden: {
-                transform: "translateX(40px) translateY(-60px) scale(0)",
-                opacity: 0,
-              },
-              visible: {
-                transform: "translateX(0px) translateY(0px) scale(1)",
-                opacity: 1,
-              },
-            }}
-          >
+          <motion.g variants={bubblesAppearVariants}>
             <motion.g
               variants={bubblesVariants}
               initial="initial"

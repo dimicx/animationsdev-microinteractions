@@ -1,4 +1,9 @@
-import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import {
+  createFloatingAnimation,
+  createRotationAnimation,
+  fadeScaleVariants,
+  UNIVERSAL_DELAY,
+} from "@/lib/animation-variants";
 import { useFlubber } from "@/lib/flubber";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
@@ -47,20 +52,28 @@ export function Hand({ isMobile }: { isMobile: boolean }) {
 
   useEffect(() => {
     startIdleAnimations();
+
+    return () => {
+      handPathAnimationRef.current?.stop();
+    };
   }, [startIdleAnimations]);
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
     onHoverStart: async () => {
       handPathAnimationRef.current?.stop();
-      await animate(handPathProgress, 0, { duration: 0 });
-      await controls.start("initial", { duration: 0 });
+      animate(handPathProgress, 0, { duration: 0 });
 
       controls.start("animate");
       handPathAnimationRef.current = animate(handPathProgress, [0, 1, 0], {
         duration: 0.5,
         times: [0, 0.7, 1],
         ease: "easeInOut",
+        onComplete: () => {
+          if (isMobile && !hasAnimatedMobile.current) {
+            hasAnimatedMobile.current = true;
+          }
+        },
       });
     },
     onHoverEnd: async () => {
@@ -68,13 +81,16 @@ export function Hand({ isMobile }: { isMobile: boolean }) {
         hasAnimatedMobile.current = false;
       }
       handPathAnimationRef.current?.stop();
-      await animate(handPathProgress, 0, { duration: 0 });
+
+      animate(handPathProgress, 0, { duration: 0 });
       await controls.start("initial");
+
       startIdleAnimations();
     },
   });
 
   const onClick = useCallback(async () => {
+    if (isMobile && !hasAnimatedMobile.current) return;
     handPathAnimationRef.current?.stop();
     await animate(handPathProgress, 0, { duration: 0 });
     handPathAnimationRef.current = animate(handPathProgress, [0, 1, 0], {
@@ -83,7 +99,7 @@ export function Hand({ isMobile }: { isMobile: boolean }) {
       ease: "easeInOut",
     });
     controls.start("click");
-  }, [controls, handPathProgress]);
+  }, [controls, handPathProgress, isMobile]);
 
   return (
     <motion.g
@@ -94,33 +110,19 @@ export function Hand({ isMobile }: { isMobile: boolean }) {
       className="origin-bottom!"
     >
       <motion.g
-        initial={{
-          transform: "translateY(0px)",
-        }}
-        animate={{
-          transform: ["translateY(-2px)", "translateY(2px)"],
-        }}
-        transition={{
+        {...createFloatingAnimation({
+          from: -1.5,
+          to: 1,
+          duration: 3,
           delay: 0.5,
-          duration: 2.5,
-          ease: "easeInOut",
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
+        })}
       >
         <motion.g
-          initial={{
-            transform: "rotate(0deg)",
-          }}
-          animate={{
-            transform: ["rotate(-3deg)", "rotate(2deg)"],
-          }}
-          transition={{
-            duration: 4,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
+          {...createRotationAnimation({
+            from: -2,
+            to: 2,
+            duration: 5,
+          })}
           className="filter-[url(#filter4_i_359_1453)] dark:filter-[url(#filter4_i_368_1560)]"
         >
           <motion.g

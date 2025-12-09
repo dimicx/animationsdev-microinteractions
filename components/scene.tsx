@@ -1,7 +1,5 @@
 "use client";
 
-import { motion, MotionConfig } from "motion/react";
-
 import { Clock } from "@/components/clock";
 import { Code } from "@/components/code";
 import { Defs } from "@/components/defs";
@@ -10,6 +8,7 @@ import { Lightbulb } from "@/components/lightbulb";
 import { SpringPath } from "@/components/spring-path";
 import { Timeline } from "@/components/timeline";
 import useIsMobile from "@/lib/use-is-mobile";
+import { motion, MotionConfig } from "motion/react";
 
 export function Scene() {
   const { isMobile } = useIsMobile();
@@ -36,8 +35,10 @@ export function Scene() {
               transition: { staggerChildren: 0.05, delayChildren: 0.125 },
             },
           }}
-          initial="initial"
-          animate="animate"
+          initial={"initial"}
+          animate={"animate"}
+          role="img"
+          aria-label="Interactive animation showcasing various microinteractions"
         >
           <Code isMobile={isMobile} />
           <SpringPath isMobile={isMobile} />

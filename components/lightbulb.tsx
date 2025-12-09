@@ -1,4 +1,9 @@
-import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import {
+  createFloatingAnimation,
+  createRotationAnimation,
+  fadeScaleVariants,
+  UNIVERSAL_DELAY,
+} from "@/lib/animation-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
   backgroundVariants,
@@ -15,6 +20,7 @@ import { useCallback, useEffect, useRef } from "react";
 export function Lightbulb({ isMobile }: { isMobile: boolean }) {
   const controls = useAnimation();
   const hasAnimatedMobile = useRef(false);
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const startAnimations = async () => {
@@ -27,24 +33,32 @@ export function Lightbulb({ isMobile }: { isMobile: boolean }) {
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
     onHoverStart: async () => {
-      await controls.start("initial", { duration: 0 });
-      await controls.start("animate");
+      controls.start("animate");
+
       if (isMobile && !hasAnimatedMobile.current) {
-        hasAnimatedMobile.current = true;
+        animationTimeoutRef.current = setTimeout(() => {
+          hasAnimatedMobile.current = true;
+        }, 200);
       }
     },
     onHoverEnd: async () => {
       if (isMobile && hasAnimatedMobile.current) {
         hasAnimatedMobile.current = false;
       }
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
       await controls.start("initial");
-      await controls.start("idle");
+      controls.start("idle");
     },
   });
 
   const onClick = useCallback(async () => {
     if (isMobile && !hasAnimatedMobile.current) return;
     controls.start("click");
+    if (animationTimeoutRef.current) {
+      clearTimeout(animationTimeoutRef.current);
+    }
   }, [controls, isMobile]);
 
   return (
@@ -56,18 +70,11 @@ export function Lightbulb({ isMobile }: { isMobile: boolean }) {
       className="origin-bottom!"
     >
       <motion.g
-        initial={{
-          transform: "translateY(0px)",
-        }}
-        animate={{
-          transform: ["translateY(-2px)", "translateY(3px)"],
-        }}
-        transition={{
+        {...createFloatingAnimation({
+          from: -1.5,
+          to: 1,
           duration: 3,
-          ease: "easeInOut",
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
+        })}
       >
         <motion.g
           variants={backgroundVariants}
@@ -75,18 +82,11 @@ export function Lightbulb({ isMobile }: { isMobile: boolean }) {
           animate={controls}
         >
           <motion.g
-            initial={{
-              transform: "rotate(0deg)",
-            }}
-            animate={{
-              transform: ["rotate(-8deg)", "rotate(8deg)"],
-            }}
-            transition={{
-              duration: 5,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "reverse",
-            }}
+            {...createRotationAnimation({
+              from: -5,
+              to: 5,
+              duration: 10,
+            })}
             className="filter-[url(#filter5_i_359_1453)] dark:filter-[url(#filter5_i_368_1560)]"
           >
             <path

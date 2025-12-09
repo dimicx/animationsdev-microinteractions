@@ -1,4 +1,8 @@
-import { fadeScaleVariants, UNIVERSAL_DELAY } from "@/lib/animation-variants";
+import {
+  createFloatingAnimation,
+  fadeScaleVariants,
+  UNIVERSAL_DELAY,
+} from "@/lib/animation-variants";
 import { useFlubber } from "@/lib/flubber";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
@@ -49,15 +53,11 @@ export function Code({ isMobile }: { isMobile: boolean }) {
       className="origin-bottom-left! group"
     >
       <motion.g
-        animate={{
-          transform: ["translateY(-1px)", "translateY(2px)"],
-          transition: {
-            duration: 2,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse",
-          },
-        }}
+        {...createFloatingAnimation({
+          from: -1,
+          to: 1,
+          duration: 3,
+        })}
       >
         <motion.g
           variants={rotateVariants}
