@@ -86,7 +86,18 @@ export function bounceAcceleratedX(x: number): number {
   } else if (x < b3) {
     // Second bounce to third ground hit (final position) - shortest jump
     const t = (x - b2) / (b3 - b2);
-    const eased = 1 - Math.pow(1 - t, 2);
+    // Subtle curve adjustment to shift peak slightly left
+    let eased;
+    if (t < 0.45) {
+      // Slightly slower rise to peak
+      const t1 = t / 0.45;
+      eased = 1 - Math.pow(1 - t1, 1.8);
+      eased *= 0.42; // Progress to 42% by t=0.45
+    } else {
+      // Slightly faster descent from peak
+      const t2 = (t - 0.45) / 0.55;
+      eased = 0.42 + Math.pow(t2, 1.3) * 0.58;
+    }
     return 0.75 + eased * 0.25; // 75% to 100%
   } else {
     // At final position (settle phase - no more X movement)
