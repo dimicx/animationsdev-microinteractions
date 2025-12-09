@@ -74,13 +74,38 @@ export function Clock({ isMobile }: { isMobile: boolean }) {
         </motion.g>
       </motion.g>
       {/* clock */}
-      <motion.path
-        variants={clockVariants}
-        initial="initial"
-        animate={controls}
-        d="M546.994 163.826c12.546 1.719 21.324 13.284 19.605 25.83s-13.284 21.323-25.83 19.604-21.323-13.283-19.604-25.829 13.283-21.324 25.829-19.605m.984 30.222a2.456 2.456 0 0 0 3.454-3.494zm-2.207-21.297a2.457 2.457 0 0 0-2.768 2.1l-1.334 9.737a5.74 5.74 0 0 0 1.65 4.854l4.659 4.606 1.727-1.747 1.727-1.747-4.659-4.607a.82.82 0 0 1-.235-.692l1.334-9.736a2.457 2.457 0 0 0-2.101-2.768"
-        className="fill-[#989898] dark:fill-[#D6D6D6]"
-      ></motion.path>
+      <motion.g variants={clockVariants} initial="initial" animate={controls}>
+        <circle
+          cx="543.879"
+          cy="186.54"
+          r="22.93"
+          className="fill-[#989898] dark:fill-[#D6D6D6]"
+        />
+        <g>
+          {/* hour hand */}
+          <line
+            x1="543.879"
+            y1="186.531"
+            x2="549.787"
+            y2="192.361"
+            stroke="#252525"
+            strokeWidth="4.9"
+            strokeLinecap="round"
+          />
+          {/* minute hand */}
+          <line
+            x1="543.881"
+            y1="186.533"
+            x2="545.458"
+            y2="175.238"
+            stroke="#252525"
+            strokeWidth="4.9"
+            strokeLinecap="round"
+          />
+          {/* center dot */}
+          <circle cx="543.88" cy="186.54" r="2.45" fill="#252525" />
+        </g>
+      </motion.g>
 
       {/* bells */}
       <motion.g
