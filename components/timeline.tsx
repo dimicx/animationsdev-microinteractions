@@ -19,10 +19,12 @@ export function Timeline({ isMobile }: { isMobile: boolean }) {
   const controls = useAnimation();
   const containerControls = useAnimation();
   const bufferLeaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasEnteredMainAreaRef = useRef(false);
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
     onHoverStart: async () => {
+      hasEnteredMainAreaRef.current = true;
       containerControls.start("animate");
       controls.start("animate");
     },
@@ -34,6 +36,7 @@ export function Timeline({ isMobile }: { isMobile: boolean }) {
   });
 
   const handleBufferEnter = async () => {
+    hasEnteredMainAreaRef.current = false;
     if (bufferLeaveTimeoutRef.current) {
       clearTimeout(bufferLeaveTimeoutRef.current);
       bufferLeaveTimeoutRef.current = null;
@@ -47,10 +50,12 @@ export function Timeline({ isMobile }: { isMobile: boolean }) {
   };
 
   const handleBufferLeave = () => {
-    // Go back to idle when leaving buffer zone
-    bufferLeaveTimeoutRef.current = setTimeout(() => {
-      controls.start("idle");
-    }, 1000);
+    // Only trigger timeout if user never entered the main hover area
+    if (!hasEnteredMainAreaRef.current) {
+      bufferLeaveTimeoutRef.current = setTimeout(() => {
+        controls.start("idle");
+      }, 100);
+    }
   };
 
   useEffect(() => {
