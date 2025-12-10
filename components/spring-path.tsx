@@ -244,13 +244,13 @@ export function SpringPath({
           forwardCompleted.current = false;
           // Fade back in
           animate(ballOpacity, 1, {
-            delay: currentProgress * BOUNCE_DURATION * 0.5,
+            delay: currentProgress * BOUNCE_DURATION * 0.4,
             duration: 0.125,
             ease: "easeOut",
           });
           pathControls.start("initial", {
             pathLength: {
-              duration: currentProgress * BOUNCE_DURATION * 0.6,
+              duration: currentProgress * BOUNCE_DURATION * 0.5,
               ease: bounceAcceleratedX,
             },
             strokeOpacity: {
