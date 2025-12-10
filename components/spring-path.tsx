@@ -38,7 +38,17 @@ const END_Y = 228;
 const GROUND_Y = 243;
 const SECOND_GROUND_Y = 237; // Second bounce hits slightly higher
 
-export function SpringPath({ isMobile }: { isMobile: boolean }) {
+export function SpringPath({
+  isMobile,
+  onDragStart,
+  onDragEnd: onDragEndCallback,
+  isDraggingRef,
+}: {
+  isMobile: boolean;
+  onDragStart?: () => void;
+  onDragEnd?: () => void;
+  isDraggingRef?: React.RefObject<boolean>;
+}) {
   const controls = useAnimation();
   const idleControls = useAnimation();
   const backgroundControls = useAnimation();
@@ -64,10 +74,10 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
 
   // Scale factors - control how much each element moves relative to drag
   const mainBubbleScale = 0.1;
-  const mediumBubbleScaleX = 0.2;
-  const mediumBubbleScaleY = 0.15;
-  const smallBubbleScaleX = 0.3;
-  const smallBubbleScaleY = 0.2;
+  const mediumBubbleScaleX = 0.13;
+  const mediumBubbleScaleY = 0.13;
+  const smallBubbleScaleX = 0.16;
+  const smallBubbleScaleY = 0.16;
 
   const scaledDragX = useTransform(dragX, (x) => x * mainBubbleScale);
   const scaledDragY = useTransform(dragY, (y) => y * mainBubbleScale);
@@ -108,6 +118,7 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
       damping: 20,
       mass: 0.4,
     });
+    onDragEndCallback?.();
   };
 
   // Transform progress to X position using accelerated X easing
@@ -183,6 +194,7 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
+    disabledRef: isDraggingRef,
     onHoverStart: () => {
       // Stop any existing animation
       animationRef.current?.stop();
@@ -344,12 +356,12 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
           dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
           dragElastic={1}
           dragTransition={{ bounceStiffness: 500, bounceDamping: 20 }}
+          onDragStart={onDragStart}
           onDrag={(_, info) => {
             dragX.set(info.offset.x);
             dragY.set(info.offset.y);
           }}
           onDragEnd={handleDragEnd}
-          className="cursor-grab active:cursor-grabbing"
         >
           {/* Transparent hit area for dragging */}
           <circle cx="193" cy="303" r="30" fill="transparent" />

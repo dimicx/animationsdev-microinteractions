@@ -27,7 +27,13 @@ const MASK_MAX_X = 250; // Right edge of mask area
 // Center line position adjusted for symmetric gap
 const MASK_CENTER_X = 223.65;
 
-export function Timeline({ isMobile }: { isMobile: boolean }) {
+export function Timeline({
+  isMobile,
+  isDraggingRef,
+}: {
+  isMobile: boolean;
+  isDraggingRef?: React.RefObject<boolean>;
+}) {
   const controls = useAnimation();
   const containerControls = useAnimation();
   const bufferLeaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -92,6 +98,7 @@ export function Timeline({ isMobile }: { isMobile: boolean }) {
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
+    disabledRef: isDraggingRef,
     onHoverStart: async () => {
       hasEnteredMainAreaRef.current = true;
       containerControls.start("animate");

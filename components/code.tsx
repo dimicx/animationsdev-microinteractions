@@ -49,7 +49,13 @@ const DARK_MODE_COLORS = [
   "#f4f4f4",
 ];
 
-export function Code({ isMobile }: { isMobile: boolean }) {
+export function Code({
+  isMobile,
+  isDraggingRef,
+}: {
+  isMobile: boolean;
+  isDraggingRef?: React.RefObject<boolean>;
+}) {
   const controls = useAnimation();
   const pulseControls = useAnimation();
   const colorIndexRef = useRef<number | null>(null);
@@ -98,6 +104,7 @@ export function Code({ isMobile }: { isMobile: boolean }) {
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
+    disabledRef: isDraggingRef,
     onHoverStart: () => {
       controls.start("animate");
       animate(codePathProgress, [0, 1, 2], {

@@ -21,7 +21,13 @@ const CLOCK_HAND_TRANSITION: Transition = {
   mass: 1.2,
 };
 
-export function Clock({ isMobile }: { isMobile: boolean }) {
+export function Clock({
+  isMobile,
+  isDraggingRef,
+}: {
+  isMobile: boolean;
+  isDraggingRef?: React.RefObject<boolean>;
+}) {
   const controls = useAnimation();
   const idleControls = useAnimation();
   const hourHandControls = useAnimation();
@@ -41,6 +47,7 @@ export function Clock({ isMobile }: { isMobile: boolean }) {
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
+    disabledRef: isDraggingRef,
     onHoverStart: async () => {
       await idleControls.start("initial", { duration: 0.05 });
       backgroundControls.start("animate");

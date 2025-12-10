@@ -9,9 +9,19 @@ import { SpringPath } from "@/components/spring-path";
 import { Timeline } from "@/components/timeline";
 import useIsMobile from "@/lib/use-is-mobile";
 import { motion, MotionConfig } from "motion/react";
+import { useRef } from "react";
 
 export function Scene() {
   const { isMobile } = useIsMobile();
+  const isDraggingRef = useRef(false);
+
+  const handleDragStart = () => {
+    isDraggingRef.current = true;
+  };
+
+  const handleDragEnd = () => {
+    isDraggingRef.current = false;
+  };
 
   return (
     <MotionConfig
@@ -40,12 +50,17 @@ export function Scene() {
           role="img"
           aria-label="Interactive animation showcasing various microinteractions"
         >
-          <Code isMobile={isMobile} />
-          <SpringPath isMobile={isMobile} />
-          <Hand isMobile={isMobile} />
-          <Clock isMobile={isMobile} />
-          <Timeline isMobile={isMobile} />
-          <Lightbulb isMobile={isMobile} />
+          <Code isMobile={isMobile} isDraggingRef={isDraggingRef} />
+          <SpringPath
+            isMobile={isMobile}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            isDraggingRef={isDraggingRef}
+          />
+          <Hand isMobile={isMobile} isDraggingRef={isDraggingRef} />
+          <Clock isMobile={isMobile} isDraggingRef={isDraggingRef} />
+          <Timeline isMobile={isMobile} isDraggingRef={isDraggingRef} />
+          <Lightbulb isMobile={isMobile} isDraggingRef={isDraggingRef} />
           <Defs />
         </motion.svg>
       </div>

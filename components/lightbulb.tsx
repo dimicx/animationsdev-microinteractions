@@ -17,7 +17,13 @@ import {
 import { motion, useAnimation } from "motion/react";
 import { useCallback, useEffect, useRef } from "react";
 
-export function Lightbulb({ isMobile }: { isMobile: boolean }) {
+export function Lightbulb({
+  isMobile,
+  isDraggingRef,
+}: {
+  isMobile: boolean;
+  isDraggingRef?: React.RefObject<boolean>;
+}) {
   const controls = useAnimation();
   const hasAnimatedMobile = useRef(false);
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -32,6 +38,7 @@ export function Lightbulb({ isMobile }: { isMobile: boolean }) {
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
+    disabledRef: isDraggingRef,
     onHoverStart: async () => {
       controls.start("animate");
 

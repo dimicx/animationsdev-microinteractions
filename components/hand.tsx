@@ -27,7 +27,13 @@ const handPaths = [
   "M58.7084 193.515C60.4054 193.697 61.2218 192.681 60.1518 191.353L50.564 180.132C49.9773 179.369 49.7127 178.406 49.8267 177.45C49.9408 176.494 50.4244 175.62 51.1742 175.016C51.924 174.412 52.8804 174.125 53.8388 174.217C54.7973 174.309 55.6817 174.772 56.303 175.508L58.2628 177.261C58.7555 177.873 59.4188 178.325 60.1686 178.56C60.9184 178.795 61.721 178.802 62.4748 178.58L70.5808 176.197C72.7831 175.55 75.1427 175.694 77.2499 176.604C79.3571 177.515 81.079 179.134 82.1168 181.182L84.8808 186.634C85.7041 188.257 85.9448 190.114 85.5625 191.894C85.1802 193.673 84.1982 195.267 82.7808 196.409L74.5738 203.02C73.6266 203.783 72.5166 204.319 71.3296 204.585C70.1426 204.851 68.9103 204.841 67.7278 204.556L55.3564 200.565C54.4436 200.344 53.6491 199.784 53.1341 198.999C52.619 198.213 52.4219 197.261 52.5826 196.336C52.7434 195.411 53.2501 194.581 53.9999 194.016C54.7496 193.45 55.6865 193.191 56.6204 193.29L58.7084 193.515Z",
 ];
 
-export function Hand({ isMobile }: { isMobile: boolean }) {
+export function Hand({
+  isMobile,
+  isDraggingRef,
+}: {
+  isMobile: boolean;
+  isDraggingRef?: React.RefObject<boolean>;
+}) {
   const controls = useAnimation();
   const handPathProgress = useMotionValue(0);
   const handPath = useFlubber(handPathProgress, handPaths);
@@ -60,6 +66,7 @@ export function Hand({ isMobile }: { isMobile: boolean }) {
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
+    disabledRef: isDraggingRef,
     onHoverStart: async () => {
       handPathAnimationRef.current?.stop();
       animate(handPathProgress, 0, { duration: 0 });
