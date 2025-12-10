@@ -18,7 +18,17 @@ const backgroundVariants: Variants = {
     },
   },
   click: {
-    transform: ["rotate(10deg) scale(0.985)", "rotate(10deg) scale(1)"],
+    transform: [
+      "rotate(10deg) scale(1)",
+      "rotate(10deg) scale(0.98)",
+      "rotate(10deg) scale(1.015)",
+      "rotate(10deg) scale(1)",
+    ],
+    transition: {
+      duration: 0.2,
+      times: [0, 0.4, 0.7, 1],
+      ease: "easeInOut",
+    },
   },
 };
 
@@ -112,7 +122,8 @@ const pulseVariants: Variants = {
     opacity: 1,
     scale: [0.97, 1],
     transition: {
-      ease: "easeInOut",
+      duration: 0.2,
+      ease: "easeOut",
     },
   },
 };

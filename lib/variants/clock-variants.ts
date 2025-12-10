@@ -20,8 +20,8 @@ const backgroundVariants: Variants = {
   click: {
     transform: [
       "rotate(-3deg) scale(1)",
-      "rotate(-3deg) scale(0.99)",
-      "rotate(-3deg) scale(1.01)",
+      "rotate(-3deg) scale(0.98)",
+      "rotate(-3deg) scale(1.015)",
       "rotate(-3deg) scale(1)",
     ],
     transition: {
