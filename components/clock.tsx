@@ -75,6 +75,7 @@ export function Clock({ isMobile }: { isMobile: boolean }) {
     if (hasClicked.current) return;
     hasClicked.current = true;
 
+    backgroundControls.start("click");
     controls.start("initial").then(() => {
       idleControls.start("animate");
     });
@@ -113,7 +114,14 @@ export function Clock({ isMobile }: { isMobile: boolean }) {
       transform: `rotate(${minuteWithSpins}deg)`,
       transition: CLOCK_HAND_TRANSITION,
     });
-  }, [controls, idleControls, hourHandControls, minuteHandControls, isMobile]);
+  }, [
+    controls,
+    idleControls,
+    hourHandControls,
+    minuteHandControls,
+    isMobile,
+    backgroundControls,
+  ]);
 
   return (
     <motion.g
