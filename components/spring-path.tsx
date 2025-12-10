@@ -69,10 +69,10 @@ export function SpringPath({
 
   // Scale factors - control how much each element moves relative to drag
   const mainBubbleScale = 0.07;
-  const mediumBubbleScaleX = 0.13;
-  const mediumBubbleScaleY = 0.13;
-  const smallBubbleScaleX = 0.16;
-  const smallBubbleScaleY = 0.16;
+  const mediumBubbleScaleX = 0.12;
+  const mediumBubbleScaleY = 0.12;
+  const smallBubbleScaleX = 0.15;
+  const smallBubbleScaleY = 0.15;
 
   const springConfig = {
     stiffness: 600,
