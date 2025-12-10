@@ -55,6 +55,7 @@ export function Code({ isMobile }: { isMobile: boolean }) {
   const colorIndexRef = useRef<number | null>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const [scope, animateColor] = useAnimate();
+  const hasClickedMobile = useRef(false);
 
   const codePathProgress = useMotionValue(0);
   const codePath = useFlubber(codePathProgress, codePaths);
@@ -68,6 +69,12 @@ export function Code({ isMobile }: { isMobile: boolean }) {
   }, [startAnimations]);
 
   const handleClick = () => {
+    // On mobile: first tap should only trigger hover, second tap triggers click animation
+    if (isMobile && !hasClickedMobile.current) {
+      hasClickedMobile.current = true;
+      return;
+    }
+
     pulseControls.start("click");
     controls.start("click");
 
@@ -107,6 +114,7 @@ export function Code({ isMobile }: { isMobile: boolean }) {
       });
     },
     onHoverEnd: () => {
+      hasClickedMobile.current = false;
       controls.start("initial");
       pulseControls.start("idle");
       animate(codePathProgress, 0, {
