@@ -196,175 +196,181 @@ export function Timeline({ isMobile }: { isMobile: boolean }) {
             </motion.g>
           </motion.g>
 
-          {/* center line - isolated from container to prevent bounding box issues */}
           <motion.g
-            variants={timelineContainerVariants}
+            variants={backgroundVariants}
             initial="initial"
             animate={containerControls}
           >
-            <motion.path
-              strokeLinecap="round"
-              strokeWidth="2.457"
-              d="m217.429 81.691 5.204-32.34"
-              className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-              style={{ x: centerLineX, y: centerLineY }}
-            />
-          </motion.g>
+            {/* center line - isolated from container to prevent bounding box issues */}
+            <motion.g
+              variants={timelineContainerVariants}
+              initial="initial"
+              animate={containerControls}
+            >
+              <motion.path
+                strokeLinecap="round"
+                strokeWidth="2.457"
+                d="m217.429 81.691 5.204-32.34"
+                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+                style={{ x: centerLineX, y: centerLineY }}
+              />
+            </motion.g>
 
-          <motion.g
-            variants={timelineContainerVariants}
-            initial="initial"
-            animate={containerControls}
-            className="transform-view origin-center"
-          >
-            <g>
-              <mask
-                id="mask2_197_321"
-                style={{
-                  maskType: "alpha",
-                }}
-                maskUnits="userSpaceOnUse"
-                x="185"
-                y="40"
-                width="80"
-                height="60"
-              >
-                <g
+            <motion.g
+              variants={timelineContainerVariants}
+              initial="initial"
+              animate={containerControls}
+              className="transform-view origin-center"
+            >
+              <g>
+                <mask
+                  id="mask2_197_321"
                   style={{
-                    transform: "rotate(9deg)",
-                    transformOrigin: "185px 40px",
-                    transformBox: "view-box",
+                    maskType: "alpha",
                   }}
+                  maskUnits="userSpaceOnUse"
+                  x="185"
+                  y="40"
+                  width="80"
+                  height="60"
                 >
-                  {/* Left mask - reveals full opacity lines from left to cursor position */}
-                  <motion.rect
-                    x={185}
-                    y={40}
-                    height={60}
-                    fill="#D9D9D9"
+                  <g
                     style={{
-                      width: leftMaskWidth,
+                      transform: "rotate(9deg)",
+                      transformOrigin: "185px 40px",
+                      transformBox: "view-box",
                     }}
+                  >
+                    {/* Left mask - reveals full opacity lines from left to cursor position */}
+                    <motion.rect
+                      x={185}
+                      y={40}
+                      height={60}
+                      fill="#D9D9D9"
+                      style={{
+                        width: leftMaskWidth,
+                      }}
+                    />
+                  </g>
+                </mask>
+                <g mask="url(#mask2_197_321)">
+                  <motion.line
+                    variants={timelineOneVariants}
+                    initial="initial"
+                    animate={controls}
+                    x1="202.907"
+                    y1="52.7907"
+                    x2="231.287"
+                    y2="57.3873"
+                    strokeOpacity="1"
+                    strokeWidth="6.55"
+                    strokeLinecap="round"
+                    className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+                  />
+                  <motion.line
+                    variants={timelineTwoVariants}
+                    initial="initial"
+                    animate={controls}
+                    x1="238.626"
+                    y1="68.4911"
+                    x2="211.948"
+                    y2="64.21"
+                    strokeOpacity="1"
+                    strokeWidth="6.55"
+                    strokeLinecap="round"
+                    className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+                  />
+                  <motion.line
+                    variants={timelineThreeVariants}
+                    initial="initial"
+                    animate={controls}
+                    x1="205.527"
+                    y1="73.1088"
+                    x2="229.023"
+                    y2="76.8985"
+                    strokeOpacity="1"
+                    strokeWidth="6.5"
+                    strokeLinecap="round"
+                    className="stroke-[#989898] dark:stroke-[#D6D6D6]"
                   />
                 </g>
-              </mask>
-              <g mask="url(#mask2_197_321)">
-                <motion.line
-                  variants={timelineOneVariants}
-                  initial="initial"
-                  animate={controls}
-                  x1="202.907"
-                  y1="52.7907"
-                  x2="231.287"
-                  y2="57.3873"
-                  strokeOpacity="1"
-                  strokeWidth="6.55"
-                  strokeLinecap="round"
-                  className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-                />
-                <motion.line
-                  variants={timelineTwoVariants}
-                  initial="initial"
-                  animate={controls}
-                  x1="238.626"
-                  y1="68.4911"
-                  x2="211.948"
-                  y2="64.21"
-                  strokeOpacity="1"
-                  strokeWidth="6.55"
-                  strokeLinecap="round"
-                  className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-                />
-                <motion.line
-                  variants={timelineThreeVariants}
-                  initial="initial"
-                  animate={controls}
-                  x1="205.527"
-                  y1="73.1088"
-                  x2="229.023"
-                  y2="76.8985"
-                  strokeOpacity="1"
-                  strokeWidth="6.5"
-                  strokeLinecap="round"
-                  className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-                />
               </g>
-            </g>
 
-            <g>
-              <mask
-                id="mask1_197_321"
-                maskUnits="userSpaceOnUse"
-                x="185"
-                y="40"
-                width="80"
-                height="60"
-                style={{
-                  maskType: "alpha",
-                }}
-              >
-                <g
+              <g>
+                <mask
+                  id="mask1_197_321"
+                  maskUnits="userSpaceOnUse"
+                  x="185"
+                  y="40"
+                  width="80"
+                  height="60"
                   style={{
-                    transform: "rotate(9deg)",
-                    transformOrigin: "185px 40px",
-                    transformBox: "view-box",
+                    maskType: "alpha",
                   }}
                 >
-                  {/* Right mask - reveals dimmed lines from cursor position to right */}
-                  <motion.rect
-                    y={40}
-                    height={60}
-                    fill="#D9D9D9"
-                    // style={{ x: rightMaskX, width: rightMaskWidth }}
+                  <g
                     style={{
-                      x: rightMaskX,
-                      width: rightMaskWidth,
+                      transform: "rotate(9deg)",
+                      transformOrigin: "185px 40px",
+                      transformBox: "view-box",
                     }}
+                  >
+                    {/* Right mask - reveals dimmed lines from cursor position to right */}
+                    <motion.rect
+                      y={40}
+                      height={60}
+                      fill="#D9D9D9"
+                      // style={{ x: rightMaskX, width: rightMaskWidth }}
+                      style={{
+                        x: rightMaskX,
+                        width: rightMaskWidth,
+                      }}
+                    />
+                  </g>
+                </mask>
+                <g mask="url(#mask1_197_321)">
+                  <motion.line
+                    variants={timelineOneVariants}
+                    initial="initial"
+                    animate={controls}
+                    x1="202.907"
+                    y1="52.7907"
+                    x2="231.287"
+                    y2="57.3873"
+                    strokeOpacity="0.4"
+                    strokeWidth="6.55"
+                    strokeLinecap="round"
+                    className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+                  />
+                  <motion.line
+                    variants={timelineTwoVariants}
+                    initial="initial"
+                    animate={controls}
+                    x1="238.626"
+                    y1="68.4911"
+                    x2="211.948"
+                    y2="64.21"
+                    strokeOpacity="0.4"
+                    strokeWidth="6.55"
+                    strokeLinecap="round"
+                    className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+                  />
+                  <motion.line
+                    variants={timelineThreeVariants}
+                    initial="initial"
+                    animate={controls}
+                    x1="205.527"
+                    y1="73.1088"
+                    x2="229.023"
+                    y2="76.8985"
+                    strokeOpacity="0.4"
+                    strokeWidth="6.5"
+                    strokeLinecap="round"
+                    className="stroke-[#989898] dark:stroke-[#D6D6D6]"
                   />
                 </g>
-              </mask>
-              <g mask="url(#mask1_197_321)">
-                <motion.line
-                  variants={timelineOneVariants}
-                  initial="initial"
-                  animate={controls}
-                  x1="202.907"
-                  y1="52.7907"
-                  x2="231.287"
-                  y2="57.3873"
-                  strokeOpacity="0.4"
-                  strokeWidth="6.55"
-                  strokeLinecap="round"
-                  className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-                />
-                <motion.line
-                  variants={timelineTwoVariants}
-                  initial="initial"
-                  animate={controls}
-                  x1="238.626"
-                  y1="68.4911"
-                  x2="211.948"
-                  y2="64.21"
-                  strokeOpacity="0.4"
-                  strokeWidth="6.55"
-                  strokeLinecap="round"
-                  className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-                />
-                <motion.line
-                  variants={timelineThreeVariants}
-                  initial="initial"
-                  animate={controls}
-                  x1="205.527"
-                  y1="73.1088"
-                  x2="229.023"
-                  y2="76.8985"
-                  strokeOpacity="0.4"
-                  strokeWidth="6.5"
-                  strokeLinecap="round"
-                  className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-                />
               </g>
-            </g>
+            </motion.g>
           </motion.g>
         </motion.g>
       </motion.g>
