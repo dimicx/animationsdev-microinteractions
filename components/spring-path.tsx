@@ -68,6 +68,57 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
   const mainDx = useSpring(scaledDragX, mainSpringConfig);
   const mainDy = useSpring(scaledDragY, mainSpringConfig);
 
+  // Small bubbles orbit around the main bubble center
+  const orbitRotation = useMotionValue(0);
+
+  // Calculate rotation based on drag position
+  const calculateRotation = (x: number, y: number) => {
+    if (x === 0 && y === 0) return 0;
+
+    // Get angle of drag position (in degrees, -180 to 180)
+    // 0° = right, 90° = below, ±180° = left, -90° = above
+    const dragAngle = Math.atan2(y, x) * (180 / Math.PI);
+
+    // Cardinal direction rotations:
+    // Right (0°) → -125°
+    // Below (90°) → -36°
+    // Left (180°) → 50°
+    // Above (-90°) → 143°
+
+    // Interpolate between cardinal points
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+    if (dragAngle >= 0 && dragAngle < 90) {
+      // Right to Below (0° to 90°)
+      const t = dragAngle / 90;
+      return lerp(-125, -36, t);
+    } else if (dragAngle >= 90 && dragAngle <= 180) {
+      // Below to Left (90° to 180°)
+      const t = (dragAngle - 90) / 90;
+      return lerp(-36, 50, t);
+    } else if (dragAngle >= -180 && dragAngle < -90) {
+      // Left to Above (-180° to -90°)
+      const t = (dragAngle + 180) / 90;
+      return lerp(50, 143, t);
+    } else {
+      // Above to Right (-90° to 0°) - go the "long way" around
+      const t = (dragAngle + 90) / 90;
+      // Use 235 instead of -125 to invert direction (235 = -125 + 360)
+      const rotation = lerp(143, 235, t);
+      // Normalize back to -180 to 180 range
+      return rotation > 180 ? rotation - 360 : rotation;
+    }
+  };
+
+  // Animate rotation back to 0 on drag end
+  const handleDragEnd = () => {
+    animate(orbitRotation, 0, {
+      type: "spring",
+      stiffness: 300,
+      damping: 25,
+    });
+  };
+
   // Transform progress to X position using accelerated X easing
   const cx = useTransform(progress, (p) => {
     const easedX = bounceAcceleratedX(p);
@@ -228,83 +279,96 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
 
   return (
     <motion.g variants={fadeScaleVariants} className="origin-bottom-left!">
-      {/* small bubbles */}
+      {/* small bubbles - container rotates around main bubble center */}
       <motion.g
-        variants={{
-          hidden: {},
-          visible: {
-            transition: {
-              staggerChildren: 0.1,
-              delayChildren: 0.35,
-            },
-          },
+        style={{
+          rotate: orbitRotation,
+          transformOrigin: "255px 205px",
         }}
-        initial="hidden"
-        animate="visible"
       >
-        <motion.g variants={bubblesAppearVariants}>
-          <motion.g
-            variants={bubblesVariants}
-            initial="initial"
-            animate={controls}
-            custom={0}
-          >
-            {/* Drag wrapper with transparent hit area */}
+        <motion.g
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.35,
+              },
+            },
+          }}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.g variants={bubblesAppearVariants}>
             <motion.g
-              drag
-              dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-              dragElastic={1}
-              dragTransition={{ bounceStiffness: 500, bounceDamping: 20 }}
-              onDrag={(_, info) => {
-                dragX.set(info.offset.x);
-                dragY.set(info.offset.y);
-              }}
-              style={{ x: dragX, y: dragY }}
-              className="cursor-grab active:cursor-grabbing"
+              variants={bubblesVariants}
+              initial="initial"
+              animate={controls}
+              custom={0}
             >
-              {/* Transparent hit area */}
-              <circle cx="201.927" cy="293.495" r="12" fill="transparent" />
-              {/* Visible circle with filter */}
-              <circle
-                cx="201.927"
-                cy="293.495"
-                r="9.417"
-                transform="rotate(-6.595 201.927 293.495)"
-                className="fill-[#F8F8F8] dark:fill-[#252525] filter-[url(#filter1_i_359_1453)] dark:filter-[url(#filter1_ii_368_1560)]"
-              />
+              {/* Drag wrapper with transparent hit area */}
+              <motion.g
+                drag
+                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                dragElastic={1}
+                dragTransition={{ bounceStiffness: 500, bounceDamping: 20 }}
+                onDrag={(_, info) => {
+                  dragX.set(info.offset.x);
+                  dragY.set(info.offset.y);
+                  orbitRotation.set(
+                    calculateRotation(info.offset.x, info.offset.y)
+                  );
+                }}
+                onDragEnd={handleDragEnd}
+                style={{ x: dragX, y: dragY }}
+                className="cursor-grab active:cursor-grabbing"
+              >
+                {/* Transparent hit area */}
+                <circle cx="201.927" cy="293.495" r="12" fill="transparent" />
+                {/* Visible circle with filter */}
+                <circle
+                  cx="201.927"
+                  cy="293.495"
+                  r="9.417"
+                  className="fill-[#F8F8F8] dark:fill-[#252525] filter-[url(#filter1_i_359_1453)] dark:filter-[url(#filter1_ii_368_1560)]"
+                />
+              </motion.g>
             </motion.g>
           </motion.g>
-        </motion.g>
-        <motion.g variants={bubblesAppearVariants}>
-          <motion.g
-            variants={bubblesVariants}
-            initial="initial"
-            animate={controls}
-            custom={1}
-          >
-            {/* Drag wrapper with transparent hit area */}
+          <motion.g variants={bubblesAppearVariants}>
             <motion.g
-              drag
-              dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-              dragElastic={1}
-              dragTransition={{ bounceStiffness: 500, bounceDamping: 20 }}
-              onDrag={(_, info) => {
-                dragX.set(info.offset.x);
-                dragY.set(info.offset.y);
-              }}
-              style={{ x: dragX, y: dragY }}
-              className="cursor-grab active:cursor-grabbing"
+              variants={bubblesVariants}
+              initial="initial"
+              animate={controls}
+              custom={1}
             >
-              {/* Transparent hit area */}
-              <circle cx="184.926" cy="314.008" r="8" fill="transparent" />
-              {/* Visible circle with filter */}
-              <circle
-                cx="184.926"
-                cy="314.008"
-                r="4.913"
-                transform="rotate(-6.595 184.926 314.008)"
-                className="fill-[#F8F8F8] dark:fill-[#252525] filter-[url(#filter2_i_359_1453)] dark:filter-[url(#filter2_ii_368_1560)]"
-              />
+              {/* Drag wrapper with transparent hit area */}
+              <motion.g
+                drag
+                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                dragElastic={1}
+                dragTransition={{ bounceStiffness: 500, bounceDamping: 20 }}
+                onDrag={(_, info) => {
+                  dragX.set(info.offset.x);
+                  dragY.set(info.offset.y);
+                  orbitRotation.set(
+                    calculateRotation(info.offset.x, info.offset.y)
+                  );
+                }}
+                onDragEnd={handleDragEnd}
+                style={{ x: dragX, y: dragY }}
+                className="cursor-grab active:cursor-grabbing"
+              >
+                {/* Transparent hit area */}
+                <circle cx="184.926" cy="314.008" r="8" fill="transparent" />
+                {/* Visible circle with filter */}
+                <circle
+                  cx="184.926"
+                  cy="314.008"
+                  r="4.913"
+                  className="fill-[#F8F8F8] dark:fill-[#252525] filter-[url(#filter2_i_359_1453)] dark:filter-[url(#filter2_ii_368_1560)]"
+                />
+              </motion.g>
             </motion.g>
           </motion.g>
         </motion.g>
