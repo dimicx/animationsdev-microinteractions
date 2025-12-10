@@ -156,6 +156,19 @@ const timelineContainerVariants: Variants = {
       duration: 0.7,
     },
   },
+  click: {
+    transform: [
+      "rotate(-9deg) scale(1)",
+      "rotate(-9deg) scale(0.95)",
+      "rotate(-9deg) scale(1.03)",
+      "rotate(-9deg) scale(1)",
+    ],
+    transition: {
+      duration: 0.4,
+      times: [0, 0.25, 0.6, 1],
+      ease: "easeOut",
+    },
+  },
 };
 
 export {
