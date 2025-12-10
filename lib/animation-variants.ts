@@ -30,7 +30,6 @@ export const createFloatingAnimation = ({
   to?: number;
   duration?: number;
   delay?: number;
-  prefersReducedMotion?: boolean;
 } = {}): FloatingAnimationProps => {
   return {
     initial: { transform: "translateY(0px)" },
@@ -62,7 +61,6 @@ export const createRotationAnimation = ({
   to?: number;
   duration?: number;
   delay?: number;
-  prefersReducedMotion?: boolean;
 } = {}): RotationAnimationProps => {
   return {
     initial: { transform: "rotate(0deg)" },

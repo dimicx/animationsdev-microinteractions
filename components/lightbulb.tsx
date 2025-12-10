@@ -29,11 +29,8 @@ export function Lightbulb({
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const startAnimations = async () => {
-      controls.start("initial");
-      controls.start("idle");
-    };
-    startAnimations();
+    controls.start("initial");
+    controls.start("idle");
   }, [controls]);
 
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({

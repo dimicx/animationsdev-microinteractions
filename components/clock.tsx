@@ -22,6 +22,10 @@ const CLOCK_HAND_TRANSITION: Transition = {
   mass: 1.2,
 };
 
+const HOUR_HAND_ORIGIN = "543.876px 186.539px";
+const MINUTE_HAND_ORIGIN = "543.876px 186.544px";
+const INITIAL_HOUR_ROTATION = 120;
+
 export function Clock({
   isMobile,
   isDraggingRef,
@@ -43,13 +47,13 @@ export function Clock({
     controls.start("initial");
     idleControls.start("animate");
     hourHandControls.set({
-      transform: `rotate(120deg)`,
-      transformOrigin: "543.876px 186.539px",
+      transform: `rotate(${INITIAL_HOUR_ROTATION}deg)`,
+      transformOrigin: HOUR_HAND_ORIGIN,
       transformBox: "view-box",
     });
     minuteHandControls.set({
       transform: `rotate(0deg)`,
-      transformOrigin: "543.876px 186.544px",
+      transformOrigin: MINUTE_HAND_ORIGIN,
       transformBox: "view-box",
     });
   }, [idleControls, controls, hourHandControls, minuteHandControls]);
@@ -72,14 +76,14 @@ export function Clock({
       hasClickedOnce.current = false;
 
       hourHandControls.start({
-        transform: `rotate(120deg)`,
-        transformOrigin: "543.876px 186.539px",
+        transform: `rotate(${INITIAL_HOUR_ROTATION}deg)`,
+        transformOrigin: HOUR_HAND_ORIGIN,
         transformBox: "view-box",
         transition: CLOCK_HAND_TRANSITION,
       });
       minuteHandControls.start({
         transform: `rotate(0deg)`,
-        transformOrigin: "543.876px 186.544px",
+        transformOrigin: MINUTE_HAND_ORIGIN,
         transformBox: "view-box",
         transition: CLOCK_HAND_TRANSITION,
       });
@@ -97,7 +101,6 @@ export function Clock({
       hasClickedMobile.current = true;
       return;
     }
-    // if (hasClicked.current) return;
     if (!hasClickedOnce.current) {
       hasClickedOnce.current = true;
       hasClicked.current = true;
@@ -127,14 +130,14 @@ export function Clock({
 
       hourHandControls.start({
         transform: `rotate(${hourWithSpins}deg)`,
-        transformOrigin: "543.876px 186.539px",
+        transformOrigin: HOUR_HAND_ORIGIN,
         transformBox: "view-box",
         transition: CLOCK_HAND_TRANSITION,
       });
 
       minuteHandControls.start({
         transform: `rotate(${minuteWithSpins}deg)`,
-        transformOrigin: "543.876px 186.544px",
+        transformOrigin: MINUTE_HAND_ORIGIN,
         transformBox: "view-box",
         transition: CLOCK_HAND_TRANSITION,
       });
@@ -209,7 +212,7 @@ export function Clock({
           <motion.g
             style={{
               transformBox: "view-box",
-              transformOrigin: "543.876px 186.544px",
+              transformOrigin: MINUTE_HAND_ORIGIN,
             }}
             animate={minuteHandControls}
           >
@@ -227,8 +230,8 @@ export function Clock({
           <motion.g
             style={{
               transformBox: "view-box",
-              transformOrigin: "543.876px 186.539px",
-              transform: `rotate(120deg)`,
+              transformOrigin: HOUR_HAND_ORIGIN,
+              transform: `rotate(${INITIAL_HOUR_ROTATION}deg)`,
             }}
             animate={hourHandControls}
           >

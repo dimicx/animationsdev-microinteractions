@@ -328,7 +328,6 @@ export function Timeline({
                     y={40}
                     height={60}
                     fill="#D9D9D9"
-                    // style={{ x: rightMaskX, width: rightMaskWidth }}
                     style={{
                       x: rightMaskX,
                       width: rightMaskWidth,
