@@ -5,6 +5,7 @@ import {
 } from "@/lib/animation-variants";
 import { useFlubber } from "@/lib/flubber";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
+import { useMobileTap } from "@/lib/use-mobile-tap";
 import {
   caretLeftVariants,
   caretRightVariants,
@@ -61,7 +62,11 @@ export function Code({
   const colorIndexRef = useRef<number | null>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const [scope, animateColor] = useAnimate();
-  const hasClickedMobile = useRef(false);
+  const {
+    isReadyRef: isReadyForClickRef,
+    markTapped,
+    reset: resetMobileTap,
+  } = useMobileTap({ isMobile });
 
   const codePathProgress = useMotionValue(0);
   const codePath = useFlubber(codePathProgress, codePaths);
@@ -76,8 +81,8 @@ export function Code({
 
   const handleClick = () => {
     // On mobile: first tap should only trigger hover, second tap triggers click animation
-    if (isMobile && !hasClickedMobile.current) {
-      hasClickedMobile.current = true;
+    if (!isReadyForClickRef.current) {
+      markTapped();
       return;
     }
 
@@ -121,7 +126,7 @@ export function Code({
       });
     },
     onHoverEnd: () => {
-      hasClickedMobile.current = false;
+      resetMobileTap();
       controls.start("initial");
       pulseControls.start("idle");
       animate(codePathProgress, 0, {

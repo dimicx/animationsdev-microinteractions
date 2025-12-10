@@ -6,6 +6,7 @@ import {
 } from "@/lib/animation-variants";
 import { useFlubber } from "@/lib/flubber";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
+import { useMobileTap } from "@/lib/use-mobile-tap";
 import {
   backgroundVariants,
   handVariants,
@@ -37,7 +38,11 @@ export function Hand({
   const controls = useAnimation();
   const handPathProgress = useMotionValue(0);
   const handPath = useFlubber(handPathProgress, handPaths);
-  const hasAnimatedMobile = useRef(false);
+  const {
+    isReadyRef: isReadyForClickRef,
+    markReady,
+    reset: resetMobileTap,
+  } = useMobileTap({ isMobile });
   const handPathAnimationRef = useRef<AnimationPlaybackControls | null>(null);
 
   const startIdleAnimations = useCallback(async () => {
@@ -77,16 +82,12 @@ export function Hand({
         times: [0, 0.7, 1],
         ease: "easeInOut",
         onComplete: () => {
-          if (isMobile && !hasAnimatedMobile.current) {
-            hasAnimatedMobile.current = true;
-          }
+          markReady();
         },
       });
     },
     onHoverEnd: async () => {
-      if (isMobile && hasAnimatedMobile.current) {
-        hasAnimatedMobile.current = false;
-      }
+      resetMobileTap();
       handPathAnimationRef.current?.stop();
 
       animate(handPathProgress, 0, { duration: 0 });
@@ -97,7 +98,7 @@ export function Hand({
   });
 
   const onClick = useCallback(async () => {
-    if (isMobile && !hasAnimatedMobile.current) return;
+    if (!isReadyForClickRef.current) return;
     handPathAnimationRef.current?.stop();
     await animate(handPathProgress, 0, { duration: 0 });
     handPathAnimationRef.current = animate(handPathProgress, [0, 1, 0], {
@@ -106,7 +107,7 @@ export function Hand({
       ease: "easeInOut",
     });
     controls.start("click");
-  }, [controls, handPathProgress, isMobile]);
+  }, [controls, handPathProgress, isReadyForClickRef]);
 
   return (
     <motion.g

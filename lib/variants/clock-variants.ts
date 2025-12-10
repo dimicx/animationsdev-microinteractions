@@ -48,8 +48,9 @@ const clockAndBellsVariants: Variants = {
     transformOrigin: "543.879px 186.54px",
     transformBox: "view-box",
     transition: {
-      duration: 0.4,
+      duration: 0.5,
       times: [0, 0.25, 0.6, 1],
+      ease: "easeOut",
     },
   },
   "scale-click": {
@@ -64,6 +65,7 @@ const clockAndBellsVariants: Variants = {
     transition: {
       duration: 0.4,
       times: [0, 0.25, 0.6, 1],
+      ease: "easeOut",
     },
   },
   idle: {

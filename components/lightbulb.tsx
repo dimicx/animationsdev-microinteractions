@@ -5,6 +5,7 @@ import {
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
+import { useMobileTap } from "@/lib/use-mobile-tap";
 import {
   backgroundVariants,
   bulbMaskVariants,
@@ -25,7 +26,11 @@ export function Lightbulb({
   isDraggingRef?: React.RefObject<boolean>;
 }) {
   const controls = useAnimation();
-  const hasAnimatedMobile = useRef(false);
+  const {
+    isReadyRef: isReadyForClickRef,
+    markReady,
+    reset: resetMobileTap,
+  } = useMobileTap({ isMobile });
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -39,16 +44,14 @@ export function Lightbulb({
     onHoverStart: async () => {
       controls.start("animate");
 
-      if (isMobile && !hasAnimatedMobile.current) {
+      if (isMobile) {
         animationTimeoutRef.current = setTimeout(() => {
-          hasAnimatedMobile.current = true;
+          markReady();
         }, 200);
       }
     },
     onHoverEnd: async () => {
-      if (isMobile && hasAnimatedMobile.current) {
-        hasAnimatedMobile.current = false;
-      }
+      resetMobileTap();
       if (animationTimeoutRef.current) {
         clearTimeout(animationTimeoutRef.current);
       }
@@ -58,12 +61,12 @@ export function Lightbulb({
   });
 
   const onClick = useCallback(async () => {
-    if (isMobile && !hasAnimatedMobile.current) return;
+    if (!isReadyForClickRef.current) return;
     controls.start("click");
     if (animationTimeoutRef.current) {
       clearTimeout(animationTimeoutRef.current);
     }
-  }, [controls, isMobile]);
+  }, [controls, isReadyForClickRef]);
 
   return (
     <motion.g

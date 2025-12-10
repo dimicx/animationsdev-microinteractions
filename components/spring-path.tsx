@@ -1,3 +1,4 @@
+import { SPRING_CONFIGS } from "@/lib/animation-configs";
 import {
   createFloatingAnimation,
   createRotationAnimation,
@@ -35,7 +36,12 @@ const START_Y = 188;
 const END_X = 290;
 const END_Y = 228;
 const GROUND_Y = 243;
-const SECOND_GROUND_Y = 237; // Second bounce hits slightly higher
+const SECOND_GROUND_Y = 237; // Second bounce hits slightly higher because of the svg rotation
+
+// Scale factors - control how much each element moves relative to drag
+const MAIN_BUBBLE_SCALE = 0.07;
+const MEDIUM_BUBBLE_SCALE = 0.12;
+const SMALL_BUBBLE_SCALE = 0.15;
 
 export function SpringPath({
   isMobile,
@@ -67,19 +73,6 @@ export function SpringPath({
   const mediumBubbleRef = useRef<SVGGElement>(null);
   const smallBubbleRef = useRef<SVGGElement>(null);
 
-  // Scale factors - control how much each element moves relative to drag
-  const mainBubbleScale = 0.07;
-  const mediumBubbleScaleX = 0.12;
-  const mediumBubbleScaleY = 0.12;
-  const smallBubbleScaleX = 0.15;
-  const smallBubbleScaleY = 0.15;
-
-  const springConfig = {
-    stiffness: 600,
-    damping: 20,
-    mass: 1,
-  };
-
   // Create motion values for the spring-animated positions
   const mainDx = useMotionValue(0);
   const mainDy = useMotionValue(0);
@@ -95,29 +88,29 @@ export function SpringPath({
     // Animate the bubble positions with spring config
     animate(mainDx, 0, {
       type: "spring",
-      ...springConfig,
+      ...SPRING_CONFIGS.dragBounce,
     });
     animate(mainDy, 0, {
       type: "spring",
-      ...springConfig,
+      ...SPRING_CONFIGS.dragBounce,
     });
 
     animate(smallDx, 0, {
       type: "spring",
-      ...springConfig,
+      ...SPRING_CONFIGS.dragBounce,
     });
     animate(smallDy, 0, {
       type: "spring",
-      ...springConfig,
+      ...SPRING_CONFIGS.dragBounce,
     });
 
     animate(mediumDx, 0, {
       type: "spring",
-      ...springConfig,
+      ...SPRING_CONFIGS.dragBounce,
     });
     animate(mediumDy, 0, {
       type: "spring",
-      ...springConfig,
+      ...SPRING_CONFIGS.dragBounce,
     });
 
     onDragEndCallback?.();
@@ -360,12 +353,12 @@ export function SpringPath({
           dragTransition={{ bounceStiffness: 500, bounceDamping: 20 }}
           onDragStart={onDragStart}
           onDrag={(_, info) => {
-            mainDx.set(info.offset.x * mainBubbleScale);
-            mainDy.set(info.offset.y * mainBubbleScale);
-            smallDx.set(info.offset.x * smallBubbleScaleX);
-            smallDy.set(info.offset.y * smallBubbleScaleY);
-            mediumDx.set(info.offset.x * mediumBubbleScaleX);
-            mediumDy.set(info.offset.y * mediumBubbleScaleY);
+            mainDx.set(info.offset.x * MAIN_BUBBLE_SCALE);
+            mainDy.set(info.offset.y * MAIN_BUBBLE_SCALE);
+            smallDx.set(info.offset.x * SMALL_BUBBLE_SCALE);
+            smallDy.set(info.offset.y * SMALL_BUBBLE_SCALE);
+            mediumDx.set(info.offset.x * MEDIUM_BUBBLE_SCALE);
+            mediumDy.set(info.offset.y * MEDIUM_BUBBLE_SCALE);
           }}
           onDragEnd={handleDragEnd}
         >

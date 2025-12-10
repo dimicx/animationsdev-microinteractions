@@ -1,16 +1,51 @@
 /**
+ * Configuration constants for bounce physics.
+ * Centralizes all magic numbers for easier tuning.
+ */
+const BOUNCE_CONFIG = {
+  /** Timing points for ground hits (progress values 0-1) */
+  timing: {
+    firstHit: 0.25,
+    secondHit: 0.55,
+    thirdHit: 0.77,
+  },
+  /** Bounce heights as fraction of original height */
+  heights: {
+    first: 0.7,
+    second: 0.5,
+  },
+  /** X-progress values at each timing point */
+  xProgress: {
+    atFirstHit: 0.38,
+    atSecondHit: 0.75,
+  },
+  /** Final landing squash parameters */
+  finalLanding: {
+    center: 0.9,
+    radius: 0.08,
+  },
+  /** Bounce decay factors for squash intensity */
+  bounceDecay: {
+    early: 1,
+    mid: 0.7,
+    late: 0.4,
+    final: 0.2,
+  },
+} as const;
+
+/**
  * Bounce easing with 2 main bounces matching the path's 3 ground touchpoints.
  * First bounce: 70% height, Second bounce: 50% height, then settle.
  */
 export function bounceEase(x: number): number {
   // Bounce timing points - 3 ground hits matching the path
-  const b1 = 0.25; // First ground hit
-  const b2 = 0.55; // Second ground hit
-  const b3 = 0.77; // Third ground hit (final position) - faster for smaller bounce
+  const b1 = BOUNCE_CONFIG.timing.firstHit;
+  const b2 = BOUNCE_CONFIG.timing.secondHit;
+  const b3 = BOUNCE_CONFIG.timing.thirdHit;
 
   // Bounce heights (how high the ball goes after each bounce, as fraction of original)
-  const h1 = 0.7; // First bounce: 70% height
-  const h2 = 0.5; // Second bounce: 50% height (higher than before)
+  const h1 = BOUNCE_CONFIG.heights.first;
+  const h2 = BOUNCE_CONFIG.heights.second;
 
   if (x < b1) {
     // Initial fall - ease in (accelerate due to gravity)
@@ -46,7 +81,11 @@ export function bounceVelocity(x: number, delta: number = 0.01): number {
 }
 
 // Bounce timing points (must match bounceEase) - 3 ground hits
-const BOUNCE_POINTS = [0.25, 0.55, 0.77];
+const BOUNCE_POINTS = [
+  BOUNCE_CONFIG.timing.firstHit,
+  BOUNCE_CONFIG.timing.secondHit,
+  BOUNCE_CONFIG.timing.thirdHit,
+];
 
 /**
  * Returns true if the ball is at or near a bounce point (ground contact).
@@ -62,12 +101,13 @@ export function isAtBouncePoint(x: number, threshold: number = 0.03): boolean {
  */
 export function bounceAcceleratedX(x: number): number {
   const [b1, b2, b3] = BOUNCE_POINTS;
+  const { atFirstHit, atSecondHit } = BOUNCE_CONFIG.xProgress;
 
   // Progress jumps at each bounce, then eases between
   if (x < b1) {
     // First fall: curves right then back left to match path curve
     const t = x / b1;
-    const baseProgress = t * t * 0.38; // Reach 38% by first ground hit
+    const baseProgress = t * t * atFirstHit; // Reach 38% by first ground hit
     // Rightward bulge mid-fall, returns to path at ground hit
     const curveBulge = Math.sin(t * Math.PI) * 0.07;
     return baseProgress + curveBulge;
@@ -82,7 +122,7 @@ export function bounceAcceleratedX(x: number): number {
       const t2 = (t - 0.5) * 2;
       eased = 0.5 + (1 - Math.pow(1 - t2, 2)) * 0.5; // ease-out for fall
     }
-    return 0.38 + eased * 0.37; // 38% to 75%
+    return atFirstHit + eased * (atSecondHit - atFirstHit); // 38% to 75%
   } else if (x < b3) {
     // Second bounce to third ground hit (final position) - shortest jump
     const t = (x - b2) / (b3 - b2);
@@ -98,7 +138,7 @@ export function bounceAcceleratedX(x: number): number {
       const t2 = (t - 0.45) / 0.55;
       eased = 0.42 + Math.pow(t2, 1.3) * 0.58;
     }
-    return 0.75 + eased * 0.25; // 75% to 100%
+    return atSecondHit + eased * (1 - atSecondHit); // 75% to 100%
   } else {
     // At final position (settle phase - no more X movement)
     return 1;
@@ -114,16 +154,18 @@ export function getSquashStretchAtProgress(
 ): { scaleX: number; scaleY: number } {
   const velocity = bounceVelocity(progress);
   const atBounce = isAtBouncePoint(progress, 0.04);
+  const { thirdHit } = BOUNCE_CONFIG.timing;
+  const { center: finalLandingCenter, radius: finalLandingRadius } =
+    BOUNCE_CONFIG.finalLanding;
+  const { early, mid, late, final } = BOUNCE_CONFIG.bounceDecay;
 
   // Final settle phase - after the light bounce up comes back down
-  // settleT goes from 0 to 1 during progress 0.77 to 1.0
-  if (progress > 0.77) {
-    const settleT = (progress - 0.77) / (1 - 0.77);
+  // settleT goes from 0 to 1 during progress thirdHit to 1.0
+  if (progress > thirdHit) {
+    const settleT = (progress - thirdHit) / (1 - thirdHit);
 
     // Final squash when ball lands from the light bounce (around settleT 0.85-0.95)
     // The light bounce peaks at settleT ~0.5, comes down after
-    const finalLandingCenter = 0.9;
-    const finalLandingRadius = 0.08;
     const distFromLanding = Math.abs(settleT - finalLandingCenter);
 
     if (distFromLanding < finalLandingRadius) {
@@ -145,10 +187,10 @@ export function getSquashStretchAtProgress(
 
   if (atBounce && progress > 0.05 && progress < 0.97) {
     // Impact squash - stronger for earlier bounces
-    let bounceDecay = 1;
-    if (progress > 0.85) bounceDecay = 0.2;
-    else if (progress > 0.65) bounceDecay = 0.4;
-    else if (progress > 0.4) bounceDecay = 0.7;
+    let bounceDecay: number = early;
+    if (progress > 0.85) bounceDecay = final;
+    else if (progress > 0.65) bounceDecay = late;
+    else if (progress > 0.4) bounceDecay = mid;
 
     return {
       scaleX: 1 + intensity * 1.5 * bounceDecay,
