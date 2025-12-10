@@ -58,10 +58,15 @@ export function SpringPath({ isMobile }: { isMobile: boolean }) {
   const dragX = useMotionValue(0);
   const dragY = useMotionValue(0);
 
-  // Main bubble follows with a spring (creates the "orbiting" effect)
+  // Scale factor - main bubble moves less than small bubbles (anchored pull effect)
+  const mainBubbleScale = 0.3;
+  const scaledDragX = useTransform(dragX, (x) => x * mainBubbleScale);
+  const scaledDragY = useTransform(dragY, (y) => y * mainBubbleScale);
+
+  // Main bubble follows the scaled values with a spring
   const mainSpringConfig = { stiffness: 200, damping: 20, mass: 1.5 };
-  const mainDx = useSpring(dragX, mainSpringConfig);
-  const mainDy = useSpring(dragY, mainSpringConfig);
+  const mainDx = useSpring(scaledDragX, mainSpringConfig);
+  const mainDy = useSpring(scaledDragY, mainSpringConfig);
 
   // Transform progress to X position using accelerated X easing
   const cx = useTransform(progress, (p) => {
