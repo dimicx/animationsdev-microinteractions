@@ -86,6 +86,7 @@ export function Clock({
 
       if (hasClicked.current) return;
       backgroundControls.start("initial");
+      scaleClickControls.start("initial");
       await controls.start("initial");
       idleControls.start("animate");
     },
