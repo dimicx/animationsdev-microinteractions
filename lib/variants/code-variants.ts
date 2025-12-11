@@ -1,6 +1,6 @@
-import { Variants } from "motion";
+import { TargetAndTransition } from "motion";
 
-const backgroundVariants: Variants = {
+const backgroundVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -32,7 +32,7 @@ const backgroundVariants: Variants = {
   },
 };
 
-const caretLeftVariants: Variants = {
+const caretLeftVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "translateX(0%) translateY(0%)",
   },
@@ -51,7 +51,7 @@ const caretLeftVariants: Variants = {
   },
 };
 
-const caretRightVariants: Variants = {
+const caretRightVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "translateX(0%) translateY(0%)",
   },
@@ -70,7 +70,7 @@ const caretRightVariants: Variants = {
   },
 };
 
-const slashVariants: Variants = {
+const slashVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "translateX(0%) translateY(0%) rotate(0deg)",
   },
@@ -89,7 +89,7 @@ const slashVariants: Variants = {
   },
 };
 
-const codePathVariants: Variants = {
+const codePathVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "translateX(0%) translateY(0%)",
   },
@@ -108,7 +108,7 @@ const codePathVariants: Variants = {
   },
 };
 
-const pulseVariants: Variants = {
+const pulseVariants: Record<string, TargetAndTransition> = {
   idle: {
     opacity: [0.4, 0.2, 0.4],
     transition: {

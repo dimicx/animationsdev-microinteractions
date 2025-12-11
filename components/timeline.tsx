@@ -7,7 +7,8 @@ import {
 import { useAnimationHelpers } from "@/lib/use-animation-helpers";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
-  backgroundVariants,
+  type VariantKey,
+  scaleVariants,
   timelineContainerVariants,
   timelineOneVariants,
   timelineThreeVariants,
@@ -44,20 +45,23 @@ export function Timeline({
   const hasAnimationCompletedRef = useRef(false);
 
   const animateVariant = useCallback(
-    (variant: "initial" | "animate" | "idle" | "click") => {
+    (variant: VariantKey) => {
       const animations: AnimationPlaybackControls[] = [];
       [
-        { name: "background", variants: backgroundVariants },
+        { name: "scale", variants: scaleVariants },
         { name: "timeline-container", variants: timelineContainerVariants },
         { name: "timeline-one", variants: timelineOneVariants },
         { name: "timeline-two", variants: timelineTwoVariants },
         { name: "timeline-three", variants: timelineThreeVariants },
       ].forEach((item) => {
         const selector = `[data-animate='${item.name}']`;
-        const itemVariant = extractVariant(item.variants[variant]);
-        animations.push(
-          scopedAnimate(selector, itemVariant.values, itemVariant.transition)
-        );
+        const variantValue = item.variants[variant];
+        if (variantValue) {
+          const itemVariant = extractVariant(variantValue);
+          animations.push(
+            scopedAnimate(selector, itemVariant.values, itemVariant.transition)
+          );
+        }
       });
       return Promise.all(animations);
     },
@@ -66,16 +70,12 @@ export function Timeline({
 
   const animateContainerVariant = useCallback(
     (variant: "initial" | "animate" | "click") => {
-      const background = extractVariant(backgroundVariants[variant]);
+      const scale = extractVariant(scaleVariants[variant]);
       const timelineContainer = extractVariant(
         timelineContainerVariants[variant]
       );
 
-      scopedAnimate(
-        "[data-animate='background']",
-        background.values,
-        background.transition
-      );
+      scopedAnimate("[data-animate='scale']", scale.values, scale.transition);
       scopedAnimate(
         "[data-animate='timeline-container']",
         timelineContainer.values,
@@ -185,7 +185,7 @@ export function Timeline({
 
   useEffect(() => {
     animateVariant("idle");
-    animateContainerVariant("initial");
+    // animateContainerVariant("initial");
     return () => {
       if (bufferLeaveTimeoutRef.current) {
         clearTimeout(bufferLeaveTimeoutRef.current);
@@ -236,7 +236,7 @@ export function Timeline({
             })}
             className="filter-[url(#filter6_i_359_1453)] dark:filter-[url(#filter6_i_368_1560)]"
           >
-            <motion.g data-animate="background">
+            <motion.g data-animate="scale" initial={scaleVariants.initial}>
               <path
                 d="M216.15 23.607c6.663-4.711 15.869-3.23 20.717 3.333a15 15 0 0 0 9.525 5.869c8.042 1.38 13.504 8.937 12.292 17.006a15 15 0 0 0 2.585 10.885c4.711 6.662 3.23 15.868-3.333 20.717a15 15 0 0 0-5.869 9.524c-1.38 8.042-8.937 13.505-17.006 12.292a15 15 0 0 0-10.885 2.585c-6.662 4.711-15.869 3.23-20.717-3.333a15 15 0 0 0-9.524-5.869c-8.042-1.38-13.505-8.937-12.292-17.006a15 15 0 0 0-2.585-10.885c-4.711-6.662-3.23-15.868 3.333-20.716a15 15 0 0 0 5.869-9.525c1.379-8.042 8.937-13.505 17.006-12.292a15 15 0 0 0 10.884-2.585"
                 className="fill-[#F8F8F8] dark:fill-[#252525]"
@@ -244,9 +244,12 @@ export function Timeline({
             </motion.g>
           </motion.g>
 
-          <motion.g data-animate="background">
+          <motion.g data-animate="scale" initial={scaleVariants.initial}>
             {/* center line - isolated from container to prevent bounding box issues */}
-            <motion.g data-animate="timeline-container">
+            <motion.g
+              data-animate="timeline-container"
+              initial={timelineContainerVariants.initial}
+            >
               <motion.path
                 strokeLinecap="round"
                 strokeWidth="2.457"
@@ -259,6 +262,7 @@ export function Timeline({
 
           <motion.g
             data-animate="timeline-container"
+            initial={timelineContainerVariants.initial}
             className="transform-view origin-center"
           >
             <g>
@@ -295,6 +299,7 @@ export function Timeline({
               <g mask="url(#mask2_197_321)">
                 <motion.line
                   data-animate="timeline-one"
+                  initial={timelineOneVariants.initial}
                   x1="202.907"
                   y1="52.7907"
                   x2="231.287"
@@ -306,6 +311,7 @@ export function Timeline({
                 />
                 <motion.line
                   data-animate="timeline-two"
+                  initial={timelineTwoVariants.initial}
                   x1="238.626"
                   y1="68.4911"
                   x2="211.948"
@@ -317,6 +323,7 @@ export function Timeline({
                 />
                 <motion.line
                   data-animate="timeline-three"
+                  initial={timelineThreeVariants.initial}
                   x1="205.527"
                   y1="73.1088"
                   x2="229.023"
@@ -363,6 +370,7 @@ export function Timeline({
               <g mask="url(#mask1_197_321)">
                 <motion.line
                   data-animate="timeline-one"
+                  initial={timelineOneVariants.initial}
                   x1="202.907"
                   y1="52.7907"
                   x2="231.287"
@@ -374,6 +382,7 @@ export function Timeline({
                 />
                 <motion.line
                   data-animate="timeline-two"
+                  initial={timelineTwoVariants.initial}
                   x1="238.626"
                   y1="68.4911"
                   x2="211.948"
@@ -385,6 +394,7 @@ export function Timeline({
                 />
                 <motion.line
                   data-animate="timeline-three"
+                  initial={timelineThreeVariants.initial}
                   x1="205.527"
                   y1="73.1088"
                   x2="229.023"

@@ -1,8 +1,8 @@
-import { Variants } from "motion";
+import { TargetAndTransition, Variant } from "motion";
 
 const REPEAT_DELAY = 6;
 
-const backgroundVariants: Variants = {
+const backgroundVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "scale(1)",
   },
@@ -37,7 +37,7 @@ const backgroundVariants: Variants = {
 
 const idleRayPathLengths = [1, 0.45, 0.1];
 
-const rayVariants: Variants = {
+const rayVariants: Record<string, Variant> = {
   initial: (i: number) => ({
     pathLength: idleRayPathLengths[i],
     strokeOpacity: 0.5,
@@ -89,7 +89,7 @@ const rayVariants: Variants = {
   },
 };
 
-const raysOpacityVariants: Variants = {
+const raysOpacityVariants: Record<string, TargetAndTransition> = {
   initial: { opacity: 1 },
   animate: {
     opacity: [1, 0, 0, 1],
@@ -111,7 +111,7 @@ const raysOpacityVariants: Variants = {
   },
 };
 
-const handVariants: Variants = {
+const handVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "translateX(0%) translateY(0%) rotate(0deg) scale(1)",
   },

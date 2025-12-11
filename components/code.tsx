@@ -82,10 +82,13 @@ export function Code({
         { name: "pulse", variants: pulseVariants },
       ].forEach((item) => {
         const selector = `[data-animate='${item.name}']`;
-        const itemVariant = extractVariant(item.variants[variant]);
-        animations.push(
-          scopedAnimate(selector, itemVariant.values, itemVariant.transition)
-        );
+        const variantValue = item.variants[variant];
+        if (variantValue) {
+          const itemVariant = extractVariant(variantValue);
+          animations.push(
+            scopedAnimate(selector, itemVariant.values, itemVariant.transition)
+          );
+        }
       });
       return Promise.all(animations);
     },

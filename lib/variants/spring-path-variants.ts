@@ -1,9 +1,9 @@
-import { Variants } from "motion";
+import { TargetAndTransition, Variant } from "motion";
 import { bounceAcceleratedX } from "../bounce-physics";
 
 const BOUNCE_DURATION = 1.1;
 
-const pathVariants: Variants = {
+const pathVariants: Record<string, TargetAndTransition> = {
   initial: {
     pathLength: 1,
     strokeOpacity: 1,
@@ -24,7 +24,7 @@ const pathVariants: Variants = {
   },
 };
 
-const secondaryCircleVariants: Variants = {
+const secondaryCircleVariants: Record<string, TargetAndTransition> = {
   initial: {
     stroke: "var(--stroke-color)",
     opacity: 1,
@@ -44,7 +44,7 @@ const secondaryCircleVariants: Variants = {
   },
 };
 
-const backgroundVariants: Variants = {
+const backgroundVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -62,7 +62,7 @@ const backgroundVariants: Variants = {
   },
 };
 
-const ballVariants: Variants = {
+const ballVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "translateY(0%) translateX(0%)",
   },
@@ -81,7 +81,7 @@ const ballVariants: Variants = {
   },
 };
 
-const bubblesVariants: Variants = {
+const bubblesVariants: Record<string, TargetAndTransition | Variant> = {
   initial: {
     transform: "translateY(0%) translateX(0%)",
   },
@@ -106,7 +106,7 @@ const bubblesVariants: Variants = {
   }),
 };
 
-const bubblesAppearVariants: Variants = {
+const bubblesAppearVariants: Record<string, TargetAndTransition> = {
   hidden: {
     transform: "translateX(40px) translateY(-60px) scale(0)",
     opacity: 0,

@@ -1,8 +1,8 @@
-import { Variants } from "motion";
+import { TargetAndTransition } from "motion";
 
 const REPEAT_DELAY = 10;
 
-const wholeVariants: Variants = {
+const wholeVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "translateY(0%) rotate(0deg) scale(1)",
   },
@@ -34,7 +34,7 @@ const wholeVariants: Variants = {
   },
 };
 
-const backgroundVariants: Variants = {
+const backgroundVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "scale(1)",
   },
@@ -56,7 +56,7 @@ const backgroundVariants: Variants = {
   },
 };
 
-const bulbVariants: Variants = {
+const bulbVariants: Record<string, TargetAndTransition> = {
   initial: {
     opacity: 1,
     transform: "translateY(0%) translateX(0%)",
@@ -102,7 +102,7 @@ const bulbVariants: Variants = {
   },
 };
 
-const stemVariants: Variants = {
+const stemVariants: Record<string, TargetAndTransition> = {
   initial: {
     opacity: 1,
   },
@@ -133,7 +133,7 @@ const stemVariants: Variants = {
   },
 };
 
-const bulbMaskVariants: Variants = {
+const bulbMaskVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "translateY(0%) translateX(0%) rotate(0deg)",
     opacity: 1,
@@ -181,7 +181,7 @@ const bulbMaskVariants: Variants = {
   },
 };
 
-const rayVariants: Variants = {
+const rayVariants: Record<string, TargetAndTransition> = {
   initial: { pathLength: 1, strokeOpacity: 0.5 },
   animate: {
     pathLength: [1, 1, 0, 0, 1],
@@ -215,7 +215,7 @@ const rayVariants: Variants = {
   },
 };
 
-const raysOpacityVariants: Variants = {
+const raysOpacityVariants: Record<string, TargetAndTransition> = {
   initial: { opacity: 1 },
   animate: {
     opacity: [1, 0, 0, 1],

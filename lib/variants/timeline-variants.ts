@@ -1,9 +1,9 @@
-import { Variants } from "motion";
+import { TargetAndTransition } from "motion";
 
 const timelineTimes = [0, 0.2, 0.35, 0.65, 0.8, 1];
 const timelineDuration = 1.7;
 
-const backgroundVariants: Variants = {
+const scaleVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "scale(1)",
   },
@@ -25,7 +25,7 @@ const backgroundVariants: Variants = {
   },
 };
 
-const timelineOneVariants: Variants = {
+const timelineOneVariants: Record<string, TargetAndTransition> = {
   initial: {
     pathLength: 1,
   },
@@ -57,7 +57,7 @@ const timelineOneVariants: Variants = {
   },
 };
 
-const timelineTwoVariants: Variants = {
+const timelineTwoVariants: Record<string, TargetAndTransition> = {
   initial: {
     pathLength: 1,
     transform: "translateY(0%) translateX(0%)",
@@ -99,7 +99,7 @@ const timelineTwoVariants: Variants = {
   },
 };
 
-const timelineThreeVariants: Variants = {
+const timelineThreeVariants: Record<string, TargetAndTransition> = {
   initial: {
     pathLength: 1,
     transform: "translateY(0%) translateX(0%)",
@@ -141,7 +141,7 @@ const timelineThreeVariants: Variants = {
   },
 };
 
-const timelineContainerVariants: Variants = {
+const timelineContainerVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "rotate(0deg)",
   },
@@ -171,8 +171,15 @@ const timelineContainerVariants: Variants = {
   },
 };
 
+export type VariantKey =
+  | keyof typeof scaleVariants
+  | keyof typeof timelineContainerVariants
+  | keyof typeof timelineOneVariants
+  | keyof typeof timelineTwoVariants
+  | keyof typeof timelineThreeVariants;
+
 export {
-  backgroundVariants,
+  scaleVariants,
   timelineOneVariants,
   timelineTwoVariants,
   timelineThreeVariants,

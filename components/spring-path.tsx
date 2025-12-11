@@ -24,10 +24,10 @@ import {
 import {
   AnimationPlaybackControls,
   motion,
+  TargetAndTransition,
   useAnimate,
   useMotionValue,
   useTransform,
-  Variant,
 } from "motion/react";
 import { useCallback, useEffect, useRef } from "react";
 
@@ -71,12 +71,12 @@ export function SpringPath({
     ) => {
       const mediumBubble = extractVariant(
         typeof bubblesVariants[variant] === "function"
-          ? (bubblesVariants[variant] as (i: number) => Variant)(0)
+          ? (bubblesVariants[variant] as (i: number) => TargetAndTransition)(0)
           : bubblesVariants[variant]
       );
       const smallBubble = extractVariant(
         typeof bubblesVariants[variant] === "function"
-          ? (bubblesVariants[variant] as (i: number) => Variant)(1)
+          ? (bubblesVariants[variant] as (i: number) => TargetAndTransition)(1)
           : bubblesVariants[variant]
       );
       const secondaryCircle = extractVariant(secondaryCircleVariants[variant]);
@@ -347,7 +347,11 @@ export function SpringPath({
           }}
         >
           <motion.g variants={bubblesAppearVariants}>
-            <motion.g data-animate="bubbles" data-index="0">
+            <motion.g
+              data-animate="bubbles"
+              data-index="0"
+              initial={bubblesVariants.initial as TargetAndTransition}
+            >
               {/* Visible circle with filter */}
               <circle
                 cx="201.927"
@@ -369,7 +373,11 @@ export function SpringPath({
           }}
         >
           <motion.g variants={bubblesAppearVariants}>
-            <motion.g data-animate="bubbles" data-index="1">
+            <motion.g
+              data-animate="bubbles"
+              data-index="1"
+              initial={bubblesVariants.initial as TargetAndTransition}
+            >
               {/* Visible circle with filter */}
               <circle
                 cx="184.926"
@@ -414,7 +422,10 @@ export function SpringPath({
       >
         {/* main bubble */}
         <motion.g style={{ x: mainDx, y: mainDy }}>
-          <motion.g data-animate="background">
+          <motion.g
+            data-animate="background"
+            initial={backgroundVariants.initial}
+          >
             <motion.g
               {...createRotationAnimation({
                 from: -1,
@@ -438,6 +449,7 @@ export function SpringPath({
             >
               <motion.path
                 data-animate="path"
+                initial={pathVariants.initial}
                 d="M288.5 224.5C288.5 224.5 285.5 210 277 212C268.5 214 272 236 271 236C270 236 267 201.5 253 201.5C236.611 201.5 242.5 239.5 241.5 239.5C240.892 239.5 240.5 227 233.5 210C230.132 201.821 225 198 225 198"
               />
             </g>
@@ -453,6 +465,7 @@ export function SpringPath({
               </g>
               <motion.circle
                 data-animate="secondary-circle"
+                initial={secondaryCircleVariants.initial}
                 cx="289.63"
                 cy="228.535"
                 r="5.732"
@@ -463,7 +476,7 @@ export function SpringPath({
               ></motion.circle>
             </g>
 
-            <motion.g data-animate="ball">
+            <motion.g data-animate="ball" initial={ballVariants.initial}>
               <motion.circle
                 cx={cx}
                 cy={cy}

@@ -1,6 +1,6 @@
-import { Variants } from "motion";
+import { TargetAndTransition, Variant } from "motion";
 
-const backgroundVariants: Variants = {
+const backgroundVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -32,7 +32,7 @@ const backgroundVariants: Variants = {
   },
 };
 
-const clockAndBellsVariants: Variants = {
+const clockAndBellsVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -67,7 +67,7 @@ const clockAndBellsVariants: Variants = {
   },
 };
 
-const clockVariants: Variants = {
+const clockVariants: Record<string, TargetAndTransition> = {
   initial: {
     y: "0%",
     x: "0%",
@@ -89,7 +89,7 @@ const clockVariants: Variants = {
   },
 };
 
-const bellVariants: Variants = {
+const bellVariants: Record<string, TargetAndTransition | Variant> = {
   initial: {
     y: "0%",
     x: "0%",
@@ -123,7 +123,7 @@ const bellVariants: Variants = {
   }),
 };
 
-const bellsVariants: Variants = {
+const bellsVariants: Record<string, TargetAndTransition> = {
   initial: {
     transform: "translateX(0%) translateY(0%) rotate(0deg)",
   },

@@ -18,8 +18,8 @@ import {
 import {
   AnimationPlaybackControls,
   motion,
+  TargetAndTransition,
   useAnimate,
-  Variant,
 } from "motion/react";
 import { useCallback, useEffect, useRef } from "react";
 
@@ -60,7 +60,7 @@ export function Clock({
         const bellVariant = bellVariants[variant];
         const bellData =
           typeof bellVariant === "function"
-            ? (bellVariant as (i: number) => Variant)(i)
+            ? (bellVariant as (i: number) => TargetAndTransition)(i)
             : bellVariant;
         const bell = extractVariant(bellData);
         animations.push(
@@ -270,7 +270,10 @@ export function Clock({
           duration: 3,
         })}
       >
-        <motion.g data-animate="background">
+        <motion.g
+          data-animate="background"
+          initial={backgroundVariants.initial}
+        >
           <motion.g
             {...createRotationAnimation({
               from: -1,
@@ -288,13 +291,14 @@ export function Clock({
 
         <motion.g
           data-animate="clock-and-bells"
+          initial={clockAndBellsVariants.initial}
           style={{
             transformOrigin: CLOCK_AND_BELLS_ORIGIN,
             transformBox: "view-box",
           }}
         >
           {/* clock */}
-          <motion.g data-animate="clock">
+          <motion.g data-animate="clock" initial={clockVariants.initial}>
             <circle
               cx="543.879"
               cy="186.54"
@@ -304,6 +308,9 @@ export function Clock({
             {/* minute hand */}
             <motion.g
               data-animate="minute-hand"
+              initial={{
+                transform: `rotate(0deg)`,
+              }}
               style={{
                 transformBox: "view-box",
                 transformOrigin: MINUTE_HAND_ORIGIN,
@@ -322,10 +329,12 @@ export function Clock({
             {/* hour hand */}
             <motion.g
               data-animate="hour-hand"
+              initial={{
+                transform: `rotate(${INITIAL_HOUR_ROTATION}deg)`,
+              }}
               style={{
                 transformBox: "view-box",
                 transformOrigin: HOUR_HAND_ORIGIN,
-                transform: `rotate(${INITIAL_HOUR_ROTATION}deg)`,
               }}
             >
               <line
@@ -341,15 +350,23 @@ export function Clock({
           </motion.g>
 
           {/* bells */}
-          <motion.g data-animate="bells">
-            <motion.g data-animate="bell" data-index="0">
+          <motion.g data-animate="bells" initial={bellsVariants.initial}>
+            <motion.g
+              data-animate="bell"
+              data-index="0"
+              initial={bellVariants.initial as TargetAndTransition}
+            >
               <path
                 d="M553.071 151.434a3.848 3.848 0 0 1 2.478 6.222l-1.993 2.482a1.7 1.7 0 0 1-1.826.544 27 27 0 0 0-4.182-.912 27 27 0 0 0-4.275-.247 1.7 1.7 0 0 1-1.612-1.015l-1.252-2.926a3.847 3.847 0 0 1 4.059-5.326z"
                 opacity="0.4"
                 className="fill-[#989898] dark:fill-[#D6D6D6]"
               ></path>
             </motion.g>
-            <motion.g data-animate="bell" data-index="1">
+            <motion.g
+              data-animate="bell"
+              data-index="1"
+              initial={bellVariants.initial as TargetAndTransition}
+            >
               <path
                 d="M570.169 166.997a3.771 3.771 0 0 1-2.773 6.044.16.16 0 0 1-.149-.081 27.3 27.3 0 0 0-4-5.269.16.16 0 0 1-.036-.164 3.77 3.77 0 0 1 6.567-1.045z"
                 opacity="0.45"

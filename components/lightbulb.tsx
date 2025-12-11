@@ -48,10 +48,13 @@ export function Lightbulb({
         { name: "rays-opacity", variants: raysOpacityVariants },
       ].forEach((item) => {
         const selector = `[data-animate='${item.name}']`;
-        const itemVariant = extractVariant(item.variants[variant]);
-        animations.push(
-          scopedAnimate(selector, itemVariant.values, itemVariant.transition)
-        );
+        const variantValue = item.variants[variant];
+        if (variantValue) {
+          const itemVariant = extractVariant(variantValue);
+          animations.push(
+            scopedAnimate(selector, itemVariant.values, itemVariant.transition)
+          );
+        }
       });
       return Promise.all(animations);
     },
@@ -108,7 +111,10 @@ export function Lightbulb({
           duration: 3,
         })}
       >
-        <motion.g data-animate="background">
+        <motion.g
+          data-animate="background"
+          initial={backgroundVariants.initial}
+        >
           <motion.g
             {...createRotationAnimation({
               from: -5,
@@ -124,7 +130,7 @@ export function Lightbulb({
           </motion.g>
         </motion.g>
 
-        <motion.g data-animate="whole">
+        <motion.g data-animate="whole" initial={wholeVariants.initial}>
           <g>
             <defs>
               <mask id="bulb-mask">
@@ -140,6 +146,7 @@ export function Lightbulb({
             {/* stem */}
             <motion.path
               data-animate="stem"
+              initial={stemVariants.initial}
               d="M379.934 77.108c.307-.725 1.318-.824 1.845-.24a12.15 12.15 0 0 0 4.303 3.05 12.14 12.14 0 0 0 5.185.959c.787-.03 1.42.764 1.114 1.49l-.784 1.854-.009.024c-.924 2.187-4.46 2.783-7.896 1.332-3.436-1.452-5.473-4.403-4.551-6.59z"
               className="fill-[#989898] dark:fill-[#D6D6D6]"
             ></motion.path>
@@ -147,6 +154,7 @@ export function Lightbulb({
             {/* shine applied as mask to the bulb path (#bulb-mask) */}
             <motion.path
               data-animate="bulb"
+              initial={bulbVariants.initial}
               d="M398.989 49.368c6.408 2.708 9.141 10.328 5.95 16.51a10 10 0 0 1-4.121 4.208l-.94.508a10.6 10.6 0 0 0-4.718 5.197l-.318.752a1.95 1.95 0 0 1-1.353 1.14 10.12 10.12 0 0 1-10.967-4.634 1.95 1.95 0 0 1-.126-1.765l.318-.752a10.6 10.6 0 0 0 .437-7.005l-.291-1.028a10 10 0 0 1 .144-5.888c2.208-6.597 9.576-9.95 15.985-7.242"
               mask="url(#bulb-mask)"
               className="fill-[#989898] dark:fill-[#D6D6D6]"
@@ -154,9 +162,13 @@ export function Lightbulb({
           </g>
 
           {/* light rays reworked as lines to animate pathLength */}
-          <motion.g data-animate="rays-opacity">
+          <motion.g
+            data-animate="rays-opacity"
+            initial={raysOpacityVariants.initial}
+          >
             <motion.line
               data-animate="ray"
+              initial={rayVariants.initial}
               x1="376.711"
               y1="53.2909"
               x2="376.62"
@@ -168,6 +180,7 @@ export function Lightbulb({
             />
             <motion.line
               data-animate="ray"
+              initial={rayVariants.initial}
               x1="382.703"
               y1="45.4685"
               x2="382.04"
@@ -179,6 +192,7 @@ export function Lightbulb({
             />
             <motion.line
               data-animate="ray"
+              initial={rayVariants.initial}
               x1="391.866"
               y1="41.752"
               x2="391.536"
@@ -190,6 +204,7 @@ export function Lightbulb({
             />
             <motion.line
               data-animate="ray"
+              initial={rayVariants.initial}
               x1="401.616"
               y1="43.146"
               x2="403.502"

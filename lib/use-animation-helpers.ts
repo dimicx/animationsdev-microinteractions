@@ -19,10 +19,13 @@ export function useAnimationHelpers(
     transition?: Transition
   ) => AnimationPlaybackControls
 ) {
-  const extractVariant = useCallback((v: Variant) => {
+  const extractVariant = useCallback((v: TargetAndTransition) => {
     if (!v) return { values: {}, transition: SPRING_CONFIGS.default };
     const { transition, ...values } = v as TargetAndTransition;
-    return { values, transition: transition ?? SPRING_CONFIGS.default };
+    return {
+      values: values,
+      transition: transition ?? SPRING_CONFIGS.default,
+    };
   }, []);
 
   const scopedAnimate = useCallback(
