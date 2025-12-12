@@ -16,7 +16,12 @@ import {
   clockVariants,
   bellsVariants,
 } from "@/lib/variants/clock-variants";
-import { AnimationPlaybackControls, motion, useAnimate } from "motion/react";
+import {
+  AnimationPlaybackControls,
+  motion,
+  Transition,
+  useAnimate,
+} from "motion/react";
 import { useCallback, useEffect, useRef } from "react";
 
 const CLOCK_AND_BELLS_ORIGIN = "543.879px 186.54px";
@@ -96,6 +101,36 @@ export function Clock({
     [animateVariant]
   );
 
+  const animateHourHand = useCallback(
+    (rotation: number, transition: Transition = SPRING_CONFIGS.clockHand) => {
+      return animate(
+        "[data-animate='hour-hand']",
+        {
+          transform: `rotate(${rotation}deg)`,
+          transformOrigin: HOUR_HAND_ORIGIN,
+          transformBox: "view-box",
+        },
+        transition
+      );
+    },
+    [animate]
+  );
+
+  const animateMinuteHand = useCallback(
+    (rotation: number, transition: Transition = SPRING_CONFIGS.clockHand) => {
+      return animate(
+        "[data-animate='minute-hand']",
+        {
+          transform: `rotate(${rotation}deg)`,
+          transformOrigin: MINUTE_HAND_ORIGIN,
+          transformBox: "view-box",
+        },
+        transition
+      );
+    },
+    [animate]
+  );
+
   const startAnimations = useCallback(() => {
     animateBellsVariant("idle");
     animate(
@@ -107,25 +142,9 @@ export function Clock({
       },
       { duration: 0 }
     );
-    animate(
-      "[data-animate='hour-hand']",
-      {
-        transform: `rotate(${INITIAL_HOUR_ROTATION}deg)`,
-        transformOrigin: HOUR_HAND_ORIGIN,
-        transformBox: "view-box",
-      },
-      { duration: 0 }
-    );
-    animate(
-      "[data-animate='minute-hand']",
-      {
-        transform: `rotate(0deg)`,
-        transformOrigin: MINUTE_HAND_ORIGIN,
-        transformBox: "view-box",
-      },
-      { duration: 0 }
-    );
-  }, [animateBellsVariant, animate]);
+    animateHourHand(INITIAL_HOUR_ROTATION, { duration: 0 });
+    animateMinuteHand(0, { duration: 0 });
+  }, [animateBellsVariant, animate, animateHourHand, animateMinuteHand]);
 
   useEffect(() => {
     startAnimations();
@@ -143,24 +162,8 @@ export function Clock({
       hasClickedRef.current = false;
       resetMobileTap();
 
-      animate(
-        "[data-animate='hour-hand']",
-        {
-          transform: `rotate(${INITIAL_HOUR_ROTATION}deg)`,
-          transformOrigin: HOUR_HAND_ORIGIN,
-          transformBox: "view-box",
-        },
-        SPRING_CONFIGS.clockHand
-      );
-      animate(
-        "[data-animate='minute-hand']",
-        {
-          transform: `rotate(0deg)`,
-          transformOrigin: MINUTE_HAND_ORIGIN,
-          transformBox: "view-box",
-        },
-        SPRING_CONFIGS.clockHand
-      );
+      animateHourHand(INITIAL_HOUR_ROTATION);
+      animateMinuteHand(0);
 
       animateBackgroundVariant("initial");
       animateScaleClickVariant("initial");
@@ -202,25 +205,8 @@ export function Clock({
       const hourWithSpins = 360 * hourSpins + newHourRotation;
       const minuteWithSpins = 360 * minuteSpins + newMinuteRotation;
 
-      animate(
-        "[data-animate='hour-hand']",
-        {
-          transform: `rotate(${hourWithSpins}deg)`,
-          transformOrigin: HOUR_HAND_ORIGIN,
-          transformBox: "view-box",
-        },
-        SPRING_CONFIGS.clockHand
-      );
-
-      animate(
-        "[data-animate='minute-hand']",
-        {
-          transform: `rotate(${minuteWithSpins}deg)`,
-          transformOrigin: MINUTE_HAND_ORIGIN,
-          transformBox: "view-box",
-        },
-        SPRING_CONFIGS.clockHand
-      );
+      animateHourHand(hourWithSpins);
+      animateMinuteHand(minuteWithSpins);
     } else {
       animateBackgroundVariant("scale-click");
       animateScaleClickVariant("scale-click");
@@ -228,7 +214,8 @@ export function Clock({
   }, [
     animateClockVariant,
     animateBellsVariant,
-    animate,
+    animateHourHand,
+    animateMinuteHand,
     markTapped,
     isReadyForClickRef,
     animateBackgroundVariant,
