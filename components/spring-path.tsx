@@ -330,7 +330,7 @@ export function SpringPath({
           visible: {
             transition: {
               staggerChildren: 0.1,
-              delayChildren: 0.35,
+              delayChildren: 0.225,
             },
           },
         }}
