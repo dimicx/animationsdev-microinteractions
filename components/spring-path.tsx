@@ -11,7 +11,7 @@ import {
   getSquashStretchAtProgress,
 } from "@/lib/bounce-physics";
 import { getIndexedVariantValue } from "@/lib/helpers";
-import { useAnimateHelpers } from "@/lib/use-animate-helpers";
+import { useAnimateVariants } from "@/lib/use-animate-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
   backgroundVariants,
@@ -57,7 +57,8 @@ export function SpringPath({
   isDraggingRef?: React.RefObject<boolean>;
 }) {
   const [scope, animate] = useAnimate();
-  const { animateVariant, animateIndexedVariants } = useAnimateHelpers(animate);
+  const { animateVariant, animateIndexedVariants } =
+    useAnimateVariants(animate);
 
   const forwardCompleted = useRef(false);
   const animationRef = useRef<AnimationPlaybackControls | null>(null);

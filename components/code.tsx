@@ -5,7 +5,7 @@ import {
 } from "@/lib/animation-variants";
 import { useFlubber } from "@/lib/flubber";
 import { getVariantValue } from "@/lib/helpers";
-import { useAnimateHelpers } from "@/lib/use-animate-helpers";
+import { useAnimateVariants } from "@/lib/use-animate-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import { useMobileTap } from "@/lib/use-mobile-tap";
 import {
@@ -61,7 +61,7 @@ export function Code({
   const colorIndexRef = useRef<number | null>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const [scope, animate] = useAnimate();
-  const { animateVariant } = useAnimateHelpers(animate);
+  const { animateVariant } = useAnimateVariants(animate);
   const {
     isReadyRef: isReadyForClickRef,
     markTapped,

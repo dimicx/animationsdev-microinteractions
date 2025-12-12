@@ -13,7 +13,7 @@ import { useCallback } from "react";
  * Custom hook that provides animation helper functions.
  * Takes the animate function from useAnimate() as a parameter.
  */
-export function useAnimateHelpers(
+export function useAnimateVariants(
   animate: (
     selector: ElementOrSelector,
     values: Variant,

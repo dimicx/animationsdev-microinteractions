@@ -5,7 +5,7 @@ import {
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { getVariantValue } from "@/lib/helpers";
-import { useAnimateHelpers } from "@/lib/use-animate-helpers";
+import { useAnimateVariants } from "@/lib/use-animate-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
   scaleVariants,
@@ -38,7 +38,7 @@ export function Timeline({
   isDraggingRef?: React.RefObject<boolean>;
 }) {
   const [scope, animate] = useAnimate();
-  const { animateVariant } = useAnimateHelpers(animate);
+  const { animateVariant } = useAnimateVariants(animate);
   const bufferLeaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasEnteredMainAreaRef = useRef(false);
   const svgRef = useRef<SVGGElement>(null);
