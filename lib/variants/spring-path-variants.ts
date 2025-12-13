@@ -1,6 +1,6 @@
-import { TargetAndTransition } from "motion/react";
-import { IndexedVariant } from "@/lib/helpers";
 import { bounceAcceleratedX } from "@/lib/bounce-physics";
+import { IndexedVariant } from "@/lib/use-animate-variants";
+import { TargetAndTransition } from "motion/react";
 
 const BOUNCE_DURATION = 1.1;
 
@@ -160,11 +160,11 @@ const bubblesAppearVariants: Record<"hidden" | "visible", TargetAndTransition> =
   };
 
 export {
-  BOUNCE_DURATION,
-  pathVariants,
-  secondaryCircleVariants,
   backgroundVariants,
   ballVariants,
-  bubblesVariants,
+  BOUNCE_DURATION,
   bubblesAppearVariants,
+  bubblesVariants,
+  pathVariants,
+  secondaryCircleVariants,
 };

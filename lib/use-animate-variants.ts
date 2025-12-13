@@ -1,5 +1,4 @@
 import { SPRING_CONFIGS } from "@/lib/animation-configs";
-import { IndexedVariant } from "@/lib/helpers";
 import {
   AnimationPlaybackControls,
   ElementOrSelector,
@@ -90,3 +89,8 @@ export function useAnimateVariants(
 
   return { animateVariants };
 }
+
+/**
+ * Type for indexed variant functions (e.g., bells, rays, bubbles)
+ */
+export type IndexedVariant = (index: number) => TargetAndTransition;

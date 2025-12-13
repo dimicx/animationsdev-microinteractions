@@ -1,5 +1,5 @@
+import { IndexedVariant } from "@/lib/use-animate-variants";
 import { TargetAndTransition } from "motion/react";
-import { IndexedVariant } from "@/lib/helpers";
 
 const REPEAT_DELAY = 6;
 
@@ -157,9 +157,9 @@ const handVariants: Record<
 };
 
 export {
-  REPEAT_DELAY,
   backgroundVariants,
-  rayVariants,
-  raysOpacityVariants,
   handVariants,
+  raysOpacityVariants,
+  rayVariants,
+  REPEAT_DELAY,
 };

@@ -1,5 +1,5 @@
+import { IndexedVariant } from "@/lib/use-animate-variants";
 import { TargetAndTransition } from "motion/react";
-import { IndexedVariant } from "@/lib/helpers";
 
 const backgroundVariants: Record<
   "initial" | "animate" | "click" | "scale-click",
@@ -165,8 +165,8 @@ const bellsVariants: Record<"initial" | "idle", TargetAndTransition> = {
 
 export {
   backgroundVariants,
-  clockVariants,
-  bellVariants,
   bellsVariants,
+  bellVariants,
   clockAndBellsVariants,
+  clockVariants,
 };
