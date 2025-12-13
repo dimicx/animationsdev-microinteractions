@@ -10,7 +10,7 @@ import {
   bounceEase,
   getSquashStretchAtProgress,
 } from "@/lib/bounce-physics";
-import { getIndexedVariantValue } from "@/lib/helpers";
+import { getIndexedVariantValue, getVariantValue } from "@/lib/helpers";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
@@ -68,8 +68,8 @@ export function SpringPath({
     typeof setTimeout
   > | null>(null);
 
-  const animateBubblesVariant = useCallback(
-    (variant: "initial" | "animate") => {
+  const animateSpringPathVariant = useCallback(
+    (variant: "initial" | "animate" | "click") => {
       const animations: AnimationPlaybackControls[] = [];
 
       const bubblesVariantVaue = getIndexedVariantValue(
@@ -85,20 +85,17 @@ export function SpringPath({
         animations.push(...bubblesAnimations.filter((a) => a !== undefined));
       }
 
-      const secondaryCircleAnimation = animateVariant(
-        "[data-animate='secondary-circle']",
-        secondaryCircleVariants[variant]
-      );
-      const backgroundAnimation = animateVariant(
-        "[data-animate='background']",
-        backgroundVariants[variant]
-      );
-
-      animations.push(
-        ...[secondaryCircleAnimation, backgroundAnimation].filter(
-          (a) => a !== undefined
-        )
-      );
+      [
+        { name: "secondary-circle", variants: secondaryCircleVariants },
+        { name: "background", variants: backgroundVariants },
+      ].forEach((item) => {
+        const selector = `[data-animate='${item.name}']`;
+        const variantValue = getVariantValue(item.variants, variant);
+        if (variantValue) {
+          const result = animateVariant(selector, variantValue);
+          if (result) animations.push(result);
+        }
+      });
 
       return Promise.all(animations);
     },
@@ -212,11 +209,11 @@ export function SpringPath({
 
   const startAnimations = useCallback(() => {
     if (shouldReduceMotion) return;
-    animateBubblesVariant("initial");
+    animateSpringPathVariant("initial");
     animatePathVariant("initial");
     animateBallVariant("idle");
   }, [
-    animateBubblesVariant,
+    animateSpringPathVariant,
     animatePathVariant,
     animateBallVariant,
     shouldReduceMotion,
@@ -245,7 +242,7 @@ export function SpringPath({
       }
 
       animateBallVariant("initial");
-      animateBubblesVariant("animate");
+      animateSpringPathVariant("animate");
       animatePathVariant("animate");
       forwardCompleted.current = false;
 
@@ -314,10 +311,16 @@ export function SpringPath({
         });
       }
 
-      animateBubblesVariant("initial");
+      animateSpringPathVariant("initial");
       animateBallVariant("idle");
     },
   });
+
+  const handleClick = useCallback(() => {
+    if (shouldReduceMotion) return;
+    if (!forwardCompleted.current) return;
+    animateSpringPathVariant("click");
+  }, [animateSpringPathVariant, shouldReduceMotion]);
 
   return (
     <motion.g
@@ -414,6 +417,7 @@ export function SpringPath({
       <motion.g
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onClick={handleClick}
         {...createFloatingAnimation({
           from: -1,
           to: 2,

@@ -48,7 +48,10 @@ const secondaryCircleVariants: Record<
   },
 };
 
-const backgroundVariants: Record<"initial" | "animate", TargetAndTransition> = {
+const backgroundVariants: Record<
+  "initial" | "animate" | "click",
+  TargetAndTransition
+> = {
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -62,6 +65,17 @@ const backgroundVariants: Record<"initial" | "animate", TargetAndTransition> = {
       duration: 0.7,
       times: [0, 0.25, 0.6],
       ease: "easeInOut",
+    },
+  },
+  click: {
+    transform: [
+      "rotate(7deg) scale(1)",
+      "rotate(7deg) scale(0.98)",
+      "rotate(7deg) scale(1)",
+    ],
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
     },
   },
 };
@@ -85,30 +99,49 @@ const ballVariants: Record<"initial" | "idle", TargetAndTransition> = {
   },
 };
 
-const bubblesVariants: Record<"initial" | "animate", IndexedVariant> = {
-  initial: () => ({
-    transform: "translateY(0%) translateX(0%)",
-  }),
-  animate: (i: number) => ({
-    transform:
-      i === 0
-        ? [
-            "translateY(0%) translateX(0%)",
-            "translateY(-40%) translateX(-25%)",
-            "translateY(-35%) translateX(-20%)",
-          ]
-        : [
-            "translateY(0%) translateX(0%)",
-            "translateY(-80%) translateX(28%)",
-            "translateY(-60%) translateX(20%)",
-          ],
-    transition: {
-      duration: 0.7,
-      times: [0, 0.25, 0.6],
-      ease: "easeInOut",
-    },
-  }),
-};
+const bubblesVariants: Record<"initial" | "animate" | "click", IndexedVariant> =
+  {
+    initial: () => ({
+      transform: "translateY(0%) translateX(0%)",
+    }),
+    animate: (i: number) => ({
+      transform:
+        i === 0
+          ? [
+              "translateY(0%) translateX(0%)",
+              "translateY(-40%) translateX(-25%)",
+              "translateY(-35%) translateX(-20%)",
+            ]
+          : [
+              "translateY(0%) translateX(0%)",
+              "translateY(-80%) translateX(28%)",
+              "translateY(-60%) translateX(20%)",
+            ],
+      transition: {
+        duration: 0.7,
+        times: [0, 0.25, 0.6],
+        ease: "easeInOut",
+      },
+    }),
+    click: (i: number) => ({
+      transform:
+        i === 0
+          ? [
+              "translateY(-35%) translateX(-20%)",
+              "translateY(-50%) translateX(-25%)",
+              "translateY(-35%) translateX(-20%)",
+            ]
+          : [
+              "translateY(-60%) translateX(20%)",
+              "translateY(-120%) translateX(40%)",
+              "translateY(-60%) translateX(20%)",
+            ],
+      transition: {
+        duration: 0.4,
+        ease: "easeOut",
+      },
+    }),
+  };
 
 const bubblesAppearVariants: Record<"hidden" | "visible", TargetAndTransition> =
   {
