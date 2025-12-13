@@ -43,7 +43,7 @@ export function Hand({
   const handPath = useFlubber(handPathProgress, handPaths);
   const {
     isReadyRef: isReadyForClickRef,
-    markReady,
+    markTapped,
     reset: resetMobileTap,
   } = useMobileTap({ isMobile });
   const handPathAnimationRef = useRef<AnimationPlaybackControls | null>(null);
@@ -118,7 +118,7 @@ export function Hand({
         times: [0, 0.7, 1],
         ease: "easeInOut",
         onComplete: () => {
-          markReady();
+          markTapped();
         },
       });
     },

@@ -10,8 +10,6 @@ interface UseMobileTapReturn {
   isReady: boolean;
   /** Call this to mark the first tap as complete (for immediate mode) */
   markTapped: () => void;
-  /** Call this when hover/animation completes (for delayed mode) */
-  markReady: () => void;
   /** Reset state (call on hover end) */
   reset: () => void;
   /** Ref for checking ready state in callbacks */
@@ -25,9 +23,7 @@ interface UseMobileTapReturn {
  *
  * On desktop, isReady is always true.
  *
- * Two modes:
- * 1. Immediate: Call markTapped() on first click, isReady becomes true immediately
- * 2. Delayed: Call markReady() after animation/timeout, isReady becomes true then
+ * On mobile, isReady is false until markTapped() is called.
  */
 export function useMobileTap({
   isMobile,
@@ -48,12 +44,6 @@ export function useMobileTap({
     }
   }, [isMobile]);
 
-  const markReady = useCallback(() => {
-    if (isMobile) {
-      isReadyRef.current = true;
-    }
-  }, [isMobile]);
-
   const reset = useCallback(() => {
     if (isMobile) {
       isReadyRef.current = false;
@@ -65,7 +55,6 @@ export function useMobileTap({
       return isReadyRef.current;
     },
     markTapped,
-    markReady,
     reset,
     isReadyRef,
   };
