@@ -66,17 +66,17 @@ export function Lightbulb({
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
     disabledRef: isDraggingRef,
-    onHoverStart: async () => {
+    onHoverStart: () => {
       animateLightbulbVariant("animate");
     },
-    onHoverEnd: async () => {
+    onHoverEnd: () => {
       resetMobileTap();
       animateLightbulbVariant("initial");
       animateLightbulbVariant("idle");
     },
   });
 
-  const onClick = useCallback(async () => {
+  const onClick = useCallback(() => {
     if (!isReadyForClickRef.current) {
       markTapped();
       return;

@@ -256,7 +256,7 @@ export function SpringPath({
         forwardCompleted.current = true;
       }, (BOUNCE_DURATION - 0.2) * 1000);
     },
-    onHoverEnd: async () => {
+    onHoverEnd: () => {
       // Stop ongoing animation
       animationRef.current?.stop();
       if (forwardCompleteTimeoutRef.current) {

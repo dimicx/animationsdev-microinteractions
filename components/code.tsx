@@ -3,9 +3,9 @@ import {
   fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
-import { useFlubber } from "@/lib/flubber";
 import { getVariantValue } from "@/lib/helpers";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
+import { useFlubber } from "@/lib/use-flubber";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import { useMobileTap } from "@/lib/use-mobile-tap";
 import {

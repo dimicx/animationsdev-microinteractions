@@ -141,7 +141,7 @@ export function Timeline({
       await animateTimelineVariant("animate");
       hasAnimationCompletedRef.current = true;
     },
-    onHoverEnd: async () => {
+    onHoverEnd: () => {
       hasAnimationCompletedRef.current = false;
       animateContainerVariant("initial");
       animateTimelineVariant("initial");

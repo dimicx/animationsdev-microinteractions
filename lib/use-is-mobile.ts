@@ -3,10 +3,20 @@
 import { useState, useEffect } from "react";
 
 interface UseIsMobileReturn {
+  /** Whether the device is mobile */
   isMobile: boolean;
+  /** Whether the initial detection is still loading */
   isLoading: boolean;
 }
 
+/**
+ * Hook for detecting if the user is on a mobile device.
+ * Uses media query to check if the viewport width is below 768px,
+ * combined with user agent detection for more accurate results.
+ *
+ * @returns Object with isMobile boolean and isLoading state
+ * @see https://www.usehooks.io/docs/use-is-mobile
+ */
 export const useIsMobile = (): UseIsMobileReturn => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

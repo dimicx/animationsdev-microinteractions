@@ -10,8 +10,24 @@ import {
 import { useCallback } from "react";
 
 /**
- * Custom hook that provides animation helper functions.
- * Takes the animate function from useAnimate() as a parameter.
+ * Hook that provides animation helper functions for Motion variants.
+ * Wraps the animate function from useAnimate() with utilities for applying
+ * variants with default transitions and handling indexed elements.
+ *
+ * @param animate - The animate function from useAnimate() hook
+ * @returns Object with animateVariant and animateIndexedVariants helper functions
+ *
+ * @example
+ * ```tsx
+ * const [scope, animate] = useAnimate();
+ * const { animateVariant, animateIndexedVariants } = useAnimateVariants(animate);
+ *
+ * // Animate a single element with a variant
+ * animateVariant('.element', { scale: 1.2, transition: { duration: 0.3 } });
+ *
+ * // Animate indexed elements (e.g., bells, rays)
+ * animateIndexedVariants('.bell', (i) => ({ rotate: i * 10 }), 3);
+ * ```
  */
 export function useAnimateVariants(
   animate: (

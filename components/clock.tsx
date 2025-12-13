@@ -154,12 +154,12 @@ export function Clock({
   const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
     disabledRef: isDraggingRef,
-    onHoverStart: async () => {
+    onHoverStart: () => {
       animateBellsVariant("initial");
       animateBackgroundVariant("animate");
       animateClockVariant("animate");
     },
-    onHoverEnd: async () => {
+    onHoverEnd: () => {
       hasClickedRef.current = false;
       resetMobileTap();
 
@@ -168,13 +168,12 @@ export function Clock({
 
       animateBackgroundVariant("initial");
       animateScaleClickVariant("initial");
-      await animateClockVariant("initial");
+      animateClockVariant("initial");
       animateBellsVariant("idle");
     },
   });
 
-  const handleClockClick = useCallback(async () => {
-    // On mobile: first tap should only trigger hover, second tap triggers clock animation
+  const handleClockClick = useCallback(() => {
     if (!isReadyForClickRef.current) {
       markTapped();
       return;
@@ -185,9 +184,8 @@ export function Clock({
 
       animateBackgroundVariant("click");
       animateScaleClickVariant("click");
-      animateClockVariant("initial").then(() => {
-        animateBellsVariant("idle");
-      });
+      animateClockVariant("initial");
+      animateBellsVariant("idle");
 
       const now = new Date();
       const hours = now.getHours() % 12;
