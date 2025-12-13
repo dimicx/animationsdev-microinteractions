@@ -5,7 +5,6 @@ import {
   fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
-import { getIndexedVariantValue, getVariantValue } from "@/lib/helpers";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import { useMobileTap } from "@/lib/use-mobile-tap";
@@ -16,13 +15,7 @@ import {
   clockVariants,
   bellsVariants,
 } from "@/lib/variants/clock-variants";
-import {
-  AnimationPlaybackControls,
-  motion,
-  Transition,
-  useAnimate,
-  useReducedMotion,
-} from "motion/react";
+import { motion, Transition, useAnimate, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useRef } from "react";
 
 const CLOCK_AND_BELLS_ORIGIN = "543.879px 186.54px";
@@ -39,8 +32,7 @@ export function Clock({
 }) {
   const shouldReduceMotion = useReducedMotion();
   const [scope, animate] = useAnimate();
-  const { animateVariant, animateIndexedVariants } =
-    useAnimateVariants(animate);
+  const { animateVariants } = useAnimateVariants(animate);
   const hasClickedRef = useRef(false);
   const {
     isReadyRef: isReadyForClickRef,
@@ -50,58 +42,59 @@ export function Clock({
 
   const animateClockVariant = useCallback(
     (variant: "initial" | "animate") => {
-      const animations: AnimationPlaybackControls[] = [];
+      const animationConfigs = [
+        { selector: "clock", variants: clockVariants },
+        { selector: "bell", variants: bellVariants, count: 2 },
+      ];
 
-      const clockVariantValue = getVariantValue(clockVariants, variant);
-      if (clockVariantValue) {
-        const result = animateVariant(
-          "[data-animate='clock']",
-          clockVariantValue
-        );
-        if (result) animations.push(result);
-      }
-
-      const bellVariantValue = getIndexedVariantValue(bellVariants, variant);
-      if (bellVariantValue) {
-        // Bell variants are functions that take an index
-        const bellAnimations = animateIndexedVariants(
-          "[data-animate='bell']",
-          bellVariants[variant],
-          2
-        );
-        animations.push(...bellAnimations.filter((a) => a !== undefined));
-      }
+      const animations = animationConfigs.flatMap((config) =>
+        animateVariants(
+          `[data-animate='${config.selector}']`,
+          config.variants,
+          variant,
+          config.count
+        )
+      );
 
       return Promise.all(animations);
     },
-    [animateVariant, animateIndexedVariants]
+    [animateVariants]
   );
 
   const animateBackgroundVariant = useCallback(
     (variant: keyof typeof backgroundVariants) => {
-      return animateVariant(
+      const result = animateVariants(
         "[data-animate='background']",
-        backgroundVariants[variant]
+        backgroundVariants,
+        variant
       );
+      return result[0];
     },
-    [animateVariant]
+    [animateVariants]
   );
 
   const animateScaleClickVariant = useCallback(
     (variant: keyof typeof clockAndBellsVariants) => {
-      return animateVariant(
+      const result = animateVariants(
         "[data-animate='clock-and-bells']",
-        clockAndBellsVariants[variant]
+        clockAndBellsVariants,
+        variant
       );
+      return result[0];
     },
-    [animateVariant]
+    [animateVariants]
   );
 
   const animateBellsVariant = useCallback(
     (variant: keyof typeof bellsVariants) => {
-      return animateVariant("[data-animate='bells']", bellsVariants[variant]);
+      const result = animateVariants(
+        "[data-animate='bells']",
+        bellsVariants,
+        variant
+      );
+      return result[0];
     },
-    [animateVariant]
+    [animateVariants]
   );
 
   const animateHourHand = useCallback(

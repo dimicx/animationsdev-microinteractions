@@ -4,7 +4,6 @@ import {
   fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
-import { getIndexedVariantValue, getVariantValue } from "@/lib/helpers";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
 import { useFlubber } from "@/lib/use-flubber";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
@@ -39,8 +38,7 @@ export function Hand({
 }) {
   const shouldReduceMotion = useReducedMotion();
   const [scope, animate] = useAnimate();
-  const { animateVariant, animateIndexedVariants } =
-    useAnimateVariants(animate);
+  const { animateVariants } = useAnimateVariants(animate);
   const handPathProgress = useMotionValue(0);
   const handPath = useFlubber(handPathProgress, handPaths);
   const {
@@ -52,35 +50,25 @@ export function Hand({
 
   const animateHandVariant = useCallback(
     (variant: "initial" | "animate" | "idle" | "click") => {
-      const animations: AnimationPlaybackControls[] = [];
+      const animationConfigs = [
+        { selector: "background", variants: backgroundVariants },
+        { selector: "hand", variants: handVariants },
+        { selector: "rays-opacity", variants: raysOpacityVariants },
+        { selector: "ray", variants: rayVariants, count: 3 },
+      ];
 
-      [
-        { name: "background", variants: backgroundVariants },
-        { name: "hand", variants: handVariants },
-        { name: "rays-opacity", variants: raysOpacityVariants },
-      ].forEach((item) => {
-        const selector = `[data-animate='${item.name}']`;
-        const variantValue = getVariantValue(item.variants, variant);
-        if (variantValue) {
-          const result = animateVariant(selector, variantValue);
-          if (result) animations.push(result);
-        }
-      });
-
-      const rayVariantValue = getIndexedVariantValue(rayVariants, variant);
-      if (rayVariantValue) {
-        // Ray variants are functions that take an index
-        const rayAnimations = animateIndexedVariants(
-          "[data-animate='ray']",
-          rayVariantValue,
-          3
-        );
-        animations.push(...rayAnimations.filter((a) => a !== undefined));
-      }
+      const animations = animationConfigs.flatMap((config) =>
+        animateVariants(
+          `[data-animate='${config.selector}']`,
+          config.variants,
+          variant,
+          config.count
+        )
+      );
 
       return Promise.all(animations);
     },
-    [animateVariant, animateIndexedVariants]
+    [animateVariants]
   );
 
   const startIdleAnimations = useCallback(async () => {

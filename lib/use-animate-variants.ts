@@ -10,23 +10,23 @@ import {
 import { useCallback } from "react";
 
 /**
- * Hook that provides animation helper functions for Motion variants.
+ * Hook that provides a unified animation function for Motion variants.
  * Wraps the animate function from useAnimate() with utilities for applying
- * variants with default transitions and handling indexed elements.
+ * variants with default transitions and handling both standard and indexed elements.
  *
  * @param animate - The animate function from useAnimate() hook
- * @returns Object with animateVariant and animateIndexedVariants helper functions
+ * @returns Object with animateVariants helper function
  *
  * @example
  * ```tsx
  * const [scope, animate] = useAnimate();
- * const { animateVariant, animateIndexedVariants } = useAnimateVariants(animate);
+ * const { animateVariants } = useAnimateVariants(animate);
  *
  * // Animate a single element with a variant
- * animateVariant('.element', { scale: 1.2, transition: { duration: 0.3 } });
+ * animateVariants('[data-animate="hand"]', { scale: 1.2, transition: { duration: 0.3 } });
  *
  * // Animate indexed elements (e.g., bells, rays)
- * animateIndexedVariants('.bell', (i) => ({ rotate: i * 10 }), 3);
+ * animateVariants('[data-animate="ray"]', (i) => ({ rotate: i * 10 }), 3);
  * ```
  */
 export function useAnimateVariants(
@@ -50,24 +50,43 @@ export function useAnimateVariants(
   );
 
   /**
-   * Animates indexed elements (e.g., bells, rays, bubbles) by looping through
-   * and applying variants. Handles both function and object variants.
+   * Unified animation function that handles both standard and indexed variants.
+   * @param selector - Element selector (e.g., "[data-animate='ray']")
+   * @param variants - The variants record object
+   * @param variantKey - The variant key to animate
+   * @param count - Optional number of indexed elements. If undefined, treats as single element.
+   * @returns Array of AnimationPlaybackControls
    */
-  const animateIndexedVariants = useCallback(
-    (
+  const animateVariants = useCallback(
+    <T extends Record<string, TargetAndTransition | IndexedVariant>>(
       selector: string,
-      variant: TargetAndTransition | IndexedVariant,
-      count: number
-    ) => {
-      const animations = [];
+      variants: T,
+      variantKey: string,
+      count?: number
+    ): AnimationPlaybackControls[] => {
+      // Get the variant value from the record
+      const variant = variantKey in variants ? variants[variantKey] : undefined;
+
+      // Early return if variant doesn't exist
+      if (!variant) return [];
+
+      // Handle standard variant (count is undefined)
+      if (count === undefined) {
+        const result = animateVariant(selector, variant as TargetAndTransition);
+        return result ? [result] : [];
+      }
+
+      // Handle indexed variants
+      const animations: AnimationPlaybackControls[] = [];
       for (let i = 0; i < count; i++) {
         const data = typeof variant === "function" ? variant(i) : variant;
-        animations.push(animateVariant(`${selector}[data-index='${i}']`, data));
+        const result = animateVariant(`${selector}[data-index='${i}']`, data);
+        if (result) animations.push(result);
       }
       return animations;
     },
     [animateVariant]
   );
 
-  return { animateVariant, animateIndexedVariants };
+  return { animateVariants };
 }

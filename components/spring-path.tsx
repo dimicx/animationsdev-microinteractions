@@ -10,7 +10,6 @@ import {
   bounceEase,
   getSquashStretchAtProgress,
 } from "@/lib/bounce-physics";
-import { getIndexedVariantValue, getVariantValue } from "@/lib/helpers";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
@@ -59,8 +58,7 @@ export function SpringPath({
 }) {
   const shouldReduceMotion = useReducedMotion();
   const [scope, animate] = useAnimate();
-  const { animateVariant, animateIndexedVariants } =
-    useAnimateVariants(animate);
+  const { animateVariants } = useAnimateVariants(animate);
 
   const forwardCompleted = useRef(false);
   const animationRef = useRef<AnimationPlaybackControls | null>(null);
@@ -70,43 +68,31 @@ export function SpringPath({
 
   const animateSpringPathVariant = useCallback(
     (variant: "initial" | "animate" | "click") => {
-      const animations: AnimationPlaybackControls[] = [];
+      const animationConfigs = [
+        { selector: "bubbles", variants: bubblesVariants, count: 2 },
+        { selector: "secondary-circle", variants: secondaryCircleVariants },
+        { selector: "background", variants: backgroundVariants },
+      ];
 
-      const bubblesVariantVaue = getIndexedVariantValue(
-        bubblesVariants,
-        variant
+      const animations = animationConfigs.flatMap((config) =>
+        animateVariants(
+          `[data-animate='${config.selector}']`,
+          config.variants,
+          variant,
+          config.count
+        )
       );
-      if (bubblesVariantVaue) {
-        const bubblesAnimations = animateIndexedVariants(
-          "[data-animate='bubbles']",
-          bubblesVariantVaue,
-          2
-        );
-        animations.push(...bubblesAnimations.filter((a) => a !== undefined));
-      }
-
-      [
-        { name: "secondary-circle", variants: secondaryCircleVariants },
-        { name: "background", variants: backgroundVariants },
-      ].forEach((item) => {
-        const selector = `[data-animate='${item.name}']`;
-        const variantValue = getVariantValue(item.variants, variant);
-        if (variantValue) {
-          const result = animateVariant(selector, variantValue);
-          if (result) animations.push(result);
-        }
-      });
 
       return Promise.all(animations);
     },
-    [animateVariant, animateIndexedVariants]
+    [animateVariants]
   );
 
   const animateBallVariant = useCallback(
     (variant: keyof typeof ballVariants) => {
-      animateVariant("[data-animate='ball']", ballVariants[variant]);
+      animateVariants("[data-animate='ball']", ballVariants, variant);
     },
-    [animateVariant]
+    [animateVariants]
   );
 
   const animatePathVariant = useCallback(
@@ -115,10 +101,10 @@ export function SpringPath({
         const { ...values } = pathVariants[variant];
         animate("[data-animate='path']", values, overrideTransition);
       } else {
-        animateVariant("[data-animate='path']", pathVariants[variant]);
+        animateVariants("[data-animate='path']", pathVariants, variant);
       }
     },
-    [animateVariant, animate]
+    [animateVariants, animate]
   );
 
   // Animation progress (0 to 1)

@@ -4,7 +4,6 @@ import {
   fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
-import { getVariantValue } from "@/lib/helpers";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import {
@@ -15,7 +14,6 @@ import {
   timelineTwoVariants,
 } from "@/lib/variants/timeline-variants";
 import {
-  AnimationPlaybackControls,
   motion,
   useAnimate,
   useMotionValue,
@@ -40,7 +38,7 @@ export function Timeline({
 }) {
   const shouldReduceMotion = useReducedMotion();
   const [scope, animate] = useAnimate();
-  const { animateVariant } = useAnimateVariants(animate);
+  const { animateVariants } = useAnimateVariants(animate);
   const bufferLeaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasEnteredMainAreaRef = useRef(false);
   const svgRef = useRef<SVGGElement>(null);
@@ -48,35 +46,37 @@ export function Timeline({
 
   const animateTimelineVariant = useCallback(
     (variant: "initial" | "animate" | "click" | "idle") => {
-      const animations: AnimationPlaybackControls[] = [];
-      [
-        { name: "scale", variants: scaleVariants },
-        { name: "timeline-container", variants: timelineContainerVariants },
-        { name: "timeline-one", variants: timelineOneVariants },
-        { name: "timeline-two", variants: timelineTwoVariants },
-        { name: "timeline-three", variants: timelineThreeVariants },
-      ].forEach((item) => {
-        const selector = `[data-animate='${item.name}']`;
-        const variantValue = getVariantValue(item.variants, variant);
-        if (variantValue) {
-          const result = animateVariant(selector, variantValue);
-          if (result) animations.push(result);
-        }
-      });
+      const animationConfigs = [
+        { selector: "scale", variants: scaleVariants },
+        { selector: "timeline-container", variants: timelineContainerVariants },
+        { selector: "timeline-one", variants: timelineOneVariants },
+        { selector: "timeline-two", variants: timelineTwoVariants },
+        { selector: "timeline-three", variants: timelineThreeVariants },
+      ];
+
+      const animations = animationConfigs.flatMap((config) =>
+        animateVariants(
+          `[data-animate='${config.selector}']`,
+          config.variants,
+          variant
+        )
+      );
+
       return Promise.all(animations);
     },
-    [animateVariant]
+    [animateVariants]
   );
 
   const animateContainerVariant = useCallback(
     (variant: "initial" | "animate" | "click") => {
-      animateVariant("[data-animate='scale']", scaleVariants[variant]);
-      animateVariant(
+      animateVariants("[data-animate='scale']", scaleVariants, variant);
+      animateVariants(
         "[data-animate='timeline-container']",
-        timelineContainerVariants[variant]
+        timelineContainerVariants,
+        variant
       );
     },
-    [animateVariant]
+    [animateVariants]
   );
 
   // Gap between masks and center line (half on each side)

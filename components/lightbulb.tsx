@@ -4,7 +4,6 @@ import {
   fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
-import { getVariantValue } from "@/lib/helpers";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import { useMobileTap } from "@/lib/use-mobile-tap";
@@ -17,12 +16,7 @@ import {
   stemVariants,
   wholeVariants,
 } from "@/lib/variants/lightbulb-variants";
-import {
-  AnimationPlaybackControls,
-  motion,
-  useAnimate,
-  useReducedMotion,
-} from "motion/react";
+import { motion, useAnimate, useReducedMotion } from "motion/react";
 import { useCallback, useEffect } from "react";
 
 export function Lightbulb({
@@ -34,7 +28,7 @@ export function Lightbulb({
 }) {
   const shouldReduceMotion = useReducedMotion();
   const [scope, animate] = useAnimate();
-  const { animateVariant } = useAnimateVariants(animate);
+  const { animateVariants } = useAnimateVariants(animate);
   const {
     isReadyRef: isReadyForClickRef,
     markTapped,
@@ -43,26 +37,27 @@ export function Lightbulb({
 
   const animateLightbulbVariant = useCallback(
     (variant: "initial" | "animate" | "idle" | "click") => {
-      const animations: AnimationPlaybackControls[] = [];
-      [
-        { name: "whole", variants: wholeVariants },
-        { name: "background", variants: backgroundVariants },
-        { name: "bulb", variants: bulbVariants },
-        { name: "stem", variants: stemVariants },
-        { name: "bulb-mask", variants: bulbMaskVariants },
-        { name: "ray", variants: rayVariants },
-        { name: "rays-opacity", variants: raysOpacityVariants },
-      ].forEach((item) => {
-        const selector = `[data-animate='${item.name}']`;
-        const variantValue = getVariantValue(item.variants, variant);
-        if (variantValue) {
-          const result = animateVariant(selector, variantValue);
-          if (result) animations.push(result);
-        }
-      });
+      const animationConfigs = [
+        { selector: "whole", variants: wholeVariants },
+        { selector: "background", variants: backgroundVariants },
+        { selector: "bulb", variants: bulbVariants },
+        { selector: "stem", variants: stemVariants },
+        { selector: "bulb-mask", variants: bulbMaskVariants },
+        { selector: "ray", variants: rayVariants },
+        { selector: "rays-opacity", variants: raysOpacityVariants },
+      ];
+
+      const animations = animationConfigs.flatMap((config) =>
+        animateVariants(
+          `[data-animate='${config.selector}']`,
+          config.variants,
+          variant
+        )
+      );
+
       return Promise.all(animations);
     },
-    [animateVariant]
+    [animateVariants]
   );
 
   useEffect(() => {

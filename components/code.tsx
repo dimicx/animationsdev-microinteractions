@@ -3,7 +3,6 @@ import {
   fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
-import { getVariantValue } from "@/lib/helpers";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
 import { useFlubber } from "@/lib/use-flubber";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
@@ -17,7 +16,6 @@ import {
   slashVariants,
 } from "@/lib/variants/code-variants";
 import {
-  AnimationPlaybackControls,
   motion,
   useAnimate,
   useMotionValue,
@@ -63,7 +61,7 @@ export function Code({
   const colorIndexRef = useRef<number | null>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const [scope, animate] = useAnimate();
-  const { animateVariant } = useAnimateVariants(animate);
+  const { animateVariants } = useAnimateVariants(animate);
   const {
     isReadyRef: isReadyForClickRef,
     markTapped,
@@ -75,25 +73,26 @@ export function Code({
 
   const animateCodeVariant = useCallback(
     (variant: "initial" | "animate" | "idle" | "click") => {
-      const animations: AnimationPlaybackControls[] = [];
-      [
-        { name: "background", variants: backgroundVariants },
-        { name: "caret-left", variants: caretLeftVariants },
-        { name: "caret-right", variants: caretRightVariants },
-        { name: "slash", variants: slashVariants },
-        { name: "code-path", variants: codePathVariants },
-        { name: "pulse", variants: pulseVariants },
-      ].forEach((item) => {
-        const selector = `[data-animate='${item.name}']`;
-        const variantValue = getVariantValue(item.variants, variant);
-        if (variantValue) {
-          const result = animateVariant(selector, variantValue);
-          if (result) animations.push(result);
-        }
-      });
+      const animationConfigs = [
+        { selector: "background", variants: backgroundVariants },
+        { selector: "caret-left", variants: caretLeftVariants },
+        { selector: "caret-right", variants: caretRightVariants },
+        { selector: "slash", variants: slashVariants },
+        { selector: "code-path", variants: codePathVariants },
+        { selector: "pulse", variants: pulseVariants },
+      ];
+
+      const animations = animationConfigs.flatMap((config) =>
+        animateVariants(
+          `[data-animate='${config.selector}']`,
+          config.variants,
+          variant
+        )
+      );
+
       return Promise.all(animations);
     },
-    [animateVariant]
+    [animateVariants]
   );
 
   useEffect(() => {
