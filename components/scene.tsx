@@ -10,11 +10,24 @@ import { Timeline } from "@/components/timeline";
 import { SPRING_CONFIGS } from "@/lib/animation-configs";
 import useIsMobile from "@/lib/use-is-mobile";
 import { motion, MotionConfig } from "motion/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function Scene() {
   const { isMobile } = useIsMobile();
   const isDraggingRef = useRef(false);
+
+  const [mounted, setMounted] = useState(false);
+  const mountedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    mountedTimeoutRef.current = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => {
+      if (mountedTimeoutRef.current) {
+        clearTimeout(mountedTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleDragStart = () => {
     isDraggingRef.current = true;
@@ -23,6 +36,8 @@ export function Scene() {
   const handleDragEnd = () => {
     isDraggingRef.current = false;
   };
+
+  if (!mounted) return null;
 
   return (
     <MotionConfig reducedMotion="user" transition={SPRING_CONFIGS.default}>
