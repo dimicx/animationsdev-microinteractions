@@ -1,6 +1,11 @@
 import {
+  DARK_MODE_COLORS,
+  DEFAULT_DARK_FILL,
+  DEFAULT_LIGHT_FILL,
+  LIGHT_MODE_COLORS,
+} from "@/lib/animation-configs";
+import {
   createFloatingAnimation,
-  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
@@ -27,27 +32,6 @@ const codePaths = [
   "M402.625 268.175C402.51 267.54 402.522 266.888 402.659 266.258C402.797 265.627 403.057 265.03 403.425 264.5C403.794 263.97 404.263 263.518 404.806 263.17C405.349 262.821 405.956 262.583 406.591 262.47L409.815 261.89C410.45 261.775 411.101 261.787 411.732 261.924C412.362 262.061 412.96 262.322 413.49 262.69C414.019 263.058 414.471 263.527 414.82 264.071C415.168 264.614 415.406 265.22 415.52 265.856L417.84 278.751C418.07 280.033 417.782 281.355 417.038 282.425C416.295 283.495 415.156 284.225 413.874 284.457L410.65 285.037C409.367 285.267 408.046 284.979 406.976 284.235C405.906 283.491 405.175 282.353 404.944 281.071L402.625 268.175Z",
   "M403.67 266.711C403.326 264.529 404.816 262.481 406.998 262.136L407.851 262.002C410.033 261.658 412.082 263.147 412.426 265.33L414.81 280.443C415.154 282.625 413.664 284.673 411.482 285.017L410.629 285.152C408.447 285.496 406.399 284.006 406.054 281.824L403.67 266.711Z",
   "M396.244 269.906C395.727 266.633 397.962 263.561 401.235 263.045L414.792 260.906C418.065 260.389 421.137 262.624 421.653 265.898L423.414 277.06C423.931 280.333 421.696 283.405 418.423 283.921L404.866 286.06C401.593 286.576 398.521 284.341 398.004 281.068L396.244 269.906Z",
-];
-
-const DEFAULT_LIGHT_FILL = "#989898";
-const DEFAULT_DARK_FILL = "#D6D6D6";
-const LIGHT_MODE_COLORS = [
-  "#f6d1da",
-  "#d9def2",
-  "#c5d4b5",
-  "#00aae8",
-  "#f1ac80",
-  "#fec300",
-  "#cae6f7",
-];
-const DARK_MODE_COLORS = [
-  "#ff8000",
-  "#ada2ff",
-  "#ff91b6",
-  "#ffca92",
-  "#00fe00",
-  "#6bff9e",
-  "#f4f4f4",
 ];
 
 export function Code({
@@ -151,8 +135,9 @@ export function Code({
       resetMobileTap();
       animateCodeVariant("initial");
       animateCodeVariant("idle");
-      animate(codePathProgress, 0, {
-        duration: 0.5,
+      animate(codePathProgress, [2, 1, 0], {
+        duration: 0.4,
+        times: [0, 0.3, 0.8],
         ease: "easeOut",
       });
 
@@ -178,7 +163,6 @@ export function Code({
   return (
     <motion.g
       ref={scope}
-      variants={fadeScaleVariants}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
@@ -186,8 +170,7 @@ export function Code({
     >
       <motion.g
         {...createFloatingAnimation({
-          from: -1,
-          to: 1,
+          to: 1.5,
           duration: 3,
           shouldReduceMotion,
         })}

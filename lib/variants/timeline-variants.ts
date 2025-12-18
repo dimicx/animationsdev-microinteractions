@@ -1,16 +1,20 @@
 import { TargetAndTransition } from "motion/react";
 
-const timelineTimes = [0, 0.2, 0.35, 0.65, 0.8, 1];
-const timelineDuration = 1.7;
+const TIMELINE_TIMES = [0, 0.2, 0.35, 0.65, 0.8, 1];
+const TIMELINE_DURATION = 1.7;
+const CLICK_DURATION = 1;
 
-const scaleVariants: Record<"initial" | "animate" | "click", TargetAndTransition> = {
+const scaleVariants: Record<
+  "initial" | "animate" | "click",
+  TargetAndTransition
+> = {
   initial: {
     transform: "scale(1)",
   },
   animate: {
     transform: ["scale(1)", "scale(0.97)", "scale(1.02)", "scale(1)"],
     transition: {
-      duration: 0.5,
+      duration: 0.4,
       times: [0, 0.25, 0.6, 1],
       ease: "easeOut",
     },
@@ -18,7 +22,7 @@ const scaleVariants: Record<"initial" | "animate" | "click", TargetAndTransition
   click: {
     transform: ["scale(1)", "scale(0.97)", "scale(1.02)", "scale(1)"],
     transition: {
-      duration: 0.5,
+      duration: 0.4,
       times: [0, 0.25, 0.6, 1],
       ease: "easeOut",
     },
@@ -35,15 +39,15 @@ const timelineOneVariants: Record<
   animate: {
     pathLength: [1, 0.4, 0.4, 0.4, 1],
     transition: {
-      duration: timelineDuration,
-      times: timelineTimes,
+      duration: TIMELINE_DURATION,
+      times: TIMELINE_TIMES,
       ease: "easeInOut",
     },
   },
   idle: {
     pathLength: [1, 0.8, 1],
     transition: {
-      duration: 3,
+      duration: 2,
       ease: "easeInOut",
       repeat: Infinity,
       repeatType: "loop",
@@ -54,7 +58,7 @@ const timelineOneVariants: Record<
   click: {
     pathLength: [1, 0.4, 1],
     transition: {
-      duration: 1,
+      duration: CLICK_DURATION,
       ease: "easeInOut",
     },
   },
@@ -79,15 +83,15 @@ const timelineTwoVariants: Record<
     ],
     transition: {
       delay: 0.1,
-      duration: timelineDuration,
-      times: timelineTimes,
+      duration: TIMELINE_DURATION,
+      times: TIMELINE_TIMES,
       ease: "easeInOut",
     },
   },
   idle: {
     pathLength: [1, 0.8, 1],
     transition: {
-      duration: 2.5,
+      duration: 2,
       ease: "easeInOut",
       repeat: Infinity,
       repeatType: "loop",
@@ -98,8 +102,8 @@ const timelineTwoVariants: Record<
   click: {
     pathLength: [1, 0.5, 1],
     transition: {
-      duration: 1,
-      delay: 0.1,
+      duration: CLICK_DURATION,
+      delay: 0.07,
       ease: "easeInOut",
     },
   },
@@ -124,8 +128,8 @@ const timelineThreeVariants: Record<
     ],
     transition: {
       delay: 0.13,
-      duration: timelineDuration,
-      times: timelineTimes,
+      duration: TIMELINE_DURATION,
+      times: TIMELINE_TIMES,
       ease: "easeInOut",
     },
   },
@@ -143,8 +147,8 @@ const timelineThreeVariants: Record<
   click: {
     pathLength: [1, 0.5, 1],
     transition: {
-      duration: 1,
-      delay: 0.2,
+      duration: CLICK_DURATION,
+      delay: 0.12,
       ease: "easeInOut",
     },
   },
@@ -158,14 +162,11 @@ const timelineContainerVariants: Record<
     transform: "rotate(0deg)",
   },
   animate: {
-    transform: [
-      "rotate(0deg)",
-      "rotate(-12deg)",
-      "rotate(-8.5deg)",
-      "rotate(-9deg)",
-    ],
+    transform: ["rotate(0deg)", "rotate(-12deg)", "rotate(-9deg)"],
     transition: {
       duration: 0.7,
+      times: [0, 0.25, 0.6],
+      ease: "easeOut",
     },
   },
   click: {

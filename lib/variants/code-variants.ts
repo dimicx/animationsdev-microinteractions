@@ -111,30 +111,47 @@ const codePathVariants: Record<"initial" | "animate", TargetAndTransition> = {
   },
 };
 
-const pulseVariants: Record<"initial" | "idle" | "click", TargetAndTransition> =
-  {
-    initial: {
-      opacity: 0.4,
+const pulseVariants: Record<
+  "initial" | "animate" | "idle" | "click",
+  TargetAndTransition
+> = {
+  initial: {
+    opacity: 0.4,
+    transform: "scale(1)",
+  },
+  animate: {
+    // opacity: 0.4,
+    // transition: {
+    //   duration: 0.2,
+    //   ease: "easeOut",
+    // },
+    opacity: [0.4, 0.2, 0.4],
+    transition: {
+      duration: 1.5,
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "loop",
     },
-    idle: {
-      opacity: [0.4, 0.2, 0.4],
-      transition: {
-        duration: 1.5,
-        ease: "easeInOut",
-        repeat: Infinity,
-        repeatType: "loop",
-      },
+  },
+  idle: {
+    opacity: [0.4, 0.2, 0.4],
+    transition: {
+      duration: 1.5,
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "loop",
     },
-    click: {
-      opacity: 1,
-      scale: [1, 0.97, 1.02, 1],
-      transition: {
-        duration: 0.35,
-        times: [0, 0.25, 0.6, 1],
-        ease: "easeOut",
-      },
+  },
+  click: {
+    opacity: 1,
+    transform: ["scale(1)", "scale(0.98)", "scale(1.01)", "scale(1)"],
+    transition: {
+      duration: 0.35,
+      times: [0, 0.25, 0.6, 1],
+      ease: "easeOut",
     },
-  };
+  },
+};
 
 export {
   backgroundVariants,

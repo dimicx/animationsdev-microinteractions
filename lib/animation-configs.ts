@@ -6,15 +6,15 @@ import { Transition } from "motion/react";
 export const SPRING_CONFIGS = {
   clockHand: {
     type: "spring",
-    stiffness: 150,
-    damping: 19,
+    stiffness: 250,
+    damping: 25,
     mass: 1.2,
   } as const,
   dragBounce: {
     type: "spring",
-    stiffness: 600,
+    stiffness: 650,
     damping: 20,
-    mass: 1,
+    mass: 0.85,
   } as const,
   default: {
     type: "spring",
@@ -23,3 +23,26 @@ export const SPRING_CONFIGS = {
     mass: 4,
   } as const,
 } satisfies Record<string, Transition>;
+
+export const DEFAULT_LIGHT_FILL = "#989898";
+export const DEFAULT_DARK_FILL = "#D6D6D6";
+export const LIGHT_MODE_COLORS = [
+  "#FFAA04",
+  "#fec300",
+  "#05DF72",
+  "#00D5BE",
+  "#00BCFF",
+  "#C27AFF",
+  "#FF637E",
+  DEFAULT_LIGHT_FILL,
+];
+export const DARK_MODE_COLORS = [
+  "#FFAA04",
+  "#00fe00",
+  "#00D492",
+  "#00D3F3",
+  "#7C86FF",
+  "#ED6AFF",
+  "#FF637E",
+  DEFAULT_DARK_FILL,
+];

@@ -1,7 +1,6 @@
+import { interpolate } from "flubber";
 import { MotionValue } from "motion";
 import { useTransform } from "motion/react";
-import { interpolate } from "flubber";
-import { useMemo } from "react";
 
 const getIndex = (_: string, index: number): number => index;
 
@@ -11,8 +10,8 @@ export function useFlubber(
   progress: MotionValue<number>,
   paths: string[]
 ): MotionValue<string> {
-  const mixer = useMemo(
-    () => (a: string, b: string) => {
+  return useTransform(progress, paths.map(getIndex), paths, {
+    mixer: (a, b) => {
       const key = `${a}-${b}`;
       if (!interpolatorCache.has(key)) {
         interpolatorCache.set(
@@ -22,8 +21,5 @@ export function useFlubber(
       }
       return interpolatorCache.get(key)!;
     },
-    []
-  );
-
-  return useTransform(progress, paths.map(getIndex), paths, { mixer });
+  });
 }

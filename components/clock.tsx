@@ -2,7 +2,6 @@ import { SPRING_CONFIGS } from "@/lib/animation-configs";
 import {
   createFloatingAnimation,
   createRotationAnimation,
-  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
@@ -229,7 +228,6 @@ export function Clock({
   return (
     <motion.g
       ref={scope}
-      variants={fadeScaleVariants}
       className="origin-bottom-right!"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -237,7 +235,6 @@ export function Clock({
     >
       <motion.g
         {...createFloatingAnimation({
-          from: -1.5,
           to: 1.5,
           duration: 3,
           shouldReduceMotion,
@@ -249,7 +246,6 @@ export function Clock({
         >
           <motion.g
             {...createRotationAnimation({
-              from: -1,
               to: 1,
               duration: 4,
               shouldReduceMotion,
@@ -284,10 +280,13 @@ export function Clock({
               data-animate="minute-hand"
               initial={{
                 transform: `rotate(0deg)`,
+                transformOrigin: MINUTE_HAND_ORIGIN,
+                transformBox: "view-box",
               }}
               style={{
-                transformBox: "view-box",
+                transform: `rotate(0deg)`,
                 transformOrigin: MINUTE_HAND_ORIGIN,
+                transformBox: "view-box",
               }}
             >
               <line
@@ -305,10 +304,13 @@ export function Clock({
               data-animate="hour-hand"
               initial={{
                 transform: `rotate(${INITIAL_HOUR_ROTATION}deg)`,
+                transformOrigin: HOUR_HAND_ORIGIN,
+                transformBox: "view-box",
               }}
               style={{
-                transformBox: "view-box",
+                transform: `rotate(${INITIAL_HOUR_ROTATION}deg)`,
                 transformOrigin: HOUR_HAND_ORIGIN,
+                transformBox: "view-box",
               }}
             >
               <line

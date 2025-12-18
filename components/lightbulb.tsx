@@ -1,7 +1,6 @@
 import {
   createFloatingAnimation,
   createRotationAnimation,
-  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
@@ -11,13 +10,12 @@ import {
   backgroundVariants,
   bulbMaskVariants,
   bulbVariants,
-  raysOpacityVariants,
   rayVariants,
   stemVariants,
   wholeVariants,
 } from "@/lib/variants/lightbulb-variants";
 import { motion, useAnimate, useReducedMotion } from "motion/react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 export function Lightbulb({
   isMobile,
@@ -29,6 +27,7 @@ export function Lightbulb({
   const shouldReduceMotion = useReducedMotion();
   const [scope, animate] = useAnimate();
   const { animateVariants } = useAnimateVariants(animate);
+  const hasAnimationCompletedRef = useRef(false);
   const {
     isReadyRef: isReadyForClickRef,
     markTapped,
@@ -44,7 +43,6 @@ export function Lightbulb({
         { selector: "stem", variants: stemVariants },
         { selector: "bulb-mask", variants: bulbMaskVariants },
         { selector: "ray", variants: rayVariants },
-        { selector: "rays-opacity", variants: raysOpacityVariants },
       ];
 
       const animations = animationConfigs.flatMap((config) =>
@@ -69,10 +67,12 @@ export function Lightbulb({
     delay: isMobile ? 0 : UNIVERSAL_DELAY,
     disabledRef: isDraggingRef,
     shouldReduceMotion,
-    onHoverStart: () => {
-      animateLightbulbVariant("animate");
+    onHoverStart: async () => {
+      await animateLightbulbVariant("animate");
+      hasAnimationCompletedRef.current = true;
     },
     onHoverEnd: () => {
+      hasAnimationCompletedRef.current = false;
       resetMobileTap();
       animateLightbulbVariant("initial");
       animateLightbulbVariant("idle");
@@ -81,6 +81,7 @@ export function Lightbulb({
 
   const onClick = useCallback(() => {
     if (shouldReduceMotion) return;
+    if (!hasAnimationCompletedRef.current) return;
     if (!isReadyForClickRef.current) {
       markTapped();
       return;
@@ -96,7 +97,6 @@ export function Lightbulb({
   return (
     <motion.g
       ref={scope}
-      variants={fadeScaleVariants}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
@@ -104,7 +104,6 @@ export function Lightbulb({
     >
       <motion.g
         {...createFloatingAnimation({
-          from: -1.5,
           to: 1,
           duration: 3,
           shouldReduceMotion,
@@ -116,7 +115,6 @@ export function Lightbulb({
         >
           <motion.g
             {...createRotationAnimation({
-              from: -5,
               to: 5,
               duration: 10,
               shouldReduceMotion,
@@ -161,11 +159,8 @@ export function Lightbulb({
             ></motion.path>
           </g>
 
-          {/* light rays reworked as lines to animate pathLength */}
-          <motion.g
-            data-animate="rays-opacity"
-            initial={raysOpacityVariants.initial}
-          >
+          {/* light rays */}
+          <g>
             <motion.line
               data-animate="ray"
               initial={rayVariants.initial}
@@ -214,7 +209,7 @@ export function Lightbulb({
               strokeLinecap="round"
               className="stroke-[#989898] dark:stroke-[#D6D6D6]"
             />
-          </motion.g>
+          </g>
         </motion.g>
       </motion.g>
     </motion.g>
