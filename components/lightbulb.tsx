@@ -51,8 +51,7 @@ export function Lightbulb({
       const animations = animationConfigs.flatMap((config) =>
         animateVariants({
           selector: `[data-animate='${config.selector}']`,
-          variants: config.variants,
-          variantKey: variant,
+          variant: config.variants[variant as keyof typeof config.variants],
           custom: initialDelay,
         })
       );

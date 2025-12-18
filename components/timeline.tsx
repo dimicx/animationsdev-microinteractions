@@ -55,8 +55,7 @@ export function Timeline({
       const animations = animationConfigs.flatMap((config) =>
         animateVariants({
           selector: `[data-animate='${config.selector}']`,
-          variants: config.variants,
-          variantKey: variant,
+          variant: config.variants[variant as keyof typeof config.variants],
         })
       );
 
@@ -69,13 +68,11 @@ export function Timeline({
     (variant: "initial" | "animate" | "click") => {
       animateVariants({
         selector: "[data-animate='scale']",
-        variants: scaleVariants,
-        variantKey: variant,
+        variant: scaleVariants[variant],
       });
       animateVariants({
         selector: "[data-animate='timeline-container']",
-        variants: timelineContainerVariants,
-        variantKey: variant,
+        variant: timelineContainerVariants[variant],
       });
     },
     [animateVariants]

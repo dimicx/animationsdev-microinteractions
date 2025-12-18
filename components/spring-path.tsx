@@ -87,8 +87,7 @@ export function SpringPath({
       const animations = animationConfigs.flatMap((config) =>
         animateVariants({
           selector: `[data-animate='${config.selector}']`,
-          variants: config.variants,
-          variantKey: variant,
+          variant: config.variants[variant as keyof typeof config.variants],
           custom: config.custom,
         })
       );
@@ -102,8 +101,7 @@ export function SpringPath({
     (variant: keyof typeof ballVariants) => {
       animateVariants({
         selector: "[data-animate='ball']",
-        variants: ballVariants,
-        variantKey: variant,
+        variant: ballVariants[variant],
       });
     },
     [animateVariants]
@@ -117,8 +115,7 @@ export function SpringPath({
       } else {
         animateVariants({
           selector: "[data-animate='path']",
-          variants: pathVariants,
-          variantKey: variant,
+          variant: pathVariants[variant],
         });
       }
     },

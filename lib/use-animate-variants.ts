@@ -39,31 +39,27 @@ export const defineVariants = <T extends Record<string, Variant>>(
  * // Animate a single element with a variant
  * animateVariants({
  *   selector: '[data-animate="hand"]',
- *   variants: handVariants,
- *   variantKey: 'animate'
+ *   variant: handVariants.animate
  * });
  *
  * // Animate indexed elements (e.g., bells, rays) - simple count
  * animateVariants({
  *   selector: '[data-animate="ray"]',
- *   variants: rayVariants,
- *   variantKey: 'animate',
+ *   variant: rayVariants.animate,
  *   custom: 3  // Calls variant(0), variant(1), variant(2)
  * });
  *
  * // Animate indexed elements with additional params
  * animateVariants({
  *   selector: '[data-animate="ray"]',
- *   variants: rayVariants,
- *   variantKey: 'idle',
+ *   variant: rayVariants.idle,
  *   custom: { count: 3, initialDelay: true }  // Calls variant({ index: 0, initialDelay: true }), etc.
  * });
  *
  * // Pass custom parameter to variant function
  * animateVariants({
  *   selector: '[data-animate="bulb"]',
- *   variants: bulbVariants,
- *   variantKey: 'idle',
+ *   variant: bulbVariants.idle,
  *   custom: true  // Non-indexed: calls variant(true)
  * });
  * ```
@@ -92,8 +88,7 @@ export function useAnimateVariants(
    * Unified animation function that handles both standard and indexed variants.
    * @param params - Animation parameters
    * @param params.selector - Element selector (e.g., "[data-animate='ray']")
-   * @param params.variants - The variants record object
-   * @param params.variantKey - The variant key to animate
+   * @param params.variant - The variant to animate
    * @param params.custom - Optional parameter with multiple patterns:
    *   - number: count for indexed variants (calls variant(0), variant(1), ...)
    *   - { count, ...params }: count + additional params for indexed variants (calls variant({ index: 0, ...params }), ...)
@@ -103,19 +98,14 @@ export function useAnimateVariants(
   const animateVariants = useCallback(
     ({
       selector,
-      variants,
-      variantKey,
+      variant,
       custom,
     }: {
       selector: string;
-      variants: Record<string, Variant>;
-      variantKey: string;
+      variant: Variant;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       custom?: any;
     }): AnimationPlaybackControls[] => {
-      // Get the variant value from the record
-      const variant = variantKey in variants ? variants[variantKey] : undefined;
-
       // Early return if variant doesn't exist
       if (!variant) return [];
 

@@ -48,9 +48,8 @@ export function Clock({
 
       const animations = animationConfigs.flatMap((config) =>
         animateVariants({
-          selector: `[data-animate='${config.selector}']`,
-          variants: config.variants,
-          variantKey: variant,
+          selector: `[data-animate="${config.selector}"]`,
+          variant: config.variants[variant],
           custom: config.custom,
         })
       );
@@ -64,8 +63,7 @@ export function Clock({
     (variant: keyof typeof backgroundVariants) => {
       const result = animateVariants({
         selector: "[data-animate='background']",
-        variants: backgroundVariants,
-        variantKey: variant,
+        variant: backgroundVariants[variant],
       });
       return result[0];
     },
@@ -76,8 +74,7 @@ export function Clock({
     (variant: keyof typeof clockAndBellsVariants) => {
       const result = animateVariants({
         selector: "[data-animate='clock-and-bells']",
-        variants: clockAndBellsVariants,
-        variantKey: variant,
+        variant: clockAndBellsVariants[variant],
       });
       return result[0];
     },
@@ -88,8 +85,7 @@ export function Clock({
     (variant: keyof typeof bellsVariants) => {
       const result = animateVariants({
         selector: "[data-animate='bells']",
-        variants: bellsVariants,
-        variantKey: variant,
+        variant: bellsVariants[variant],
       });
       return result[0];
     },

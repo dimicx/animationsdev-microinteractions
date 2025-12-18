@@ -66,13 +66,12 @@ export function Code({
         { selector: "pulse", variants: pulseVariants },
       ];
 
-      const animations = animationConfigs.flatMap((config) =>
+      const animations = animationConfigs.flatMap((config) => {
         animateVariants({
           selector: `[data-animate='${config.selector}']`,
-          variants: config.variants,
-          variantKey: variant,
-        })
-      );
+          variant: config.variants[variant as keyof typeof config.variants],
+        });
+      });
 
       return Promise.all(animations);
     },

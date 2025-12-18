@@ -71,9 +71,8 @@ export function Hand({
 
       const animations = animationConfigs.flatMap((config) =>
         animateVariants({
-          selector: `[data-animate='${config.selector}']`,
-          variants: config.variants,
-          variantKey: variant,
+          selector: `[data-animate="${config.selector}"]`,
+          variant: config.variants[variant as keyof typeof config.variants],
           custom: config.custom,
         })
       );
