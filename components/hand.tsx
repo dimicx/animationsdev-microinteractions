@@ -10,11 +10,12 @@ import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import { useMobileTap } from "@/lib/use-mobile-tap";
 import {
   backgroundVariants,
+  DURATION,
   handVariants,
+  IDLE_DURATION,
+  INITIAL_DELAY,
   rayVariants,
   REPEAT_DELAY,
-  DURATION,
-  INITIAL_DELAY,
 } from "@/lib/variants/hand-variants";
 import {
   AnimationPlaybackControls,
@@ -96,8 +97,8 @@ export function Hand({
 
     animateHandVariant("idle");
     handPathAnimationRef.current = animate(handPathProgress, [0, 1, 0], {
-      duration: DURATION,
-      times: [0, 0.3, 0.5],
+      duration: IDLE_DURATION,
+      times: [0.2, 0.5, 0.7],
       ease: easeOut,
       repeat: Infinity,
       repeatType: "loop",

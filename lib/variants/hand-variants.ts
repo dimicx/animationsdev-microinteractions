@@ -2,8 +2,9 @@ import { defineVariants } from "@/lib/use-animate-variants";
 import { Transition } from "motion/react";
 
 const REPEAT_DELAY = 6;
-const INITIAL_DELAY = 2.5;
+const INITIAL_DELAY = 3.5;
 const DURATION = 0.53;
+const IDLE_DURATION = DURATION + 0.1;
 
 const backgroundVariants = defineVariants({
   initial: {
@@ -21,8 +22,8 @@ const backgroundVariants = defineVariants({
   idle: (initialDelay: boolean) => ({
     transform: ["scale(1)", "scale(0.97)", "scale(1.01)", "scale(1)"],
     transition: {
-      duration: DURATION,
-      times: [0.1, 0.33, 0.7, 1],
+      duration: IDLE_DURATION,
+      times: [0.2, 0.55, 0.92, 1],
       ease: "easeOut",
       repeat: Infinity,
       repeatType: "loop",
@@ -43,7 +44,7 @@ const backgroundVariants = defineVariants({
 const idleRayPathLengths = [1, 0.45, 0.1];
 const getIdleRayTransition = (initialDelay: boolean): Transition => ({
   delay: initialDelay ? INITIAL_DELAY : REPEAT_DELAY,
-  duration: DURATION,
+  duration: IDLE_DURATION,
   repeat: Infinity,
   repeatType: "loop",
   repeatDelay: REPEAT_DELAY,
@@ -62,12 +63,12 @@ const rayVariants = defineVariants({
         pathLength: {
           delay: i === 1 ? 0 : 0.04,
           duration: DURATION,
-          times: [0.8, 1],
+          times: [0.85, 1],
         },
         strokeOpacity: {
           delay: i === 1 ? 0 : 0.04,
           duration: DURATION,
-          times: [0.8, 0.81],
+          times: [0.85, 0.86],
         },
       },
     };
@@ -80,11 +81,11 @@ const rayVariants = defineVariants({
       strokeOpacity: [0.5, 0, 0, 0.5],
       transition: {
         pathLength: {
-          times: [0.1, 0.2, 0.5, 0.8],
+          times: [0.1, 0.2, 0.55, 0.85],
           ...idleRayTransition,
         },
         strokeOpacity: {
-          times: [0, 0.01, 0.5, 0.51],
+          times: [0.1, 0.15, 0.55, 0.56],
           ...idleRayTransition,
         },
       },
@@ -149,4 +150,5 @@ export {
   rayVariants,
   REPEAT_DELAY,
   INITIAL_DELAY,
+  IDLE_DURATION,
 };

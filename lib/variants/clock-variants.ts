@@ -1,7 +1,7 @@
 import { defineVariants } from "@/lib/use-animate-variants";
 
 const REPEAT_DELAY = 6;
-const INITIAL_DELAY = 3.5;
+const INITIAL_DELAY = 4.5;
 
 const backgroundVariants = defineVariants({
   initial: {
