@@ -1,5 +1,5 @@
 import { defineVariants } from "@/lib/use-animate-variants";
-import { easeInOut, easeOut, Transition } from "motion/react";
+import { Transition } from "motion/react";
 
 const REPEAT_DELAY = 7;
 const INITIAL_DELAY = 1;
@@ -19,7 +19,7 @@ const wholeVariants = defineVariants({
     transition: {
       duration: DURATION,
       times: [0, 0.25, 0.6, 1],
-      ease: easeInOut,
+      ease: "easeInOut",
     },
   },
   click: {
@@ -32,7 +32,7 @@ const wholeVariants = defineVariants({
     transition: {
       duration: DURATION,
       times: [0, 0.25, 0.6, 1],
-      ease: easeInOut,
+      ease: "easeInOut",
     },
   },
 });
@@ -46,7 +46,7 @@ const backgroundVariants = defineVariants({
     transition: {
       duration: DURATION,
       times: [0, 0.2, 0.45, 0.6],
-      ease: easeOut,
+      ease: "easeOut",
     },
   },
   click: {
@@ -54,7 +54,7 @@ const backgroundVariants = defineVariants({
     transition: {
       duration: DURATION,
       times: [0, 0.2, 0.45, 0.6],
-      ease: easeOut,
+      ease: "easeOut",
     },
   },
 });
