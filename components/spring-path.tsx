@@ -8,6 +8,7 @@ import {
 import {
   createFloatingAnimation,
   createRotationAnimation,
+  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import {
@@ -21,6 +22,7 @@ import {
   backgroundVariants,
   ballVariants,
   BOUNCE_DURATION,
+  bubblesAppearVariants,
   bubblesVariants,
   pathVariants,
   secondaryCircleVariants,
@@ -354,8 +356,12 @@ export function SpringPath({
   ]);
 
   return (
-    <motion.g ref={scope} className="origin-bottom-left!">
-      {/* small bubbles - point towards pointer */}
+    <motion.g
+      ref={scope}
+      variants={fadeScaleVariants}
+      className="origin-bottom-left!"
+    >
+      {/* small bubbles */}
       <motion.g
         variants={{
           hidden: {},
@@ -385,17 +391,19 @@ export function SpringPath({
               transformOrigin: "201.927px 293.495px",
             }}
           >
-            <motion.g
-              data-animate="bubbles"
-              data-index="0"
-              initial={bubblesVariants.initial}
-            >
-              <circle
-                cx="201.927"
-                cy="293.495"
-                r="9.417"
-                className="fill-[#F8F8F8] dark:fill-[#252525] filter-[url(#filter1_i_359_1453)] dark:filter-[url(#filter1_ii_368_1560)]"
-              />
+            <motion.g variants={bubblesAppearVariants}>
+              <motion.g
+                data-animate="bubbles"
+                data-index="0"
+                initial={bubblesVariants.initial}
+              >
+                <circle
+                  cx="201.927"
+                  cy="293.495"
+                  r="9.417"
+                  className="fill-[#F8F8F8] dark:fill-[#252525] filter-[url(#filter1_i_359_1453)] dark:filter-[url(#filter1_ii_368_1560)]"
+                />
+              </motion.g>
             </motion.g>
           </motion.g>
         </motion.g>
@@ -417,17 +425,19 @@ export function SpringPath({
               transformOrigin: "184.926px 314.008px",
             }}
           >
-            <motion.g
-              data-animate="bubbles"
-              data-index="1"
-              initial={bubblesVariants.initial}
-            >
-              <circle
-                cx="184.926"
-                cy="314.008"
-                r="4.913"
-                className="fill-[#F8F8F8] dark:fill-[#252525] filter-[url(#filter2_i_359_1453)] dark:filter-[url(#filter2_ii_368_1560)]"
-              />
+            <motion.g variants={bubblesAppearVariants}>
+              <motion.g
+                data-animate="bubbles"
+                data-index="1"
+                initial={bubblesVariants.initial}
+              >
+                <circle
+                  cx="184.926"
+                  cy="314.008"
+                  r="4.913"
+                  className="fill-[#F8F8F8] dark:fill-[#252525] filter-[url(#filter2_i_359_1453)] dark:filter-[url(#filter2_ii_368_1560)]"
+                />
+              </motion.g>
             </motion.g>
           </motion.g>
         </motion.g>

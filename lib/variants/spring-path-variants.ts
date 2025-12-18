@@ -148,6 +148,21 @@ const bubblesVariants = defineVariants({
   }),
 });
 
+const bubblesAppearVariants = defineVariants({
+  hidden: {
+    scale: 0,
+    x: 40,
+    y: -60,
+    opacity: 0,
+  },
+  visible: {
+    scale: 1,
+    x: 0,
+    y: 0,
+    opacity: 1,
+  },
+});
+
 export {
   backgroundVariants,
   ballVariants,
@@ -155,4 +170,5 @@ export {
   bubblesVariants,
   pathVariants,
   secondaryCircleVariants,
+  bubblesAppearVariants,
 };

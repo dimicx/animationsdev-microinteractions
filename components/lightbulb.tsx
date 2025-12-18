@@ -1,6 +1,7 @@
 import {
   createFloatingAnimation,
   createRotationAnimation,
+  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
@@ -104,6 +105,7 @@ export function Lightbulb({
   return (
     <motion.g
       ref={scope}
+      variants={fadeScaleVariants}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}

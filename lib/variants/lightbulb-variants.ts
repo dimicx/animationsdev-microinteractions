@@ -2,7 +2,7 @@ import { defineVariants } from "@/lib/use-animate-variants";
 import { Transition } from "motion/react";
 
 const REPEAT_DELAY = 8;
-const INITIAL_DELAY = 1;
+const INITIAL_DELAY = 1.5;
 const DURATION = 0.7;
 
 const wholeVariants = defineVariants({
