@@ -1,10 +1,6 @@
-import { IndexedVariant } from "@/lib/use-animate-variants";
-import { TargetAndTransition } from "motion/react";
+import { defineVariants } from "@/lib/use-animate-variants";
 
-const backgroundVariants: Record<
-  "initial" | "animate" | "click" | "scale-click",
-  TargetAndTransition
-> = {
+const backgroundVariants = defineVariants({
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -12,13 +8,11 @@ const backgroundVariants: Record<
     transform: [
       "rotate(0deg) scale(1)",
       "rotate(-4deg) scale(0.99)",
-      "rotate(-1deg) scale(1.01)",
       "rotate(-3deg) scale(1)",
     ],
     transition: {
-      duration: 0.5,
-      times: [0, 0.25, 0.6, 1],
-      ease: "easeInOut",
+      duration: 0.3,
+      ease: "easeOut",
     },
   },
   click: {
@@ -42,15 +36,12 @@ const backgroundVariants: Record<
     transition: {
       duration: 0.4,
       times: [0, 0.25, 0.6, 1],
-      ease: "easeInOut",
+      ease: "easeOut",
     },
   },
-};
+});
 
-const clockAndBellsVariants: Record<
-  "initial" | "click" | "scale-click" | "idle",
-  TargetAndTransition
-> = {
+const clockAndBellsVariants = defineVariants({
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -83,38 +74,38 @@ const clockAndBellsVariants: Record<
   idle: {
     transform: ["rotate(0deg) scale(1)"],
   },
-};
+});
 
-const clockVariants: Record<"initial" | "animate", TargetAndTransition> = {
+const clockVariants = defineVariants({
   initial: {
     y: "0%",
     x: "0%",
   },
   animate: {
-    y: ["0%", "3%", "-6%"],
+    y: ["0%", "-6%"],
     x: ["0%", "-3%", "3.5%", "-3.5%", "3.5%", "-3%", "0%"],
     transition: {
       y: {
-        duration: 0.3,
+        duration: 0.25,
         ease: "easeOut",
       },
       x: {
-        duration: 0.3,
+        duration: 0.25,
         repeat: Infinity,
         ease: "linear",
       },
     },
   },
-};
+});
 
-const bellVariants: Record<"initial" | "animate", IndexedVariant> = {
+const bellVariants = defineVariants({
   initial: () => ({
     y: "0%",
     x: "0%",
     rotate: "0deg",
   }),
   animate: (i: number) => ({
-    y: i === 0 ? ["0%", "10%", "-25%", "-70%"] : ["0%", "20%", "-50%", "-100%"],
+    y: i === 0 ? ["0%", "-25%", "-80%"] : ["0%", "-50%", "-120%"],
     x:
       i === 0
         ? ["0%", "-20%", "16%", "-16%", "20%", "-16%", "0%"]
@@ -122,13 +113,11 @@ const bellVariants: Record<"initial" | "animate", IndexedVariant> = {
     rotate: i === 0 ? "0deg" : ["0deg", "-5deg"],
     transition: {
       y: {
-        delay: i * 0.05,
         duration: 3,
-        times: [0, 0.05, 0.1, 1],
+        times: [0, 0.1, 1],
         ease: "easeOut",
       },
       x: {
-        delay: i * 0.05,
         duration: 0.25,
         repeat: Infinity,
         ease: "linear",
@@ -139,9 +128,9 @@ const bellVariants: Record<"initial" | "animate", IndexedVariant> = {
       },
     },
   }),
-};
+});
 
-const bellsVariants: Record<"initial" | "idle", TargetAndTransition> = {
+const bellsVariants = defineVariants({
   initial: {
     transform: "translateX(0%) translateY(0%) rotate(0deg)",
   },
@@ -161,7 +150,7 @@ const bellsVariants: Record<"initial" | "idle", TargetAndTransition> = {
       delay: 2,
     },
   },
-};
+});
 
 export {
   backgroundVariants,

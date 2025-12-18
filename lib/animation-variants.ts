@@ -1,15 +1,4 @@
-import { Transition, Variants } from "motion/react";
-
-export const fadeScaleVariants: Variants = {
-  initial: {
-    opacity: 0,
-    scale: 0,
-  },
-  animate: {
-    opacity: 1,
-    scale: 1,
-  },
-};
+import { Transition } from "motion/react";
 
 export const UNIVERSAL_DELAY = 100; // 0.1s
 
@@ -21,13 +10,11 @@ export interface FloatingAnimationProps {
 }
 
 export const createFloatingAnimation = ({
-  from = -2,
   to = 2,
   duration = 2.5,
   delay = 0,
   shouldReduceMotion,
 }: {
-  from?: number;
   to?: number;
   duration?: number;
   delay?: number;
@@ -41,7 +28,9 @@ export const createFloatingAnimation = ({
   }
   return {
     initial: { transform: "translateY(0px)" },
-    animate: { transform: [`translateY(${from}px)`, `translateY(${to}px)`] },
+    animate: {
+      transform: ["translateY(0px)", `translateY(${to}px)`],
+    },
     transition: {
       delay,
       duration,
@@ -60,13 +49,11 @@ export interface RotationAnimationProps {
 }
 
 export const createRotationAnimation = ({
-  from = -2,
   to = 2,
   duration = 5,
   delay = 0,
   shouldReduceMotion,
 }: {
-  from?: number;
   to?: number;
   duration?: number;
   delay?: number;
@@ -80,7 +67,9 @@ export const createRotationAnimation = ({
   }
   return {
     initial: { transform: "rotate(0deg)" },
-    animate: { transform: [`rotate(${from}deg)`, `rotate(${to}deg)`] },
+    animate: {
+      transform: ["rotate(0deg)", `rotate(${to}deg)`],
+    },
     transition: {
       delay,
       duration,

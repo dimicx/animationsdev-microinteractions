@@ -2,7 +2,6 @@ import { SPRING_CONFIGS } from "@/lib/animation-configs";
 import {
   createFloatingAnimation,
   createRotationAnimation,
-  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
@@ -44,16 +43,15 @@ export function Clock({
     (variant: "initial" | "animate") => {
       const animationConfigs = [
         { selector: "clock", variants: clockVariants },
-        { selector: "bell", variants: bellVariants, count: 2 },
+        { selector: "bell", variants: bellVariants, custom: 2 },
       ];
 
       const animations = animationConfigs.flatMap((config) =>
-        animateVariants(
-          `[data-animate='${config.selector}']`,
-          config.variants,
-          variant,
-          config.count
-        )
+        animateVariants({
+          selector: `[data-animate="${config.selector}"]`,
+          variant: config.variants[variant],
+          custom: config.custom,
+        })
       );
 
       return Promise.all(animations);
@@ -63,11 +61,10 @@ export function Clock({
 
   const animateBackgroundVariant = useCallback(
     (variant: keyof typeof backgroundVariants) => {
-      const result = animateVariants(
-        "[data-animate='background']",
-        backgroundVariants,
-        variant
-      );
+      const result = animateVariants({
+        selector: "[data-animate='background']",
+        variant: backgroundVariants[variant],
+      });
       return result[0];
     },
     [animateVariants]
@@ -75,11 +72,10 @@ export function Clock({
 
   const animateScaleClickVariant = useCallback(
     (variant: keyof typeof clockAndBellsVariants) => {
-      const result = animateVariants(
-        "[data-animate='clock-and-bells']",
-        clockAndBellsVariants,
-        variant
-      );
+      const result = animateVariants({
+        selector: "[data-animate='clock-and-bells']",
+        variant: clockAndBellsVariants[variant],
+      });
       return result[0];
     },
     [animateVariants]
@@ -87,11 +83,10 @@ export function Clock({
 
   const animateBellsVariant = useCallback(
     (variant: keyof typeof bellsVariants) => {
-      const result = animateVariants(
-        "[data-animate='bells']",
-        bellsVariants,
-        variant
-      );
+      const result = animateVariants({
+        selector: "[data-animate='bells']",
+        variant: bellsVariants[variant],
+      });
       return result[0];
     },
     [animateVariants]
@@ -229,7 +224,6 @@ export function Clock({
   return (
     <motion.g
       ref={scope}
-      variants={fadeScaleVariants}
       className="origin-bottom-right!"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -237,7 +231,6 @@ export function Clock({
     >
       <motion.g
         {...createFloatingAnimation({
-          from: -1.5,
           to: 1.5,
           duration: 3,
           shouldReduceMotion,
@@ -249,7 +242,6 @@ export function Clock({
         >
           <motion.g
             {...createRotationAnimation({
-              from: -1,
               to: 1,
               duration: 4,
               shouldReduceMotion,
@@ -284,10 +276,13 @@ export function Clock({
               data-animate="minute-hand"
               initial={{
                 transform: `rotate(0deg)`,
+                transformOrigin: MINUTE_HAND_ORIGIN,
+                transformBox: "view-box",
               }}
               style={{
-                transformBox: "view-box",
+                transform: `rotate(0deg)`,
                 transformOrigin: MINUTE_HAND_ORIGIN,
+                transformBox: "view-box",
               }}
             >
               <line
@@ -305,10 +300,13 @@ export function Clock({
               data-animate="hour-hand"
               initial={{
                 transform: `rotate(${INITIAL_HOUR_ROTATION}deg)`,
+                transformOrigin: HOUR_HAND_ORIGIN,
+                transformBox: "view-box",
               }}
               style={{
-                transformBox: "view-box",
+                transform: `rotate(${INITIAL_HOUR_ROTATION}deg)`,
                 transformOrigin: HOUR_HAND_ORIGIN,
+                transformBox: "view-box",
               }}
             >
               <line

@@ -1,8 +1,13 @@
-import { SPRING_CONFIGS } from "@/lib/animation-configs";
+import {
+  DARK_MODE_COLORS,
+  DEFAULT_DARK_FILL,
+  DEFAULT_LIGHT_FILL,
+  LIGHT_MODE_COLORS,
+  SPRING_CONFIGS,
+} from "@/lib/animation-configs";
 import {
   createFloatingAnimation,
   createRotationAnimation,
-  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import {
@@ -16,7 +21,6 @@ import {
   backgroundVariants,
   ballVariants,
   BOUNCE_DURATION,
-  bubblesAppearVariants,
   bubblesVariants,
   pathVariants,
   secondaryCircleVariants,
@@ -61,6 +65,7 @@ export function SpringPath({
   const { animateVariants } = useAnimateVariants(animate);
 
   const forwardCompleted = useRef(false);
+  const colorIndexRef = useRef<number | null>(null);
   const animationRef = useRef<AnimationPlaybackControls | null>(null);
   const forwardCompleteTimeoutRef = useRef<ReturnType<
     typeof setTimeout
@@ -69,28 +74,35 @@ export function SpringPath({
   const animateSpringPathVariant = useCallback(
     (variant: "initial" | "animate" | "click") => {
       const animationConfigs = [
-        { selector: "bubbles", variants: bubblesVariants, count: 2 },
+        { selector: "bubbles", variants: bubblesVariants, custom: 2 },
         { selector: "secondary-circle", variants: secondaryCircleVariants },
         { selector: "background", variants: backgroundVariants },
+        { selector: "ball", variants: ballVariants },
       ];
 
+      if (variant === "click") {
+        animationConfigs.push({ selector: "ball", variants: ballVariants });
+      }
+
       const animations = animationConfigs.flatMap((config) =>
-        animateVariants(
-          `[data-animate='${config.selector}']`,
-          config.variants,
-          variant,
-          config.count
-        )
+        animateVariants({
+          selector: `[data-animate='${config.selector}']`,
+          variant: config.variants[variant as keyof typeof config.variants],
+          custom: config.custom,
+        })
       );
 
-      return Promise.all(animations);
+      return animations;
     },
     [animateVariants]
   );
 
   const animateBallVariant = useCallback(
     (variant: keyof typeof ballVariants) => {
-      animateVariants("[data-animate='ball']", ballVariants, variant);
+      animateVariants({
+        selector: "[data-animate='ball']",
+        variant: ballVariants[variant],
+      });
     },
     [animateVariants]
   );
@@ -101,7 +113,10 @@ export function SpringPath({
         const { ...values } = pathVariants[variant];
         animate("[data-animate='path']", values, overrideTransition);
       } else {
-        animateVariants("[data-animate='path']", pathVariants, variant);
+        animateVariants({
+          selector: "[data-animate='path']",
+          variant: pathVariants[variant],
+        });
       }
     },
     [animateVariants, animate]
@@ -305,15 +320,41 @@ export function SpringPath({
   const handleClick = useCallback(() => {
     if (shouldReduceMotion) return;
     if (!forwardCompleted.current) return;
+    animateBallVariant("initial");
     animateSpringPathVariant("click");
-  }, [animateSpringPathVariant, shouldReduceMotion]);
+
+    const prevIndex = colorIndexRef.current;
+    const prevLightColor =
+      prevIndex !== null ? LIGHT_MODE_COLORS[prevIndex] : DEFAULT_LIGHT_FILL;
+    const prevDarkColor =
+      prevIndex !== null ? DARK_MODE_COLORS[prevIndex] : DEFAULT_DARK_FILL;
+
+    colorIndexRef.current =
+      prevIndex === null ? 0 : (prevIndex + 1) % LIGHT_MODE_COLORS.length;
+
+    const newLightColor = LIGHT_MODE_COLORS[colorIndexRef.current];
+    const newDarkColor = DARK_MODE_COLORS[colorIndexRef.current];
+
+    animate(
+      '[data-animate="ball-fill"]',
+      {
+        "--light-fill": [prevLightColor, newLightColor],
+        "--dark-fill": [prevDarkColor, newDarkColor],
+      },
+      {
+        duration: 0.1,
+        ease: "easeOut",
+      }
+    );
+  }, [
+    animateSpringPathVariant,
+    shouldReduceMotion,
+    animate,
+    animateBallVariant,
+  ]);
 
   return (
-    <motion.g
-      ref={scope}
-      variants={fadeScaleVariants}
-      className="origin-bottom-left!"
-    >
+    <motion.g ref={scope} className="origin-bottom-left!">
       {/* small bubbles - point towards pointer */}
       <motion.g
         variants={{
@@ -328,20 +369,26 @@ export function SpringPath({
         initial="hidden"
         animate="visible"
       >
-        {/* Medium bubble with scaled movement and rotation */}
+        {/* medium bubble */}
         <motion.g
-          ref={mediumBubbleRef}
-          style={{
-            x: mediumDx,
-            y: mediumDy,
-            transformOrigin: "201.927px 293.495px",
-          }}
+          {...createFloatingAnimation({
+            to: -1.5,
+            duration: 3,
+            shouldReduceMotion,
+          })}
         >
-          <motion.g variants={bubblesAppearVariants}>
+          <motion.g
+            ref={mediumBubbleRef}
+            style={{
+              x: mediumDx,
+              y: mediumDy,
+              transformOrigin: "201.927px 293.495px",
+            }}
+          >
             <motion.g
               data-animate="bubbles"
               data-index="0"
-              initial={bubblesVariants.initial(0)}
+              initial={bubblesVariants.initial}
             >
               <circle
                 cx="201.927"
@@ -353,20 +400,27 @@ export function SpringPath({
           </motion.g>
         </motion.g>
 
-        {/* Small bubble with scaled movement and rotation */}
+        {/* small bubble */}
         <motion.g
-          ref={smallBubbleRef}
-          style={{
-            x: smallDx,
-            y: smallDy,
-            transformOrigin: "184.926px 314.008px",
-          }}
+          {...createFloatingAnimation({
+            to: -1,
+            duration: 2.5,
+            delay: 0.5,
+            shouldReduceMotion,
+          })}
         >
-          <motion.g variants={bubblesAppearVariants}>
+          <motion.g
+            ref={smallBubbleRef}
+            style={{
+              x: smallDx,
+              y: smallDy,
+              transformOrigin: "184.926px 314.008px",
+            }}
+          >
             <motion.g
               data-animate="bubbles"
               data-index="1"
-              initial={bubblesVariants.initial(1)}
+              initial={bubblesVariants.initial}
             >
               <circle
                 cx="184.926"
@@ -378,7 +432,7 @@ export function SpringPath({
           </motion.g>
         </motion.g>
 
-        {/* Transparent drag group */}
+        {/* transparent hit area for dragging */}
         <motion.g
           drag={!shouldReduceMotion}
           dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
@@ -395,7 +449,6 @@ export function SpringPath({
           }}
           onDragEnd={handleDragEnd}
         >
-          {/* Transparent hit area for dragging */}
           <circle cx="193" cy="303" r="30" fill="transparent" />
         </motion.g>
       </motion.g>
@@ -405,81 +458,80 @@ export function SpringPath({
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
         {...createFloatingAnimation({
-          from: -1,
           to: 2,
           duration: 5,
           shouldReduceMotion,
         })}
       >
-        {/* main bubble */}
-        <motion.g style={{ x: mainDx, y: mainDy }}>
-          <motion.g
-            data-animate="background"
-            initial={backgroundVariants.initial}
-          >
+        <motion.g
+          {...createRotationAnimation({
+            to: 2,
+            duration: 6,
+            delay: 1,
+            shouldReduceMotion,
+          })}
+        >
+          <motion.g style={{ x: mainDx, y: mainDy }}>
             <motion.g
-              {...createRotationAnimation({
-                from: -1,
-                to: 2,
-                duration: 6,
-                delay: 1,
-                shouldReduceMotion,
-              })}
-              className="filter-[url(#filter0_i_359_1453)] dark:filter-[url(#filter0_ii_368_1560)]"
+              data-animate="background"
+              initial={backgroundVariants.initial}
             >
-              <path
-                d="M245.555 146.249c9.49-1.097 18.358 3.212 23.526 10.486 3.964-6.087 10.509-10.43 18.289-11.329 12.356-1.429 23.659 6.309 27.111 17.822 13.829-1.544 26.315 8.383 27.914 22.219a25.17 25.17 0 0 1-3.739 16.399 25.17 25.17 0 0 1 7.38 15.112c1.6 13.834-8.29 26.347-22.105 28-.733 11.998-9.972 22.111-22.329 23.54-7.78.899-15.142-1.835-20.39-6.857-3.372 8.261-11.023 14.481-20.513 15.578-8.436.975-16.381-2.322-21.672-8.176a25.19 25.19 0 0 1-16.205 8.564c-12.356 1.428-23.66-6.31-27.112-17.823-13.827 1.541-26.31-8.385-27.909-22.218a25.17 25.17 0 0 1 3.736-16.398 25.17 25.17 0 0 1-7.381-15.114c-1.6-13.834 8.29-26.347 22.104-28.001.733-11.998 9.974-22.111 22.331-23.539a25.2 25.2 0 0 1 17.73 4.639c3.816-6.907 10.799-11.929 19.234-12.904"
-                className="fill-[#F8F8F8] dark:fill-[#252525]"
-              ></path>
-            </motion.g>
-
-            <g
-              className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-              strokeLinecap="round"
-              strokeWidth="4.913"
-              opacity="0.4"
-            >
-              <motion.path
-                data-animate="path"
-                initial={pathVariants.initial}
-                d="M288.5 224.5C288.5 224.5 285.5 210 277 212C268.5 214 272 236 271 236C270 236 267 201.5 253 201.5C236.611 201.5 242.5 239.5 241.5 239.5C240.892 239.5 240.5 227 233.5 210C230.132 201.821 225 198 225 198"
-              />
-            </g>
-            <g>
-              <g className="filter-[url(#filter3_i_359_1453)] dark:filter-[url(#filter3_i_368_1560)]">
-                <circle
-                  cx="289.63"
-                  cy="228.535"
-                  r="8.189"
-                  transform="rotate(-6.595 289.63 228.535)"
+              <g className="filter-[url(#filter0_i_359_1453)] dark:filter-[url(#filter0_ii_368_1560)]">
+                <path
+                  d="M245.555 146.249c9.49-1.097 18.358 3.212 23.526 10.486 3.964-6.087 10.509-10.43 18.289-11.329 12.356-1.429 23.659 6.309 27.111 17.822 13.829-1.544 26.315 8.383 27.914 22.219a25.17 25.17 0 0 1-3.739 16.399 25.17 25.17 0 0 1 7.38 15.112c1.6 13.834-8.29 26.347-22.105 28-.733 11.998-9.972 22.111-22.329 23.54-7.78.899-15.142-1.835-20.39-6.857-3.372 8.261-11.023 14.481-20.513 15.578-8.436.975-16.381-2.322-21.672-8.176a25.19 25.19 0 0 1-16.205 8.564c-12.356 1.428-23.66-6.31-27.112-17.823-13.827 1.541-26.31-8.385-27.909-22.218a25.17 25.17 0 0 1 3.736-16.398 25.17 25.17 0 0 1-7.381-15.114c-1.6-13.834 8.29-26.347 22.104-28.001.733-11.998 9.974-22.111 22.331-23.539a25.2 25.2 0 0 1 17.73 4.639c3.816-6.907 10.799-11.929 19.234-12.904"
                   className="fill-[#F8F8F8] dark:fill-[#252525]"
-                ></circle>
+                ></path>
               </g>
-              <motion.circle
-                data-animate="secondary-circle"
-                initial={secondaryCircleVariants.initial}
-                cx="289.63"
-                cy="228.535"
-                r="5.732"
+
+              <g
+                className="stroke-[#989898] dark:stroke-[#D6D6D6]"
                 strokeLinecap="round"
                 strokeWidth="4.913"
-                transform="rotate(-6.595 289.63 228.535)"
-                className="[--stroke-color:#989898] dark:[--stroke-color:#D6D6D6] [--stroke-highlight:#98989866] dark:[--stroke-highlight:#D6D6D666] [--bg-fill:#F8F8F8] dark:[--bg-fill:#252525]"
-              ></motion.circle>
-            </g>
+                opacity="0.4"
+              >
+                <motion.path
+                  data-animate="path"
+                  initial={pathVariants.initial}
+                  d="M288.5 224.5C288.5 224.5 285.5 210 277 212C268.5 214 272 236 271 236C270 236 267 201.5 253 201.5C236.611 201.5 242.5 239.5 241.5 239.5C240.892 239.5 240.5 227 233.5 210C230.132 201.821 225 198 225 198"
+                />
+              </g>
+              <g>
+                <g className="filter-[url(#filter3_i_359_1453)] dark:filter-[url(#filter3_i_368_1560)]">
+                  <circle
+                    cx="289.63"
+                    cy="228.535"
+                    r="8.189"
+                    transform="rotate(-6.595 289.63 228.535)"
+                    className="fill-[#F8F8F8] dark:fill-[#252525]"
+                  ></circle>
+                </g>
+                <motion.circle
+                  data-animate="secondary-circle"
+                  initial={secondaryCircleVariants.initial}
+                  cx="289.63"
+                  cy="228.535"
+                  r="5.732"
+                  strokeLinecap="round"
+                  strokeWidth="4.913"
+                  transform="rotate(-6.595 289.63 228.535)"
+                  className="[--stroke-color:#989898] dark:[--stroke-color:#D6D6D6] [--stroke-highlight:#98989866] dark:[--stroke-highlight:#D6D6D666] [--bg-fill:#F8F8F8] dark:[--bg-fill:#252525]"
+                ></motion.circle>
+              </g>
 
-            <motion.g data-animate="ball" initial={ballVariants.initial}>
-              <motion.circle
-                cx={cx}
-                cy={cy}
-                r="8.189"
-                style={{
-                  opacity: ballOpacity,
-                  scaleX: ballScaleX,
-                  scaleY: ballScaleY,
-                }}
-                className="fill-[#989898] dark:fill-[#D6D6D6]"
-              />
+              <motion.g data-animate="ball" initial={ballVariants.initial}>
+                <motion.circle
+                  cx={cx}
+                  cy={cy}
+                  r="8.189"
+                  style={{
+                    opacity: ballOpacity,
+                    scaleX: ballScaleX,
+                    scaleY: ballScaleY,
+                  }}
+                  data-animate="ball-fill"
+                  className="[--light-fill:#989898] [--dark-fill:#D6D6D6] dark:fill-(--dark-fill) fill-(--light-fill)"
+                />
+              </motion.g>
             </motion.g>
           </motion.g>
         </motion.g>

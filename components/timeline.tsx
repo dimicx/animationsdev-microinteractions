@@ -1,7 +1,6 @@
 import {
   createFloatingAnimation,
   createRotationAnimation,
-  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useAnimateVariants } from "@/lib/use-animate-variants";
@@ -39,7 +38,6 @@ export function Timeline({
   const shouldReduceMotion = useReducedMotion();
   const [scope, animate] = useAnimate();
   const { animateVariants } = useAnimateVariants(animate);
-  const bufferLeaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasEnteredMainAreaRef = useRef(false);
   const svgRef = useRef<SVGGElement>(null);
   const hasAnimationCompletedRef = useRef(false);
@@ -55,11 +53,10 @@ export function Timeline({
       ];
 
       const animations = animationConfigs.flatMap((config) =>
-        animateVariants(
-          `[data-animate='${config.selector}']`,
-          config.variants,
-          variant
-        )
+        animateVariants({
+          selector: `[data-animate='${config.selector}']`,
+          variant: config.variants[variant as keyof typeof config.variants],
+        })
       );
 
       return Promise.all(animations);
@@ -69,12 +66,14 @@ export function Timeline({
 
   const animateContainerVariant = useCallback(
     (variant: "initial" | "animate" | "click") => {
-      animateVariants("[data-animate='scale']", scaleVariants, variant);
-      animateVariants(
-        "[data-animate='timeline-container']",
-        timelineContainerVariants,
-        variant
-      );
+      animateVariants({
+        selector: "[data-animate='scale']",
+        variant: scaleVariants[variant],
+      });
+      animateVariants({
+        selector: "[data-animate='timeline-container']",
+        variant: timelineContainerVariants[variant],
+      });
     },
     [animateVariants]
   );
@@ -141,64 +140,38 @@ export function Timeline({
     onHoverStart: async () => {
       hasEnteredMainAreaRef.current = true;
       animateContainerVariant("animate");
+      animateTimelineVariant("initial");
       await animateTimelineVariant("animate");
       hasAnimationCompletedRef.current = true;
     },
-    onHoverEnd: () => {
+    onHoverEnd: async () => {
       hasAnimationCompletedRef.current = false;
       animateContainerVariant("initial");
-      animateTimelineVariant("initial");
+      await animateTimelineVariant("initial");
       animateTimelineVariant("idle");
     },
   });
 
-  const handleBufferEnter = async () => {
-    if (shouldReduceMotion) return;
-    hasEnteredMainAreaRef.current = false;
-    if (bufferLeaveTimeoutRef.current) {
-      clearTimeout(bufferLeaveTimeoutRef.current);
-      bufferLeaveTimeoutRef.current = null;
-    }
-    // Reset to initial when cursor enters buffer zone
-    animateContainerVariant("initial");
-    animateTimelineVariant("initial");
-  };
-
-  const handleBufferLeave = () => {
-    if (shouldReduceMotion) return;
-    // Only trigger timeout if user never entered the main hover area
-    if (!hasEnteredMainAreaRef.current) {
-      bufferLeaveTimeoutRef.current = setTimeout(() => {
-        animateTimelineVariant("idle");
-      }, 100);
-    }
-  };
-
-  const handleClick = async () => {
+  const handleClick = useCallback(async () => {
     if (shouldReduceMotion) return;
     if (!hasAnimationCompletedRef.current) return;
     animateTimelineVariant("click");
     animateContainerVariant("click");
-  };
+  }, [animateTimelineVariant, animateContainerVariant, shouldReduceMotion]);
+
+  const handleBufferEnter = useCallback(() => {
+    animateTimelineVariant("initial");
+  }, [animateTimelineVariant]);
 
   useEffect(() => {
     if (shouldReduceMotion) return;
     animateTimelineVariant("idle");
-    // animateContainerVariant("initial");
-    return () => {
-      if (bufferLeaveTimeoutRef.current) {
-        clearTimeout(bufferLeaveTimeoutRef.current);
-      }
-    };
+    animateContainerVariant("initial");
   }, [animateTimelineVariant, animateContainerVariant, shouldReduceMotion]);
 
   return (
-    <motion.g
-      ref={scope}
-      variants={fadeScaleVariants}
-      className="origin-bottom!"
-    >
-      {/* Buffer zone to reset the timeline when cursor enters */}
+    <motion.g ref={scope} className="origin-bottom!">
+      {/* buffer zone to reset timelines early */}
       <rect
         x="150"
         y="-5"
@@ -207,7 +180,6 @@ export function Timeline({
         fill="transparent"
         pointerEvents="all"
         onMouseEnter={handleBufferEnter}
-        onMouseLeave={handleBufferLeave}
       />
 
       <motion.g
@@ -222,22 +194,20 @@ export function Timeline({
       >
         <motion.g
           {...createFloatingAnimation({
-            from: -1,
             to: 2.5,
             duration: 2.5,
             shouldReduceMotion,
           })}
         >
-          <motion.g
-            {...createRotationAnimation({
-              from: 0,
-              to: 360,
-              duration: 90,
-              shouldReduceMotion,
-            })}
-            className="filter-[url(#filter6_i_359_1453)] dark:filter-[url(#filter6_i_368_1560)]"
-          >
-            <motion.g data-animate="scale" initial={scaleVariants.initial}>
+          <motion.g data-animate="scale" initial={scaleVariants.initial}>
+            <motion.g
+              {...createRotationAnimation({
+                to: 360,
+                duration: 90,
+                shouldReduceMotion,
+              })}
+              className="filter-[url(#filter6_i_359_1453)] dark:filter-[url(#filter6_i_368_1560)]"
+            >
               <path
                 d="M216.15 23.607c6.663-4.711 15.869-3.23 20.717 3.333a15 15 0 0 0 9.525 5.869c8.042 1.38 13.504 8.937 12.292 17.006a15 15 0 0 0 2.585 10.885c4.711 6.662 3.23 15.868-3.333 20.717a15 15 0 0 0-5.869 9.524c-1.38 8.042-8.937 13.505-17.006 12.292a15 15 0 0 0-10.885 2.585c-6.662 4.711-15.869 3.23-20.717-3.333a15 15 0 0 0-9.524-5.869c-8.042-1.38-13.505-8.937-12.292-17.006a15 15 0 0 0-2.585-10.885c-4.711-6.662-3.23-15.868 3.333-20.716a15 15 0 0 0 5.869-9.525c1.379-8.042 8.937-13.505 17.006-12.292a15 15 0 0 0 10.884-2.585"
                 className="fill-[#F8F8F8] dark:fill-[#252525]"
