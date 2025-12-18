@@ -43,16 +43,16 @@ export function Clock({
     (variant: "initial" | "animate") => {
       const animationConfigs = [
         { selector: "clock", variants: clockVariants },
-        { selector: "bell", variants: bellVariants, count: 2 },
+        { selector: "bell", variants: bellVariants, custom: 2 },
       ];
 
       const animations = animationConfigs.flatMap((config) =>
-        animateVariants(
-          `[data-animate='${config.selector}']`,
-          config.variants,
-          variant,
-          config.count
-        )
+        animateVariants({
+          selector: `[data-animate='${config.selector}']`,
+          variants: config.variants,
+          variantKey: variant,
+          custom: config.custom,
+        })
       );
 
       return Promise.all(animations);
@@ -62,11 +62,11 @@ export function Clock({
 
   const animateBackgroundVariant = useCallback(
     (variant: keyof typeof backgroundVariants) => {
-      const result = animateVariants(
-        "[data-animate='background']",
-        backgroundVariants,
-        variant
-      );
+      const result = animateVariants({
+        selector: "[data-animate='background']",
+        variants: backgroundVariants,
+        variantKey: variant,
+      });
       return result[0];
     },
     [animateVariants]
@@ -74,11 +74,11 @@ export function Clock({
 
   const animateScaleClickVariant = useCallback(
     (variant: keyof typeof clockAndBellsVariants) => {
-      const result = animateVariants(
-        "[data-animate='clock-and-bells']",
-        clockAndBellsVariants,
-        variant
-      );
+      const result = animateVariants({
+        selector: "[data-animate='clock-and-bells']",
+        variants: clockAndBellsVariants,
+        variantKey: variant,
+      });
       return result[0];
     },
     [animateVariants]
@@ -86,11 +86,11 @@ export function Clock({
 
   const animateBellsVariant = useCallback(
     (variant: keyof typeof bellsVariants) => {
-      const result = animateVariants(
-        "[data-animate='bells']",
-        bellsVariants,
-        variant
-      );
+      const result = animateVariants({
+        selector: "[data-animate='bells']",
+        variants: bellsVariants,
+        variantKey: variant,
+      });
       return result[0];
     },
     [animateVariants]

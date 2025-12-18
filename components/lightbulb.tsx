@@ -28,6 +28,7 @@ export function Lightbulb({
   const [scope, animate] = useAnimate();
   const { animateVariants } = useAnimateVariants(animate);
   const hasAnimationCompletedRef = useRef(false);
+  const isFirstIdleRef = useRef(true);
   const {
     isReadyRef: isReadyForClickRef,
     markTapped,
@@ -36,6 +37,8 @@ export function Lightbulb({
 
   const animateLightbulbVariant = useCallback(
     (variant: "initial" | "animate" | "idle" | "click") => {
+      const initialDelay = variant === "idle" && isFirstIdleRef.current;
+
       const animationConfigs = [
         { selector: "whole", variants: wholeVariants },
         { selector: "background", variants: backgroundVariants },
@@ -46,12 +49,17 @@ export function Lightbulb({
       ];
 
       const animations = animationConfigs.flatMap((config) =>
-        animateVariants(
-          `[data-animate='${config.selector}']`,
-          config.variants,
-          variant
-        )
+        animateVariants({
+          selector: `[data-animate='${config.selector}']`,
+          variants: config.variants,
+          variantKey: variant,
+          custom: initialDelay,
+        })
       );
+
+      if (variant === "idle") {
+        isFirstIdleRef.current = false;
+      }
 
       return Promise.all(animations);
     },

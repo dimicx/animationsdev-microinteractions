@@ -74,7 +74,7 @@ export function SpringPath({
   const animateSpringPathVariant = useCallback(
     (variant: "initial" | "animate" | "click") => {
       const animationConfigs = [
-        { selector: "bubbles", variants: bubblesVariants, count: 2 },
+        { selector: "bubbles", variants: bubblesVariants, custom: 2 },
         { selector: "secondary-circle", variants: secondaryCircleVariants },
         { selector: "background", variants: backgroundVariants },
         { selector: "ball", variants: ballVariants },
@@ -85,12 +85,12 @@ export function SpringPath({
       }
 
       const animations = animationConfigs.flatMap((config) =>
-        animateVariants(
-          `[data-animate='${config.selector}']`,
-          config.variants,
-          variant,
-          config.count
-        )
+        animateVariants({
+          selector: `[data-animate='${config.selector}']`,
+          variants: config.variants,
+          variantKey: variant,
+          custom: config.custom,
+        })
       );
 
       return animations;
@@ -100,7 +100,11 @@ export function SpringPath({
 
   const animateBallVariant = useCallback(
     (variant: keyof typeof ballVariants) => {
-      animateVariants("[data-animate='ball']", ballVariants, variant);
+      animateVariants({
+        selector: "[data-animate='ball']",
+        variants: ballVariants,
+        variantKey: variant,
+      });
     },
     [animateVariants]
   );
@@ -111,7 +115,11 @@ export function SpringPath({
         const { ...values } = pathVariants[variant];
         animate("[data-animate='path']", values, overrideTransition);
       } else {
-        animateVariants("[data-animate='path']", pathVariants, variant);
+        animateVariants({
+          selector: "[data-animate='path']",
+          variants: pathVariants,
+          variantKey: variant,
+        });
       }
     },
     [animateVariants, animate]
@@ -383,7 +391,7 @@ export function SpringPath({
             <motion.g
               data-animate="bubbles"
               data-index="0"
-              initial={bubblesVariants.initial(0)}
+              initial={bubblesVariants.initial}
             >
               <circle
                 cx="201.927"
@@ -415,7 +423,7 @@ export function SpringPath({
             <motion.g
               data-animate="bubbles"
               data-index="1"
-              initial={bubblesVariants.initial(1)}
+              initial={bubblesVariants.initial}
             >
               <circle
                 cx="184.926"

@@ -13,9 +13,11 @@ import {
   rayVariants,
   REPEAT_DELAY,
   DURATION,
+  INITIAL_DELAY,
 } from "@/lib/variants/hand-variants";
 import {
   AnimationPlaybackControls,
+  easeOut,
   motion,
   useAnimate,
   useMotionValue,
@@ -47,23 +49,38 @@ export function Hand({
   } = useMobileTap({ isMobile });
   const handPathAnimationRef = useRef<AnimationPlaybackControls | null>(null);
   const hasAnimationCompletedRef = useRef(false);
+  const isFirstIdleRef = useRef(true);
 
   const animateHandVariant = useCallback(
     (variant: "initial" | "animate" | "idle" | "click") => {
+      const initialDelay = variant === "idle" && isFirstIdleRef.current;
+
       const animationConfigs = [
-        { selector: "background", variants: backgroundVariants },
-        { selector: "hand", variants: handVariants },
-        { selector: "ray", variants: rayVariants, count: 3 },
+        {
+          selector: "background",
+          variants: backgroundVariants,
+          custom: initialDelay,
+        },
+        { selector: "hand", variants: handVariants, custom: initialDelay },
+        {
+          selector: "ray",
+          variants: rayVariants,
+          custom: variant === "idle" ? { count: 3, initialDelay } : 3,
+        },
       ];
 
       const animations = animationConfigs.flatMap((config) =>
-        animateVariants(
-          `[data-animate='${config.selector}']`,
-          config.variants,
-          variant,
-          config.count
-        )
+        animateVariants({
+          selector: `[data-animate='${config.selector}']`,
+          variants: config.variants,
+          variantKey: variant,
+          custom: config.custom,
+        })
       );
+
+      if (variant === "idle") {
+        isFirstIdleRef.current = false;
+      }
 
       return Promise.all(animations);
     },
@@ -71,6 +88,8 @@ export function Hand({
   );
 
   const startIdleAnimations = useCallback(async () => {
+    const initialDelay = isFirstIdleRef.current;
+
     if (shouldReduceMotion) return;
     handPathAnimationRef.current?.stop();
     await animate(handPathProgress, 0);
@@ -79,13 +98,19 @@ export function Hand({
     handPathAnimationRef.current = animate(handPathProgress, [0, 1, 0], {
       duration: DURATION,
       times: [0, 0.3, 0.5],
-      ease: "easeInOut",
+      ease: easeOut,
       repeat: Infinity,
       repeatType: "loop",
       repeatDelay: REPEAT_DELAY,
-      delay: REPEAT_DELAY / 2,
+      delay: initialDelay ? INITIAL_DELAY : REPEAT_DELAY,
     });
-  }, [animate, animateHandVariant, handPathProgress, shouldReduceMotion]);
+  }, [
+    animate,
+    animateHandVariant,
+    handPathProgress,
+    shouldReduceMotion,
+    isFirstIdleRef,
+  ]);
 
   useEffect(() => {
     startIdleAnimations();
@@ -110,7 +135,7 @@ export function Hand({
         {
           duration: DURATION,
           times: [0.4, 0.6, 1],
-          ease: "easeInOut",
+          ease: easeOut,
         }
       );
       hasAnimationCompletedRef.current = true;
@@ -138,8 +163,8 @@ export function Hand({
     handPathProgress.set(0);
     handPathAnimationRef.current = animate(handPathProgress, [0, 1, 0], {
       duration: DURATION,
-      times: [0.15, 0.5, 0.7],
-      ease: "easeInOut",
+      times: [0.1, 0.33, 0.53],
+      ease: easeOut,
     });
     animateHandVariant("click");
   }, [

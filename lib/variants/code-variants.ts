@@ -1,9 +1,6 @@
-import { TargetAndTransition } from "motion/react";
+import { defineVariants } from "@/lib/use-animate-variants";
 
-const backgroundVariants: Record<
-  "initial" | "animate" | "click",
-  TargetAndTransition
-> = {
+const backgroundVariants = defineVariants({
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -33,9 +30,9 @@ const backgroundVariants: Record<
       ease: "easeInOut",
     },
   },
-};
+});
 
-const caretLeftVariants: Record<"initial" | "animate", TargetAndTransition> = {
+const caretLeftVariants = defineVariants({
   initial: {
     transform: "translateX(0%) translateY(0%)",
   },
@@ -52,9 +49,9 @@ const caretLeftVariants: Record<"initial" | "animate", TargetAndTransition> = {
       ease: "easeInOut",
     },
   },
-};
+});
 
-const caretRightVariants: Record<"initial" | "animate", TargetAndTransition> = {
+const caretRightVariants = defineVariants({
   initial: {
     transform: "translateX(0%) translateY(0%)",
   },
@@ -71,9 +68,9 @@ const caretRightVariants: Record<"initial" | "animate", TargetAndTransition> = {
       ease: "easeInOut",
     },
   },
-};
+});
 
-const slashVariants: Record<"initial" | "animate", TargetAndTransition> = {
+const slashVariants = defineVariants({
   initial: {
     transform: "translateX(0%) translateY(0%) rotate(0deg)",
   },
@@ -90,9 +87,9 @@ const slashVariants: Record<"initial" | "animate", TargetAndTransition> = {
       ease: "easeInOut",
     },
   },
-};
+});
 
-const codePathVariants: Record<"initial" | "animate", TargetAndTransition> = {
+const codePathVariants = defineVariants({
   initial: {
     transform: "translateX(0%) translateY(0%)",
   },
@@ -109,22 +106,14 @@ const codePathVariants: Record<"initial" | "animate", TargetAndTransition> = {
       ease: "easeInOut",
     },
   },
-};
+});
 
-const pulseVariants: Record<
-  "initial" | "animate" | "idle" | "click",
-  TargetAndTransition
-> = {
+const pulseVariants = defineVariants({
   initial: {
     opacity: 0.4,
     transform: "scale(1)",
   },
   animate: {
-    // opacity: 0.4,
-    // transition: {
-    //   duration: 0.2,
-    //   ease: "easeOut",
-    // },
     opacity: [0.4, 0.2, 0.4],
     transition: {
       duration: 1.5,
@@ -151,13 +140,13 @@ const pulseVariants: Record<
       ease: "easeOut",
     },
   },
-};
+});
 
 export {
   backgroundVariants,
   caretLeftVariants,
   caretRightVariants,
-  slashVariants,
   codePathVariants,
   pulseVariants,
+  slashVariants,
 };

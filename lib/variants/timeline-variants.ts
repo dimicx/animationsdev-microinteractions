@@ -1,13 +1,10 @@
-import { TargetAndTransition } from "motion/react";
+import { defineVariants } from "@/lib/use-animate-variants";
 
 const TIMELINE_TIMES = [0, 0.2, 0.35, 0.65, 0.8, 1];
 const TIMELINE_DURATION = 1.7;
 const CLICK_DURATION = 1;
 
-const scaleVariants: Record<
-  "initial" | "animate" | "click",
-  TargetAndTransition
-> = {
+const scaleVariants = defineVariants({
   initial: {
     transform: "scale(1)",
   },
@@ -27,12 +24,9 @@ const scaleVariants: Record<
       ease: "easeOut",
     },
   },
-};
+});
 
-const timelineOneVariants: Record<
-  "initial" | "animate" | "idle" | "click",
-  TargetAndTransition
-> = {
+const timelineOneVariants = defineVariants({
   initial: {
     pathLength: 1,
   },
@@ -62,12 +56,9 @@ const timelineOneVariants: Record<
       ease: "easeInOut",
     },
   },
-};
+});
 
-const timelineTwoVariants: Record<
-  "initial" | "animate" | "idle" | "click",
-  TargetAndTransition
-> = {
+const timelineTwoVariants = defineVariants({
   initial: {
     pathLength: 1,
     transform: "translateY(0%) translateX(0%)",
@@ -107,12 +98,9 @@ const timelineTwoVariants: Record<
       ease: "easeInOut",
     },
   },
-};
+});
 
-const timelineThreeVariants: Record<
-  "initial" | "animate" | "idle" | "click",
-  TargetAndTransition
-> = {
+const timelineThreeVariants = defineVariants({
   initial: {
     pathLength: 1,
     transform: "translateY(0%) translateX(0%)",
@@ -152,12 +140,9 @@ const timelineThreeVariants: Record<
       ease: "easeInOut",
     },
   },
-};
+});
 
-const timelineContainerVariants: Record<
-  "initial" | "animate" | "click",
-  TargetAndTransition
-> = {
+const timelineContainerVariants = defineVariants({
   initial: {
     transform: "rotate(0deg)",
   },
@@ -182,7 +167,7 @@ const timelineContainerVariants: Record<
       ease: "easeOut",
     },
   },
-};
+});
 
 export {
   scaleVariants,

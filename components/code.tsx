@@ -67,11 +67,11 @@ export function Code({
       ];
 
       const animations = animationConfigs.flatMap((config) =>
-        animateVariants(
-          `[data-animate='${config.selector}']`,
-          config.variants,
-          variant
-        )
+        animateVariants({
+          selector: `[data-animate='${config.selector}']`,
+          variants: config.variants,
+          variantKey: variant,
+        })
       );
 
       return Promise.all(animations);

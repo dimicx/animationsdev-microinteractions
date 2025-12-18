@@ -53,11 +53,11 @@ export function Timeline({
       ];
 
       const animations = animationConfigs.flatMap((config) =>
-        animateVariants(
-          `[data-animate='${config.selector}']`,
-          config.variants,
-          variant
-        )
+        animateVariants({
+          selector: `[data-animate='${config.selector}']`,
+          variants: config.variants,
+          variantKey: variant,
+        })
       );
 
       return Promise.all(animations);
@@ -67,12 +67,16 @@ export function Timeline({
 
   const animateContainerVariant = useCallback(
     (variant: "initial" | "animate" | "click") => {
-      animateVariants("[data-animate='scale']", scaleVariants, variant);
-      animateVariants(
-        "[data-animate='timeline-container']",
-        timelineContainerVariants,
-        variant
-      );
+      animateVariants({
+        selector: "[data-animate='scale']",
+        variants: scaleVariants,
+        variantKey: variant,
+      });
+      animateVariants({
+        selector: "[data-animate='timeline-container']",
+        variants: timelineContainerVariants,
+        variantKey: variant,
+      });
     },
     [animateVariants]
   );

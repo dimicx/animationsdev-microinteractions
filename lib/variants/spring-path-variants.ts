@@ -1,10 +1,9 @@
 import { bounceAcceleratedX } from "@/lib/bounce-physics";
-import { IndexedVariant } from "@/lib/use-animate-variants";
-import { TargetAndTransition } from "motion/react";
+import { defineVariants } from "@/lib/use-animate-variants";
 
 const BOUNCE_DURATION = 1.1;
 
-const pathVariants: Record<"initial" | "animate", TargetAndTransition> = {
+const pathVariants = defineVariants({
   initial: {
     pathLength: 1,
     strokeOpacity: 1,
@@ -23,12 +22,9 @@ const pathVariants: Record<"initial" | "animate", TargetAndTransition> = {
       },
     },
   },
-};
+});
 
-const secondaryCircleVariants: Record<
-  "initial" | "animate",
-  TargetAndTransition
-> = {
+const secondaryCircleVariants = defineVariants({
   initial: {
     stroke: "var(--stroke-color)",
     opacity: 1,
@@ -46,12 +42,9 @@ const secondaryCircleVariants: Record<
       times: [0, 0.1, 0.85, 0.87],
     },
   },
-};
+});
 
-const backgroundVariants: Record<
-  "initial" | "animate" | "click",
-  TargetAndTransition
-> = {
+const backgroundVariants = defineVariants({
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -80,82 +73,80 @@ const backgroundVariants: Record<
       ease: "easeOut",
     },
   },
-};
+});
 
-const ballVariants: Record<"initial" | "idle" | "click", TargetAndTransition> =
-  {
-    initial: {
-      transform: "translateY(0%) translateX(0%)",
+const ballVariants = defineVariants({
+  initial: {
+    transform: "translateY(0%) translateX(0%)",
+  },
+  idle: {
+    transform: [
+      "translateY(0%) translateX(0%)",
+      "translateY(-25%) translateX(-20%)",
+      "translateY(0%) translateX(0%)",
+    ],
+    transition: {
+      duration: 4,
+      repeat: Infinity,
+      repeatType: "mirror",
+      ease: "easeInOut",
     },
-    idle: {
-      transform: [
-        "translateY(0%) translateX(0%)",
-        "translateY(-25%) translateX(-20%)",
-        "translateY(0%) translateX(0%)",
-      ],
-      transition: {
-        duration: 4,
-        repeat: Infinity,
-        repeatType: "mirror",
-        ease: "easeInOut",
-      },
+  },
+  click: {
+    transform: ["scale(1)", "scale(0.95)", "scale(1.03)", "scale(1)"],
+    transition: {
+      duration: 0.4,
+      times: [0, 0.25, 0.6, 1],
+      ease: "easeOut",
     },
-    click: {
-      transform: ["scale(1)", "scale(0.95)", "scale(1.03)", "scale(1)"],
-      transition: {
-        duration: 0.4,
-        times: [0, 0.25, 0.6, 1],
-        ease: "easeOut",
-      },
-    },
-  };
+  },
+});
 
-const bubblesVariants: Record<"initial" | "animate" | "click", IndexedVariant> =
-  {
-    initial: () => ({
-      transform: "translateY(0%) translateX(0%)",
-    }),
-    animate: (i: number) => ({
-      transform:
-        i === 0
-          ? [
-              "translateY(0%) translateX(0%)",
-              "translateY(-40%) translateX(-25%)",
-              "translateY(-35%) translateX(-20%)",
-            ]
-          : [
-              "translateY(0%) translateX(0%)",
-              "translateY(-80%) translateX(28%)",
-              "translateY(-60%) translateX(20%)",
-            ],
-      transition: {
-        duration: 0.7,
-        times: [0, 0.25, 0.6],
-        ease: "easeInOut",
-      },
-    }),
-    click: (i: number) => ({
-      transform:
-        i === 0
-          ? [
-              "translateY(-35%) translateX(-20%) scale(1)",
-              "translateY(-50%) translateX(-20%) scale(0.95)",
-              "translateY(-30%) translateX(-20%) scale(1.03)",
-              "translateY(-35%) translateX(-20%) scale(1)",
-            ]
-          : [
-              "translateY(-60%) translateX(20%) scale(1)",
-              "translateY(-120%) translateX(20%) scale(0.95)",
-              "translateY(-50%) translateX(20%) scale(1.03)",
-              "translateY(-60%) translateX(20%) scale(1)",
-            ],
-      transition: {
-        duration: 0.4,
-        times: [0, 0.25, 0.6, 1],
-        ease: "easeOut",
-      },
-    }),
-  };
+const bubblesVariants = defineVariants({
+  initial: {
+    transform: "translateY(0%) translateX(0%)",
+  },
+  animate: (i: number) => ({
+    transform:
+      i === 0
+        ? [
+            "translateY(0%) translateX(0%)",
+            "translateY(-40%) translateX(-25%)",
+            "translateY(-35%) translateX(-20%)",
+          ]
+        : [
+            "translateY(0%) translateX(0%)",
+            "translateY(-80%) translateX(28%)",
+            "translateY(-60%) translateX(20%)",
+          ],
+    transition: {
+      duration: 0.7,
+      times: [0, 0.25, 0.6],
+      ease: "easeInOut",
+    },
+  }),
+  click: (i: number) => ({
+    transform:
+      i === 0
+        ? [
+            "translateY(-35%) translateX(-20%) scale(1)",
+            "translateY(-50%) translateX(-20%) scale(0.95)",
+            "translateY(-30%) translateX(-20%) scale(1.03)",
+            "translateY(-35%) translateX(-20%) scale(1)",
+          ]
+        : [
+            "translateY(-60%) translateX(20%) scale(1)",
+            "translateY(-120%) translateX(20%) scale(0.95)",
+            "translateY(-50%) translateX(20%) scale(1.03)",
+            "translateY(-60%) translateX(20%) scale(1)",
+          ],
+    transition: {
+      duration: 0.4,
+      times: [0, 0.25, 0.6, 1],
+      ease: "easeOut",
+    },
+  }),
+});
 
 export {
   backgroundVariants,

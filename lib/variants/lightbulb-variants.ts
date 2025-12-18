@@ -1,12 +1,11 @@
-import { TargetAndTransition, Transition } from "motion/react";
+import { defineVariants } from "@/lib/use-animate-variants";
+import { easeInOut, easeOut, Transition } from "motion/react";
 
-const REPEAT_DELAY = 8;
+const REPEAT_DELAY = 7;
+const INITIAL_DELAY = 1;
 const DURATION = 0.7;
 
-const wholeVariants: Record<
-  "initial" | "animate" | "click",
-  TargetAndTransition
-> = {
+const wholeVariants = defineVariants({
   initial: {
     transform: "translateY(0%) rotate(0deg) scale(1)",
   },
@@ -20,7 +19,7 @@ const wholeVariants: Record<
     transition: {
       duration: DURATION,
       times: [0, 0.25, 0.6, 1],
-      ease: "easeInOut",
+      ease: easeInOut,
     },
   },
   click: {
@@ -33,15 +32,12 @@ const wholeVariants: Record<
     transition: {
       duration: DURATION,
       times: [0, 0.25, 0.6, 1],
-      ease: "easeInOut",
+      ease: easeInOut,
     },
   },
-};
+});
 
-const backgroundVariants: Record<
-  "initial" | "animate" | "click",
-  TargetAndTransition
-> = {
+const backgroundVariants = defineVariants({
   initial: {
     transform: "scale(1)",
   },
@@ -50,7 +46,7 @@ const backgroundVariants: Record<
     transition: {
       duration: DURATION,
       times: [0, 0.2, 0.45, 0.6],
-      ease: "easeOut",
+      ease: easeOut,
     },
   },
   click: {
@@ -58,15 +54,12 @@ const backgroundVariants: Record<
     transition: {
       duration: DURATION,
       times: [0, 0.2, 0.45, 0.6],
-      ease: "easeOut",
+      ease: easeOut,
     },
   },
-};
+});
 
-const bulbVariants: Record<
-  "initial" | "animate" | "idle" | "click",
-  TargetAndTransition
-> = {
+const bulbVariants = defineVariants({
   initial: {
     opacity: 1,
     transform: "translateY(0%) translateX(0%)",
@@ -83,17 +76,17 @@ const bulbVariants: Record<
       times: [0.2, 0.45, 0.6],
     },
   },
-  idle: {
+  idle: (initialDelay) => ({
     opacity: [1, 0.3, 1, 0.3, 0.3, 1],
     transition: {
       duration: DURATION,
       times: [0, 0.05, 0.1, 0.2, 0.5, 0.7],
-      delay: REPEAT_DELAY / 2,
+      delay: initialDelay ? INITIAL_DELAY : REPEAT_DELAY,
       repeat: Infinity,
       repeatType: "loop",
       repeatDelay: REPEAT_DELAY,
     },
-  },
+  }),
   click: {
     opacity: [0.3, 0.3, 1],
     transform: [
@@ -106,12 +99,9 @@ const bulbVariants: Record<
       times: [0.2, 0.45, 0.6],
     },
   },
-};
+});
 
-const stemVariants: Record<
-  "initial" | "animate" | "idle" | "click",
-  TargetAndTransition
-> = {
+const stemVariants = defineVariants({
   initial: {
     opacity: 1,
   },
@@ -122,17 +112,17 @@ const stemVariants: Record<
       times: [0.2, 0.45, 0.6],
     },
   },
-  idle: {
+  idle: (initialDelay) => ({
     opacity: [1, 0.3, 1, 0.3, 0.3, 1],
     transition: {
       duration: DURATION,
       times: [0, 0.05, 0.1, 0.2, 0.5, 0.7],
-      delay: REPEAT_DELAY / 2,
+      delay: initialDelay ? INITIAL_DELAY : REPEAT_DELAY,
       repeat: Infinity,
       repeatType: "loop",
       repeatDelay: REPEAT_DELAY,
     },
-  },
+  }),
   click: {
     opacity: [0.3, 0.3, 1],
     transition: {
@@ -140,12 +130,9 @@ const stemVariants: Record<
       times: [0.2, 0.45, 0.6],
     },
   },
-};
+});
 
-const bulbMaskVariants: Record<
-  "initial" | "animate" | "idle" | "click",
-  TargetAndTransition
-> = {
+const bulbMaskVariants = defineVariants({
   initial: {
     transform: "translateY(0%) translateX(0%) rotate(0deg)",
     opacity: 1,
@@ -162,17 +149,17 @@ const bulbMaskVariants: Record<
       times: [0.45, 0.75, 1],
     },
   },
-  idle: {
+  idle: (initialDelay) => ({
     opacity: [1, 0, 0, 1],
     transition: {
       duration: DURATION,
       times: [0, 0.05, 0.5, 0.7],
-      delay: REPEAT_DELAY / 2,
+      delay: initialDelay ? INITIAL_DELAY : REPEAT_DELAY,
       repeat: Infinity,
       repeatType: "loop",
       repeatDelay: REPEAT_DELAY,
     },
-  },
+  }),
   click: {
     transform: [
       "translateY(15%) translateX(15%) rotate(15deg)",
@@ -185,20 +172,17 @@ const bulbMaskVariants: Record<
       times: [0.45, 0.75, 1],
     },
   },
-};
+});
 
-const idleRayTransition: Transition = {
+const getIdleRayTransition = (initialDelay = false): Transition => ({
   duration: DURATION,
-  delay: REPEAT_DELAY / 2,
+  delay: initialDelay ? INITIAL_DELAY : REPEAT_DELAY,
   repeat: Infinity,
   repeatType: "loop",
   repeatDelay: REPEAT_DELAY,
-};
+});
 
-const rayVariants: Record<
-  "initial" | "animate" | "idle" | "click",
-  TargetAndTransition
-> = {
+const rayVariants = defineVariants({
   initial: { pathLength: 1, strokeOpacity: 0.5 },
   animate: {
     pathLength: [0.01, 1],
@@ -214,19 +198,22 @@ const rayVariants: Record<
       },
     },
   },
-  idle: {
-    pathLength: [1, 0, 0, 1],
-    strokeOpacity: [0.5, 0, 0, 0.5],
-    transition: {
-      pathLength: {
-        times: [0, 0.05, 0.5, 0.7],
-        ...idleRayTransition,
+  idle: (initialDelay) => {
+    const idleRayTransition = getIdleRayTransition(initialDelay);
+    return {
+      pathLength: [1, 0, 0, 1],
+      strokeOpacity: [0.5, 0, 0, 0.5],
+      transition: {
+        pathLength: {
+          times: [0, 0.05, 0.5, 0.7],
+          ...idleRayTransition,
+        },
+        strokeOpacity: {
+          times: [0, 0.01, 0.5, 0.51],
+          ...idleRayTransition,
+        },
       },
-      strokeOpacity: {
-        times: [0, 0.01, 0.5, 0.51],
-        ...idleRayTransition,
-      },
-    },
+    };
   },
   click: {
     pathLength: [0, 1],
@@ -242,13 +229,13 @@ const rayVariants: Record<
       },
     },
   },
-};
+});
 
 export {
-  wholeVariants,
   backgroundVariants,
-  bulbVariants,
-  stemVariants,
   bulbMaskVariants,
+  bulbVariants,
   rayVariants,
+  stemVariants,
+  wholeVariants,
 };
