@@ -38,6 +38,7 @@ export function Clock({
     markTapped,
     reset: resetMobileTap,
   } = useMobileTap({ isMobile });
+  const isFirstIdleRef = useRef(true);
 
   const animateClockVariant = useCallback(
     (variant: "initial" | "animate") => {
@@ -83,10 +84,17 @@ export function Clock({
 
   const animateBellsVariant = useCallback(
     (variant: keyof typeof bellsVariants) => {
+      const initialDelay = variant === "idle" && isFirstIdleRef.current;
+
       const result = animateVariants({
         selector: "[data-animate='bells']",
         variant: bellsVariants[variant],
+        custom: initialDelay,
       });
+
+      if (variant === "idle") {
+        isFirstIdleRef.current = false;
+      }
       return result[0];
     },
     [animateVariants]
