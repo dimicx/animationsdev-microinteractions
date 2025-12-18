@@ -356,19 +356,7 @@ export function SpringPath({
   return (
     <motion.g ref={scope} className="origin-bottom-left!">
       {/* small bubbles - point towards pointer */}
-      <motion.g
-        variants={{
-          hidden: {},
-          visible: {
-            transition: {
-              staggerChildren: 0.1,
-              delayChildren: 0.225,
-            },
-          },
-        }}
-        initial="hidden"
-        animate="visible"
-      >
+      <g>
         {/* medium bubble */}
         <motion.g
           {...createFloatingAnimation({
@@ -451,7 +439,7 @@ export function SpringPath({
         >
           <circle cx="193" cy="303" r="30" fill="transparent" />
         </motion.g>
-      </motion.g>
+      </g>
 
       <motion.g
         onMouseEnter={handleMouseEnter}
