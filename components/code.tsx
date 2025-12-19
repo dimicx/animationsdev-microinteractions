@@ -14,12 +14,13 @@ import { useFlubber } from "@/lib/use-flubber";
 import { useHoverTimeout } from "@/lib/use-hover-timeout";
 import { useMobileTap } from "@/lib/use-mobile-tap";
 import {
-  backgroundVariants,
   caretLeftVariants,
   caretRightVariants,
   codePathVariants,
+  opacityVariants,
   pulseVariants,
   slashVariants,
+  wholeVariants,
 } from "@/lib/variants/code-variants";
 import {
   motion,
@@ -52,6 +53,7 @@ export function Code({
     markTapped,
     reset: resetMobileTap,
   } = useMobileTap({ isMobile });
+  const hasClickedRef = useRef(false);
 
   const codePathProgress = useMotionValue(0);
   const codePath = useFlubber(codePathProgress, codePaths);
@@ -59,12 +61,12 @@ export function Code({
   const animateCodeVariant = useCallback(
     (variant: "initial" | "animate" | "idle" | "click") => {
       const animationConfigs = [
-        { selector: "background", variants: backgroundVariants },
+        { selector: "whole", variants: wholeVariants },
         { selector: "caret-left", variants: caretLeftVariants },
         { selector: "caret-right", variants: caretRightVariants },
         { selector: "slash", variants: slashVariants },
         { selector: "code-path", variants: codePathVariants },
-        { selector: "pulse", variants: pulseVariants },
+        { selector: "opacity", variants: opacityVariants },
       ];
 
       const animations = animationConfigs.flatMap((config) => {
@@ -79,10 +81,21 @@ export function Code({
     [animateVariants]
   );
 
+  const animatePulseVariant = useCallback(
+    (variant: "initial" | "animate") => {
+      animateVariants({
+        selector: "[data-animate='pulse']",
+        variant: pulseVariants[variant],
+      });
+    },
+    [animateVariants]
+  );
+
   useEffect(() => {
     if (shouldReduceMotion) return;
     animateCodeVariant("idle");
-  }, [animateCodeVariant, shouldReduceMotion]);
+    animatePulseVariant("animate");
+  }, [animateCodeVariant, animatePulseVariant, shouldReduceMotion]);
 
   const handleClick = () => {
     if (shouldReduceMotion) return;
@@ -92,6 +105,9 @@ export function Code({
       return;
     }
 
+    hasClickedRef.current = true;
+
+    animatePulseVariant("initial");
     animateCodeVariant("click");
 
     const prevIndex = colorIndexRef.current;
@@ -140,6 +156,10 @@ export function Code({
         times: [0, 0.3, 0.8],
         ease: "easeOut",
       });
+      if (hasClickedRef.current) {
+        animatePulseVariant("animate");
+      }
+      hasClickedRef.current = false;
 
       const prevIndex = colorIndexRef.current;
       colorIndexRef.current = null;
@@ -152,7 +172,7 @@ export function Code({
             "--dark-fill": [DARK_MODE_COLORS[prevIndex], DEFAULT_DARK_FILL],
           },
           {
-            duration: 0.5,
+            duration: 0.2,
             ease: "easeOut",
           }
         );
@@ -176,7 +196,7 @@ export function Code({
           shouldReduceMotion,
         })}
       >
-        <motion.g data-animate="background">
+        <motion.g data-animate="whole">
           <g className="filter-[url(#filter8_i_359_1453)] dark:filter-[url(#filter8_i_368_1560)]">
             <path
               d="M425.217 236.652C443.467 233.369 460.923 245.503 464.206 263.753C467.489 282.003 455.355 299.459 437.105 302.742L408.026 307.972C401.42 309.172 394.605 308.353 388.471 305.622C388.141 306.321 387.71 306.967 387.192 307.54C384.266 310.776 380.349 312.95 376.055 313.722L374.302 314.037C372.384 314.382 370.829 312.493 371.537 310.677L372.153 309.096C373.031 306.846 373.268 304.396 372.841 302.018L369.037 280.871C365.754 262.621 377.888 245.165 396.138 241.883L425.217 236.652Z"
@@ -186,15 +206,6 @@ export function Code({
           <motion.g data-animate="caret-left">
             <path
               d="M400.254 282.746L392.234 277.171C392.045 277.04 391.951 276.975 391.905 276.888C391.863 276.812 391.847 276.725 391.86 276.639C391.873 276.542 391.939 276.448 392.07 276.259L397.645 268.239"
-              strokeWidth="2.457"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="stroke-[#989898] dark:stroke-[#D6D6D6]"
-            />
-          </motion.g>
-          <motion.g data-animate="slash">
-            <path
-              d="M423.804 261.037L423.126 271.144L422.447 281.25"
               strokeWidth="2.457"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -212,12 +223,26 @@ export function Code({
           </motion.g>
           <motion.g data-animate="code-path">
             <motion.g data-animate="pulse" initial={pulseVariants.initial}>
-              <motion.path
-                ref={pathRef}
-                d={codePath}
-                className="[--light-fill:#989898] [--dark-fill:#D6D6D6] dark:fill-(--dark-fill) fill-(--light-fill)"
-              />
+              <motion.g
+                data-animate="opacity"
+                initial={opacityVariants.initial}
+              >
+                <motion.path
+                  ref={pathRef}
+                  d={codePath}
+                  className="[--light-fill:#989898] [--dark-fill:#D6D6D6] dark:fill-(--dark-fill) fill-(--light-fill)"
+                />
+              </motion.g>
             </motion.g>
+          </motion.g>
+          <motion.g data-animate="slash">
+            <path
+              d="M423.804 261.037L423.126 271.144L422.447 281.25"
+              strokeWidth="2.457"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="stroke-[#989898] dark:stroke-[#D6D6D6]"
+            />
           </motion.g>
         </motion.g>
       </motion.g>
