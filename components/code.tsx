@@ -140,7 +140,7 @@ export function Code({
     shouldReduceMotion: shouldReduceMotion,
     onHoverStart: () => {
       animateCodeVariant("animate");
-      animate(codePathProgress, [0, 1, 2], {
+      animate(codePathProgress, [codePathProgress.get(), 1, 2], {
         duration: 0.5,
         times: [0, 0.3, 0.8],
         ease: "easeInOut",
