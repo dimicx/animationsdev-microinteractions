@@ -26,6 +26,7 @@ import {
   useAnimate,
   useMotionValue,
   useReducedMotion,
+  useTransform,
 } from "motion/react";
 import { useCallback, useEffect, useRef } from "react";
 
@@ -54,7 +55,8 @@ export function Code({
   } = useMobileTap({ isMobile });
   const hasClickedRef = useRef(false);
 
-  const codePathProgress = useMotionValue(0);
+  const hoverProgress = useMotionValue(0);
+  const codePathProgress = useTransform(hoverProgress, [0, 0.4, 1], [0, 1, 2]);
   const codePath = useFlubber(codePathProgress, codePaths);
 
   const animateCodeVariant = useCallback(
@@ -68,12 +70,12 @@ export function Code({
         { selector: "opacity", variants: opacityVariants },
       ];
 
-      const animations = animationConfigs.flatMap((config) => {
+      const animations = animationConfigs.flatMap((config) =>
         animateVariants({
           selector: `[data-animate='${config.selector}']`,
           variant: config.variants[variant as keyof typeof config.variants],
-        });
-      });
+        })
+      );
 
       return Promise.all(animations);
     },
@@ -140,9 +142,8 @@ export function Code({
     shouldReduceMotion: shouldReduceMotion,
     onHoverStart: () => {
       animateCodeVariant("animate");
-      animate(codePathProgress, [codePathProgress.get(), 1, 2], {
-        duration: 0.5,
-        times: [0, 0.3, 0.8],
+      animate(hoverProgress, 1, {
+        duration: 0.4,
         ease: "easeInOut",
       });
     },
@@ -150,9 +151,8 @@ export function Code({
       resetMobileTap();
       animateCodeVariant("initial");
       animateCodeVariant("idle");
-      animate(codePathProgress, [codePathProgress.get(), 1, 0], {
+      animate(hoverProgress, 0, {
         duration: 0.4,
-        times: [0, 0.3, 0.8],
         ease: "easeOut",
       });
       if (hasClickedRef.current) {
