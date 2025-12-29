@@ -6,6 +6,7 @@ import {
 } from "@/lib/animation-configs";
 import {
   createFloatingAnimation,
+  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useAnimateVariant } from "@/lib/hooks/use-animate-variant";
@@ -175,7 +176,8 @@ export function Code({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
-      className="origin-bottom-left! group"
+      variants={fadeScaleVariants}
+      className="origin-bottom-left!"
     >
       <motion.g
         style={{ willChange: "transform" }}

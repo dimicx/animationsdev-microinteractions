@@ -34,6 +34,13 @@ export function Scene() {
           fill="none"
           viewBox="0 0 622 319"
           className="h-auto max-w-full overflow-visible!"
+          variants={{
+            animate: {
+              transition: { staggerChildren: 0.05 },
+            },
+          }}
+          initial="initial"
+          animate="animate"
           role="img"
           aria-label="Interactive animation showcasing various microinteractions"
         >

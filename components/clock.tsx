@@ -2,6 +2,7 @@ import { SPRING_CONFIGS } from "@/lib/animation-configs";
 import {
   createFloatingAnimation,
   createRotationAnimation,
+  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useAnimateVariant } from "@/lib/hooks/use-animate-variant";
@@ -211,6 +212,7 @@ export function Clock({
   return (
     <motion.g
       ref={scope}
+      variants={fadeScaleVariants}
       className="origin-bottom-right!"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

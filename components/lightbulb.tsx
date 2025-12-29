@@ -1,6 +1,7 @@
 import {
   createFloatingAnimation,
   createRotationAnimation,
+  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useAnimateVariant } from "@/lib/hooks/use-animate-variant";
@@ -111,6 +112,7 @@ export function Lightbulb({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
+      variants={fadeScaleVariants}
       className="origin-bottom!"
     >
       <motion.g

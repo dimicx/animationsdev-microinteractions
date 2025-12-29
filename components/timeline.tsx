@@ -1,6 +1,7 @@
 import {
   createFloatingAnimation,
   createRotationAnimation,
+  fadeScaleVariants,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useAnimateVariant } from "@/lib/hooks/use-animate-variant";
@@ -173,7 +174,11 @@ export function Timeline({
   }, [animateTimelineVariant, animateContainerVariant, shouldReduceMotion]);
 
   return (
-    <motion.g ref={scope} className="origin-bottom!">
+    <motion.g
+      ref={scope}
+      variants={fadeScaleVariants}
+      className="origin-bottom!"
+    >
       {/* buffer zone to reset timelines early */}
       <rect
         x="150"
