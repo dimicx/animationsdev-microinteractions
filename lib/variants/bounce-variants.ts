@@ -1,30 +1,22 @@
-import { bounceAcceleratedX } from "@/lib/bounce-physics";
-import { defineVariants } from "@/lib/use-animate-variants";
+import { bounceAcceleratedXFast } from "../bounce-physics";
 
 const BOUNCE_DURATION = 1.1;
 
-const pathVariants = defineVariants({
+const pathVariants = {
   initial: {
-    pathLength: 1,
-    strokeOpacity: 1,
+    strokeDashoffset: 0,
   },
   animate: {
-    pathLength: [1, 0.01],
-    strokeOpacity: [1, 1, 0],
+    strokeDashoffset: [0, 1.05],
     transition: {
-      delay: 0.045,
-      duration: BOUNCE_DURATION - 0.1,
-      ease: bounceAcceleratedX, // Path shrinks in sync with X movement
-      strokeOpacity: {
-        duration: BOUNCE_DURATION - 0.1,
-        ease: "easeOut",
-        times: [0, 0.75, 0.76],
-      },
+      delay: 0.1,
+      duration: BOUNCE_DURATION - 0.15,
+      ease: bounceAcceleratedXFast, // Optimized: Path shrinks in sync with X movement
     },
   },
-});
+};
 
-const secondaryCircleVariants = defineVariants({
+const secondaryCircleVariants = {
   initial: {
     stroke: "var(--stroke-color)",
     opacity: 1,
@@ -39,12 +31,12 @@ const secondaryCircleVariants = defineVariants({
     transition: {
       duration: BOUNCE_DURATION - 0.1,
       ease: "easeOut",
-      times: [0, 0.1, 0.85, 0.87],
+      times: [0, 0.1, 0.83, 0.83],
     },
   },
-});
+};
 
-const backgroundVariants = defineVariants({
+const backgroundVariants = {
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -73,9 +65,9 @@ const backgroundVariants = defineVariants({
       ease: "easeOut",
     },
   },
-});
+};
 
-const ballVariants = defineVariants({
+const ballVariants = {
   initial: {
     transform: "translateY(0%) translateX(0%)",
   },
@@ -100,9 +92,9 @@ const ballVariants = defineVariants({
       ease: "easeOut",
     },
   },
-});
+};
 
-const bubblesVariants = defineVariants({
+const bubblesVariants = {
   initial: {
     transform: "translateY(0%) translateX(0%)",
   },
@@ -146,7 +138,7 @@ const bubblesVariants = defineVariants({
       ease: "easeOut",
     },
   }),
-});
+};
 
 export {
   backgroundVariants,

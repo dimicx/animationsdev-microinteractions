@@ -1,11 +1,9 @@
-import { defineVariants } from "@/lib/use-animate-variants";
-
 const TIMELINE_TIMES = [0, 0.2, 0.35, 0.65, 0.8, 1];
 const TIMELINE_DURATION = 1.7;
 const CLICK_DURATION = 1;
 const REPEAT_DELAY = 5;
 
-const scaleVariants = defineVariants({
+const scaleVariants = {
   initial: {
     transform: "scale(1)",
   },
@@ -25,9 +23,9 @@ const scaleVariants = defineVariants({
       ease: "easeOut",
     },
   },
-});
+};
 
-const timelineOneVariants = defineVariants({
+const timelineOneVariants = {
   initial: {
     pathLength: 1,
   },
@@ -57,9 +55,9 @@ const timelineOneVariants = defineVariants({
       ease: "easeInOut",
     },
   },
-});
+};
 
-const timelineTwoVariants = defineVariants({
+const timelineTwoVariants = {
   initial: {
     pathLength: 1,
     transform: "translateY(0%) translateX(0%)",
@@ -99,9 +97,9 @@ const timelineTwoVariants = defineVariants({
       ease: "easeInOut",
     },
   },
-});
+};
 
-const timelineThreeVariants = defineVariants({
+const timelineThreeVariants = {
   initial: {
     pathLength: 1,
     transform: "translateY(0%) translateX(0%)",
@@ -141,9 +139,9 @@ const timelineThreeVariants = defineVariants({
       ease: "easeInOut",
     },
   },
-});
+};
 
-const timelineContainerVariants = defineVariants({
+const timelineContainerVariants = {
   initial: {
     transform: "rotate(0deg)",
   },
@@ -168,7 +166,7 @@ const timelineContainerVariants = defineVariants({
       ease: "easeOut",
     },
   },
-});
+};
 
 export {
   scaleVariants,

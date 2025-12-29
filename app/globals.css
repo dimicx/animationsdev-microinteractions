@@ -24,3 +24,26 @@ body {
   color: var(--color-foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Performance optimizations for animations on high-DPI displays */
+[data-animate] {
+  /* Force GPU acceleration and optimize compositor */
+  will-change: transform, opacity;
+  /* Hint to browser to optimize rendering */
+  contain: layout style paint;
+}
+
+/* Optimize animated SVG elements specifically */
+svg [data-animate] {
+  /* SVG-specific optimizations */
+  will-change: transform, opacity, stroke-dashoffset;
+}
+
+/* Optimize animated elements that have filters applied */
+/* When an element with a filter is animated, the filter must be recalculated each frame */
+/* Force GPU layer to optimize compositor performance on high-DPI displays */
+svg [data-animate].filter-animated,
+svg .filter-animated {
+  will-change: transform; /* We're animating transforms, not the filter itself */
+  transform: translateZ(0); /* Force GPU layer to reduce filter recalculation cost */
+}

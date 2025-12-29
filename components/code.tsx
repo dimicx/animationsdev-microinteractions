@@ -8,22 +8,21 @@ import {
   createFloatingAnimation,
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
-import { useAnimateVariants } from "@/lib/use-animate-variants";
-import { useFlubber } from "@/lib/use-flubber";
-import { useHoverTimeout } from "@/lib/use-hover-timeout";
-import { useMobileTap } from "@/lib/use-mobile-tap";
+import { useAnimateVariant } from "@/lib/hooks/use-animate-variant";
+import { useFlubber } from "@/lib/hooks/use-flubber";
+import { useHoverTimeout } from "@/lib/hooks/use-hover-timeout";
+import { useMobileTap } from "@/lib/hooks/use-mobile-tap";
 import {
-  wholeVariants,
   caretLeftVariants,
   caretRightVariants,
   codePathVariants,
   opacityVariants,
   pulseVariants,
   slashVariants,
+  wholeVariants,
 } from "@/lib/variants/code-variants";
 import {
   motion,
-  useAnimate,
   useMotionValue,
   useReducedMotion,
   useTransform,
@@ -46,8 +45,7 @@ export function Code({
   const shouldReduceMotion = useReducedMotion();
   const colorIndexRef = useRef<number | null>(null);
   const pathRef = useRef<SVGPathElement>(null);
-  const [scope, animate] = useAnimate();
-  const { animateVariants } = useAnimateVariants(animate);
+  const [scope, animateVariant, animate] = useAnimateVariant();
   const {
     isReadyRef: isReadyForClickRef,
     markTapped,
@@ -61,42 +59,34 @@ export function Code({
 
   const animateCodeVariant = useCallback(
     (variant: "initial" | "animate" | "idle" | "click") => {
-      const animationConfigs = [
-        { selector: "whole", variants: wholeVariants },
-        { selector: "caret-left", variants: caretLeftVariants },
-        { selector: "caret-right", variants: caretRightVariants },
-        { selector: "slash", variants: slashVariants },
-        { selector: "code-path", variants: codePathVariants },
-        { selector: "opacity", variants: opacityVariants },
-      ];
+      const variantMap = {
+        whole: wholeVariants,
+        "caret-left": caretLeftVariants,
+        "caret-right": caretRightVariants,
+        slash: slashVariants,
+        "code-path": codePathVariants,
+        opacity: opacityVariants,
+      };
 
-      const animations = animationConfigs.flatMap((config) =>
-        animateVariants({
-          selector: `[data-animate='${config.selector}']`,
-          variant: config.variants[variant as keyof typeof config.variants],
-        })
-      );
+      const animations = Object.entries(variantMap)
+        .map(([selector, variants]) =>
+          animateVariant(
+            `[data-animate='${selector}']`,
+            variants[variant as keyof typeof variants]
+          )
+        )
+        .filter(Boolean);
 
       return Promise.all(animations);
     },
-    [animateVariants]
-  );
-
-  const animatePulseVariant = useCallback(
-    (variant: "initial" | "animate") => {
-      animateVariants({
-        selector: "[data-animate='pulse']",
-        variant: pulseVariants[variant],
-      });
-    },
-    [animateVariants]
+    [animateVariant]
   );
 
   useEffect(() => {
     if (shouldReduceMotion) return;
     animateCodeVariant("idle");
-    animatePulseVariant("animate");
-  }, [animateCodeVariant, animatePulseVariant, shouldReduceMotion]);
+    animateVariant("[data-animate='pulse']", pulseVariants.animate);
+  }, [animateCodeVariant, animateVariant, shouldReduceMotion]);
 
   const handleClick = () => {
     if (shouldReduceMotion) return;
@@ -108,7 +98,7 @@ export function Code({
 
     hasClickedRef.current = true;
 
-    animatePulseVariant("initial");
+    animateVariant("[data-animate='pulse']", pulseVariants.initial);
     animateCodeVariant("click");
 
     const prevIndex = colorIndexRef.current;
@@ -156,7 +146,7 @@ export function Code({
         ease: "easeOut",
       });
       if (hasClickedRef.current) {
-        animatePulseVariant("animate");
+        animateVariant("[data-animate='pulse']", pulseVariants.animate);
       }
       hasClickedRef.current = false;
 
@@ -188,20 +178,24 @@ export function Code({
       className="origin-bottom-left! group"
     >
       <motion.g
+        style={{ willChange: "transform" }}
         {...createFloatingAnimation({
           to: 1.5,
           duration: 3,
           shouldReduceMotion,
         })}
       >
-        <motion.g data-animate="whole">
-          <g className="filter-[url(#filter8_i_359_1453)] dark:filter-[url(#filter8_i_368_1560)]">
+        <motion.g data-animate="whole" style={{ willChange: "transform" }}>
+          <g className="filter-[url(#filter8_i_359_1453)] dark:filter-[url(#filter8_i_368_1560)] filter-animated">
             <path
               d="M425.217 236.652C443.467 233.369 460.923 245.503 464.206 263.753C467.489 282.003 455.355 299.459 437.105 302.742L408.026 307.972C401.42 309.172 394.605 308.353 388.471 305.622C388.141 306.321 387.71 306.967 387.192 307.54C384.266 310.776 380.349 312.95 376.055 313.722L374.302 314.037C372.384 314.382 370.829 312.493 371.537 310.677L372.153 309.096C373.031 306.846 373.268 304.396 372.841 302.018L369.037 280.871C365.754 262.621 377.888 245.165 396.138 241.883L425.217 236.652Z"
               className="fill-[#F8F8F8] dark:fill-[#252525]"
             />
           </g>
-          <motion.g data-animate="caret-left">
+          <motion.g
+            data-animate="caret-left"
+            style={{ willChange: "transform" }}
+          >
             <path
               d="M400.254 282.746L392.234 277.171C392.045 277.04 391.951 276.975 391.905 276.888C391.863 276.812 391.847 276.725 391.86 276.639C391.873 276.542 391.939 276.448 392.07 276.259L397.645 268.239"
               strokeWidth="2.457"
@@ -210,7 +204,10 @@ export function Code({
               className="stroke-[#989898] dark:stroke-[#D6D6D6]"
             />
           </motion.g>
-          <motion.g data-animate="caret-right">
+          <motion.g
+            data-animate="caret-right"
+            style={{ willChange: "transform" }}
+          >
             <path
               d="M429.881 262.438L437.901 268.013C438.09 268.144 438.184 268.209 438.23 268.296C438.271 268.372 438.287 268.46 438.275 268.545C438.262 268.642 438.196 268.736 438.065 268.925L432.49 276.945"
               strokeWidth="2.457"
@@ -219,21 +216,30 @@ export function Code({
               className="stroke-[#989898] dark:stroke-[#D6D6D6]"
             />
           </motion.g>
-          <motion.g data-animate="code-path">
-            <motion.g data-animate="pulse" initial={pulseVariants.initial}>
+          <motion.g
+            data-animate="code-path"
+            style={{ willChange: "transform" }}
+          >
+            <motion.g
+              data-animate="pulse"
+              initial={pulseVariants.initial}
+              style={{ willChange: "opacity" }}
+            >
               <motion.g
                 data-animate="opacity"
                 initial={opacityVariants.initial}
+                style={{ willChange: "opacity" }}
               >
                 <motion.path
                   ref={pathRef}
                   d={codePath}
                   className="[--light-fill:#989898] [--dark-fill:#D6D6D6] dark:fill-(--dark-fill) fill-(--light-fill)"
+                  style={{ willChange: "d" }}
                 />
               </motion.g>
             </motion.g>
           </motion.g>
-          <motion.g data-animate="slash">
+          <motion.g data-animate="slash" style={{ willChange: "transform" }}>
             <path
               d="M423.804 261.037L423.126 271.144L422.447 281.25"
               strokeWidth="2.457"

@@ -1,19 +1,19 @@
 "use client";
 
+import { Bounce } from "@/components/bounce";
+import { Click } from "@/components/click";
 import { Clock } from "@/components/clock";
 import { Code } from "@/components/code";
 import { Defs } from "@/components/defs";
-import { Hand } from "@/components/hand";
 import { Lightbulb } from "@/components/lightbulb";
-import { SpringPath } from "@/components/spring-path";
 import { Timeline } from "@/components/timeline";
 import { SPRING_CONFIGS } from "@/lib/animation-configs";
-import useIsMobile from "@/lib/use-is-mobile";
+import { useIsMobile } from "@/lib/hooks/use-is-mobile";
 import { motion, MotionConfig } from "motion/react";
 import { useRef } from "react";
 
 export function Scene() {
-  const { isMobile } = useIsMobile();
+  const isMobile = useIsMobile();
   const isDraggingRef = useRef(false);
 
   const handleDragStart = () => {
@@ -38,13 +38,13 @@ export function Scene() {
           aria-label="Interactive animation showcasing various microinteractions"
         >
           <Code isMobile={isMobile} isDraggingRef={isDraggingRef} />
-          <SpringPath
+          <Bounce
             isMobile={isMobile}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             isDraggingRef={isDraggingRef}
           />
-          <Hand isMobile={isMobile} isDraggingRef={isDraggingRef} />
+          <Click isMobile={isMobile} isDraggingRef={isDraggingRef} />
           <Clock isMobile={isMobile} isDraggingRef={isDraggingRef} />
           <Timeline isMobile={isMobile} isDraggingRef={isDraggingRef} />
           <Lightbulb isMobile={isMobile} isDraggingRef={isDraggingRef} />

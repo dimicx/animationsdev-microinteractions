@@ -1,11 +1,10 @@
-import { defineVariants } from "@/lib/use-animate-variants";
 import { Transition } from "motion/react";
 
 const REPEAT_DELAY = 8;
 const INITIAL_DELAY = 1;
 const DURATION = 0.7;
 
-const wholeVariants = defineVariants({
+const wholeVariants = {
   initial: {
     transform: "translateY(0%) rotate(0deg) scale(1)",
   },
@@ -35,9 +34,9 @@ const wholeVariants = defineVariants({
       ease: "easeInOut",
     },
   },
-});
+};
 
-const backgroundVariants = defineVariants({
+const backgroundVariants = {
   initial: {
     transform: "scale(1)",
   },
@@ -57,9 +56,9 @@ const backgroundVariants = defineVariants({
       ease: "easeOut",
     },
   },
-});
+};
 
-const bulbVariants = defineVariants({
+const bulbVariants = {
   initial: {
     opacity: 1,
     transform: "translateY(0%) translateX(0%)",
@@ -99,9 +98,9 @@ const bulbVariants = defineVariants({
       times: [0.2, 0.45, 0.6],
     },
   },
-});
+};
 
-const stemVariants = defineVariants({
+const stemVariants = {
   initial: {
     opacity: 1,
   },
@@ -130,9 +129,9 @@ const stemVariants = defineVariants({
       times: [0.2, 0.45, 0.6],
     },
   },
-});
+};
 
-const bulbMaskVariants = defineVariants({
+const bulbMaskVariants = {
   initial: {
     transform: "translateY(0%) translateX(0%) rotate(0deg)",
     opacity: 1,
@@ -172,9 +171,9 @@ const bulbMaskVariants = defineVariants({
       times: [0.45, 0.75, 1],
     },
   },
-});
+};
 
-const getIdleRayTransition = (initialDelay: boolean): Transition => ({
+const getIdleLineTransition = (initialDelay: boolean): Transition => ({
   duration: DURATION,
   delay: initialDelay ? INITIAL_DELAY : REPEAT_DELAY,
   repeat: Infinity,
@@ -182,7 +181,7 @@ const getIdleRayTransition = (initialDelay: boolean): Transition => ({
   repeatDelay: REPEAT_DELAY,
 });
 
-const rayVariants = defineVariants({
+const lineVariants = {
   initial: { pathLength: 1, strokeOpacity: 0.5 },
   animate: {
     pathLength: [0.01, 1],
@@ -199,18 +198,18 @@ const rayVariants = defineVariants({
     },
   },
   idle: (initialDelay: boolean) => {
-    const idleRayTransition = getIdleRayTransition(initialDelay);
+    const idleLineTransition = getIdleLineTransition(initialDelay);
     return {
       pathLength: [1, 0, 0, 1],
       strokeOpacity: [0.5, 0, 0, 0.5],
       transition: {
         pathLength: {
           times: [0, 0.05, 0.5, 0.7],
-          ...idleRayTransition,
+          ...idleLineTransition,
         },
         strokeOpacity: {
           times: [0, 0.01, 0.5, 0.51],
-          ...idleRayTransition,
+          ...idleLineTransition,
         },
       },
     };
@@ -229,13 +228,13 @@ const rayVariants = defineVariants({
       },
     },
   },
-});
+};
 
 export {
   backgroundVariants,
   bulbMaskVariants,
   bulbVariants,
-  rayVariants,
+  lineVariants,
   stemVariants,
   wholeVariants,
 };

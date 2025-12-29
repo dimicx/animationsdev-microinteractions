@@ -1,6 +1,4 @@
-import { defineVariants } from "@/lib/use-animate-variants";
-
-const wholeVariants = defineVariants({
+const wholeVariants = {
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -30,9 +28,9 @@ const wholeVariants = defineVariants({
       ease: "easeInOut",
     },
   },
-});
+};
 
-const caretLeftVariants = defineVariants({
+const caretLeftVariants = {
   initial: {
     transform: "translateX(0%) translateY(0%)",
   },
@@ -49,9 +47,9 @@ const caretLeftVariants = defineVariants({
       ease: "easeInOut",
     },
   },
-});
+};
 
-const caretRightVariants = defineVariants({
+const caretRightVariants = {
   initial: {
     transform: "translateX(0%) translateY(0%)",
   },
@@ -68,9 +66,9 @@ const caretRightVariants = defineVariants({
       ease: "easeInOut",
     },
   },
-});
+};
 
-const slashVariants = defineVariants({
+const slashVariants = {
   initial: {
     transform: "translateX(0%) translateY(0%) rotate(0deg)",
   },
@@ -87,9 +85,9 @@ const slashVariants = defineVariants({
       ease: "easeInOut",
     },
   },
-});
+};
 
-const codePathVariants = defineVariants({
+const codePathVariants = {
   initial: {
     transform: "translateX(0%) translateY(0%) rotate(0deg) scale(1)",
   },
@@ -119,9 +117,9 @@ const codePathVariants = defineVariants({
       ease: "easeOut",
     },
   },
-});
+};
 
-const opacityVariants = defineVariants({
+const opacityVariants = {
   initial: {
     opacity: 0.4,
   },
@@ -144,9 +142,9 @@ const opacityVariants = defineVariants({
       duration: 0.2,
     },
   },
-});
+};
 
-const pulseVariants = defineVariants({
+const pulseVariants = {
   initial: {
     opacity: 1,
   },
@@ -160,7 +158,7 @@ const pulseVariants = defineVariants({
       delay: 0.1,
     },
   },
-});
+};
 
 export {
   wholeVariants,

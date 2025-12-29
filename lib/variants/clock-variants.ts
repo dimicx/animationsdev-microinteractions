@@ -1,9 +1,7 @@
-import { defineVariants } from "@/lib/use-animate-variants";
-
 const REPEAT_DELAY = 6;
 const INITIAL_DELAY = 3.5;
 
-const backgroundVariants = defineVariants({
+const backgroundVariants = {
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -42,9 +40,9 @@ const backgroundVariants = defineVariants({
       ease: "easeOut",
     },
   },
-});
+};
 
-const clockAndBellsVariants = defineVariants({
+const clockAndBellsVariants = {
   initial: {
     transform: "rotate(0deg) scale(1)",
   },
@@ -77,9 +75,9 @@ const clockAndBellsVariants = defineVariants({
   idle: {
     transform: ["rotate(0deg) scale(1)"],
   },
-});
+};
 
-const clockVariants = defineVariants({
+const clockVariants = {
   initial: {
     y: "0%",
     x: "0%",
@@ -99,9 +97,9 @@ const clockVariants = defineVariants({
       },
     },
   },
-});
+};
 
-const bellVariants = defineVariants({
+const bellVariants = {
   initial: () => ({
     y: "0%",
     x: "0%",
@@ -131,9 +129,9 @@ const bellVariants = defineVariants({
       },
     },
   }),
-});
+};
 
-const bellsVariants = defineVariants({
+const bellsVariants = {
   initial: {
     transform: "translateX(0%) translateY(0%) rotate(0deg)",
   },
@@ -153,7 +151,7 @@ const bellsVariants = defineVariants({
       delay: initialDelay ? INITIAL_DELAY : REPEAT_DELAY,
     },
   }),
-});
+};
 
 export {
   backgroundVariants,
