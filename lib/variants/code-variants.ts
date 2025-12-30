@@ -32,14 +32,14 @@ const wholeVariants = {
 
 const caretLeftVariants = {
   initial: {
-    transform: "translateX(0%) translateY(0%)",
+    transform: "translateX(0px) translateY(0px)",
   },
   animate: {
     transform: [
-      "translateX(0%) translateY(0%)",
-      "translateX(15%) translateY(-3%)",
-      "translateX(-90%) translateY(12%)",
-      "translateX(-80%) translateY(10%)",
+      "translateX(0px) translateY(0px)",
+      "translateX(2px) translateY(-1px)",
+      "translateX(-9px) translateY(1.5px)",
+      "translateX(-7px) translateY(1.5px)",
     ],
     transition: {
       duration: 0.7,
@@ -51,14 +51,14 @@ const caretLeftVariants = {
 
 const caretRightVariants = {
   initial: {
-    transform: "translateX(0%) translateY(0%)",
+    transform: "translateX(0px) translateY(0px)",
   },
   animate: {
     transform: [
-      "translateX(0%) translateY(0%)",
-      "translateX(-15%) translateY(3%)",
-      "translateX(90%) translateY(-12%)",
-      "translateX(80%) translateY(-10%)",
+      "translateX(0px) translateY(0px)",
+      "translateX(-2px) translateY(1px)",
+      "translateX(9px) translateY(-1.5px)",
+      "translateX(7px) translateY(-1.5px)",
     ],
     transition: {
       duration: 0.7,
@@ -70,14 +70,14 @@ const caretRightVariants = {
 
 const slashVariants = {
   initial: {
-    transform: "translateX(0%) translateY(0%) rotate(0deg)",
+    transform: "translateX(0px) translateY(0px) rotate(0deg)",
   },
   animate: {
     transform: [
-      "translateX(0%) translateY(0%) rotate(0deg)",
-      "translateX(80%) translateY(-3%) rotate(-8deg)",
-      "translateX(-1700%) translateY(21%) rotate(8deg)",
-      "translateX(-1650%) translateY(19%) rotate(0deg)",
+      "translateX(0px) translateY(0px) rotate(0deg)",
+      "translateX(2px) translateY(0px) rotate(-8deg)",
+      "translateX(-24.5px) translateY(4px) rotate(8deg)",
+      "translateX(-22.5px) translateY(4px) rotate(0deg)",
     ],
     transition: {
       duration: 0.7,
@@ -89,14 +89,14 @@ const slashVariants = {
 
 const codePathVariants = {
   initial: {
-    transform: "translateX(0%) translateY(0%) rotate(0deg) scale(1)",
+    transform: "translateX(0px) translateY(0px) rotate(0deg) scale(1)",
   },
   animate: {
     transform: [
-      "translateX(0%) translateY(0%) rotate(0deg) scale(1)",
-      "translateX(10%) translateY(0%) rotate(0deg) scale(1)",
-      "translateX(43%) translateY(-9%) rotate(-1deg) scale(1)",
-      "translateX(38%) translateY(-9%) rotate(-1deg) scale(1)",
+      "translateX(0px) translateY(0px) rotate(0deg) scale(1)",
+      "translateX(-0.5px) translateY(0px) rotate(0deg) scale(1)",
+      "translateX(11px) translateY(-2px) rotate(1deg) scale(1)",
+      "translateX(9px) translateY(-2px) rotate(1deg) scale(1)",
     ],
     transition: {
       duration: 0.7,
@@ -106,10 +106,10 @@ const codePathVariants = {
   },
   click: {
     transform: [
-      "translateX(38%) translateY(-9%) rotate(-1deg) scale(1)",
-      "translateX(38%) translateY(-9%) rotate(-1deg) scale(0.98)",
-      "translateX(38%) translateY(-9%) rotate(-1deg) scale(1.01)",
-      "translateX(38%) translateY(-9%) rotate(-1deg) scale(1)",
+      "translateX(9px) translateY(-2px) rotate(1deg) scale(1)",
+      "translateX(9px) translateY(-2px) rotate(1deg) scale(0.96)",
+      "translateX(9px) translateY(-2px) rotate(1deg) scale(1.01)",
+      "translateX(9px) translateY(-2px) rotate(1deg) scale(1)",
     ],
     transition: {
       duration: 0.35,

@@ -10,7 +10,6 @@ import {
   UNIVERSAL_DELAY,
 } from "@/lib/animation-variants";
 import { useAnimateVariant } from "@/lib/hooks/use-animate-variant";
-import { useFlubber } from "@/lib/hooks/use-flubber";
 import { useHoverTimeout } from "@/lib/hooks/use-hover-timeout";
 import { useMobileTap } from "@/lib/hooks/use-mobile-tap";
 import {
@@ -24,16 +23,16 @@ import {
 } from "@/lib/variants/code-variants";
 import {
   motion,
-  useMotionValue,
   useReducedMotion,
+  useSpring,
   useTransform,
 } from "motion/react";
 import { useCallback, useEffect, useRef } from "react";
 
 const codePaths = [
   "M402.625 268.175C402.51 267.54 402.522 266.888 402.659 266.258C402.797 265.627 403.057 265.03 403.425 264.5C403.794 263.97 404.263 263.518 404.806 263.17C405.349 262.821 405.956 262.583 406.591 262.47L409.815 261.89C410.45 261.775 411.101 261.787 411.732 261.924C412.362 262.061 412.96 262.322 413.49 262.69C414.019 263.058 414.471 263.527 414.82 264.071C415.168 264.614 415.406 265.22 415.52 265.856L417.84 278.751C418.07 280.033 417.782 281.355 417.038 282.425C416.295 283.495 415.156 284.225 413.874 284.457L410.65 285.037C409.367 285.267 408.046 284.979 406.976 284.235C405.906 283.491 405.175 282.353 404.944 281.071L402.625 268.175Z",
-  "M403.67 266.711C403.326 264.529 404.816 262.481 406.998 262.136L407.851 262.002C410.033 261.658 412.082 263.147 412.426 265.33L414.81 280.443C415.154 282.625 413.664 284.673 411.482 285.017L410.629 285.152C408.447 285.496 406.399 284.006 406.054 281.824L403.67 266.711Z",
-  "M396.244 269.906C395.727 266.633 397.962 263.561 401.235 263.045L414.792 260.906C418.065 260.389 421.137 262.624 421.653 265.898L423.414 277.06C423.931 280.333 421.696 283.405 418.423 283.921L404.866 286.06C401.593 286.576 398.521 284.341 398.004 281.068L396.244 269.906Z",
+  "M403.648 268.006C403.534 267.371 403.545 266.72 403.683 266.089C403.82 265.459 404.08 264.862 404.449 264.332C404.817 263.802 405.286 263.35 405.829 263.001C406.373 262.653 406.979 262.415 407.614 262.301L408.815 262.08C409.45 261.966 410.101 261.978 410.732 262.115C411.362 262.252 411.959 262.513 412.489 262.881C413.019 263.249 413.471 263.718 413.819 264.262C414.168 264.805 414.406 265.411 414.52 266.046L416.84 278.941C417.07 280.224 416.782 281.546 416.038 282.616C415.294 283.686 414.156 284.416 412.874 284.647L411.673 284.868C410.391 285.099 409.069 284.81 407.999 284.067C406.929 283.323 406.198 282.185 405.967 280.902L403.648 268.006Z",
+  "M397.258 269.181C397.143 268.546 397.155 267.895 397.292 267.264C397.43 266.634 397.69 266.037 398.058 265.507C398.426 264.977 398.896 264.525 399.439 264.176C399.982 263.828 400.589 263.59 401.224 263.476L417.151 260.491C417.786 260.377 418.437 260.388 419.068 260.526C419.698 260.663 420.295 260.923 420.825 261.292C421.355 261.66 421.807 262.129 422.156 262.672C422.504 263.215 422.742 263.822 422.856 264.457L425.176 277.352C425.406 278.635 425.118 279.956 424.374 281.026C423.63 282.096 422.492 282.827 421.21 283.058L405.283 286.043C404 286.274 402.679 285.985 401.609 285.242C400.539 284.498 399.808 283.36 399.577 282.077L397.258 269.181Z",
 ];
 
 export function Code({
@@ -54,9 +53,11 @@ export function Code({
   } = useMobileTap({ isMobile });
   const hasClickedRef = useRef(false);
 
-  const hoverProgress = useMotionValue(0);
-  const codePathProgress = useTransform(hoverProgress, [0, 0.4, 1], [0, 1, 2]);
-  const codePath = useFlubber(codePathProgress, codePaths);
+  const codePathProgress = useSpring(0, {
+    visualDuration: 0.34,
+    bounce: 0,
+  });
+  const codePath = useTransform(codePathProgress, [0, 1, 2], codePaths);
 
   const animateCodeVariant = useCallback(
     (variant: "initial" | "animate" | "idle" | "click") => {
@@ -133,19 +134,13 @@ export function Code({
     shouldReduceMotion: shouldReduceMotion,
     onHoverStart: () => {
       animateCodeVariant("animate");
-      animate(hoverProgress, 1, {
-        duration: 0.4,
-        ease: "easeInOut",
-      });
+      codePathProgress.set(2);
     },
     onHoverEnd: () => {
       resetMobileTap();
       animateCodeVariant("initial");
       animateCodeVariant("idle");
-      animate(hoverProgress, 0, {
-        duration: 0.4,
-        ease: "easeOut",
-      });
+      codePathProgress.set(0);
       if (hasClickedRef.current) {
         animateVariant("[data-animate='pulse']", pulseVariants.animate);
       }

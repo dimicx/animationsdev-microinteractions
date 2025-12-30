@@ -88,12 +88,12 @@ const lineVariants = {
 
 const handVariants = {
   initial: {
-    transform: "translateX(0%) translateY(0%) rotate(0deg)",
+    transform: "translateX(0px) translateY(0px) rotate(0deg)",
   },
   hover: {
     transform: [
-      "translateX(0%) translateY(0%) rotate(0deg)",
-      "translateX(-11%) translateY(8%) rotate(25deg)",
+      "translateX(0px) translateY(0px) rotate(0deg)",
+      "translateX(-4px) translateY(3px) rotate(25deg)",
     ],
     transition: {
       duration: DURATION,
@@ -102,7 +102,7 @@ const handVariants = {
     },
   },
   click: {
-    transform: "translateX(-11%) translateY(8%) rotate(25deg)",
+    transform: "translateX(-4px) translateY(3px) rotate(25deg)",
   },
 };
 
