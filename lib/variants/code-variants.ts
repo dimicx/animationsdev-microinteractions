@@ -38,8 +38,8 @@ const caretLeftVariants = {
     transform: [
       "translateX(0px) translateY(0px)",
       "translateX(2px) translateY(-1px)",
-      "translateX(-9px) translateY(1.5px)",
-      "translateX(-7px) translateY(1.5px)",
+      "translateX(-6px) translateY(1px)",
+      "translateX(-5px) translateY(1px)",
     ],
     transition: {
       duration: 0.7,
@@ -57,8 +57,8 @@ const caretRightVariants = {
     transform: [
       "translateX(0px) translateY(0px)",
       "translateX(-2px) translateY(1px)",
+      "translateX(11px) translateY(-1.5px)",
       "translateX(9px) translateY(-1.5px)",
-      "translateX(7px) translateY(-1.5px)",
     ],
     transition: {
       duration: 0.7,
@@ -76,8 +76,8 @@ const slashVariants = {
     transform: [
       "translateX(0px) translateY(0px) rotate(0deg)",
       "translateX(2px) translateY(0px) rotate(-8deg)",
-      "translateX(-24.5px) translateY(4px) rotate(8deg)",
-      "translateX(-22.5px) translateY(4px) rotate(0deg)",
+      "translateX(-22.5px) translateY(3.5px) rotate(8deg)",
+      "translateX(-20.5px) translateY(3.5px) rotate(0deg)",
     ],
     transition: {
       duration: 0.7,
@@ -94,22 +94,21 @@ const codePathVariants = {
   animate: {
     transform: [
       "translateX(0px) translateY(0px) rotate(0deg) scale(1)",
-      "translateX(-0.5px) translateY(0px) rotate(0deg) scale(1)",
+      "translateX(12px) translateY(-2px) rotate(1deg) scale(1)",
       "translateX(11px) translateY(-2px) rotate(1deg) scale(1)",
-      "translateX(9px) translateY(-2px) rotate(1deg) scale(1)",
     ],
     transition: {
       duration: 0.7,
-      times: [0, 0.2, 0.55, 1],
+      times: [0.2, 0.55, 1],
       ease: "easeInOut",
     },
   },
   click: {
     transform: [
-      "translateX(9px) translateY(-2px) rotate(1deg) scale(1)",
-      "translateX(9px) translateY(-2px) rotate(1deg) scale(0.96)",
-      "translateX(9px) translateY(-2px) rotate(1deg) scale(1.01)",
-      "translateX(9px) translateY(-2px) rotate(1deg) scale(1)",
+      "translateX(11px) translateY(-2px) rotate(1deg) scale(1)",
+      "translateX(11px) translateY(-2px) rotate(1deg) scale(0.97)",
+      "translateX(11px) translateY(-2px) rotate(1deg) scale(1.01)",
+      "translateX(11px) translateY(-2px) rotate(1deg) scale(1)",
     ],
     transition: {
       duration: 0.35,
